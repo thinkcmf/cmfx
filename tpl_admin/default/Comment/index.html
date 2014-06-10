@@ -1,0 +1,50 @@
+<admintpl file="header" />
+<body class="J_scroll_fixed" style="min-width:800px;">
+<div class="wrap J_check_wrap">
+  <form class="J_ajaxForm" action="" method="post">
+    <div class="table_list">
+      <table width="100%">
+        <thead>
+	          <tr>
+	            <td width="16"><label><input type="checkbox" class="J_check_all" data-direction="x" data-checklist="J_check_x"></label></td>
+	            <td width="50">ID</td>
+	            <td>用户名/姓名</td>
+	            <td>邮箱</td>
+	            <td width="140">内容</td>
+	            <td width="140"><span>评论时间</span></td>
+	            <td width="50"><span>状态</span></td>
+	            <td width="120">操作</td>
+	          </tr>
+        </thead>
+        	<php>$status=array("1"=>"已审核","0"=>"未审核");</php>
+        	<foreach name="comments" item="vo">
+	        	<tr>
+		            <td><input type="checkbox" class="J_check" data-yid="J_check_y" data-xid="J_check_x" name="ids[]" value="{$vo.id}" ></td>
+		            <td>{$vo.id}</td>
+		            <td>{$vo.full_name}</td>
+		            <td>{$vo.email}</td>
+		            <td>{$vo.content}</td>
+		            <td>{$vo.createtime}</td>
+		            <td>{$status[$vo['status']]}</td>
+		            <td>
+		            	<a href="{:U('Commentadmin/delete',array('id'=>$vo['id']))}" class="J_ajax_del" >删除</a>
+					</td>
+	          	</tr>
+          </foreach>
+          </table>
+      <div class="p10"><div class="pages"> {$Page} </div> </div>
+     
+    </div>
+    <div>
+      <div class="btn_wrap_pd">
+        <label class="mr20"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y">全选</label>                
+        <button class="btn J_ajax_submit_btn" type="submit" data-action="{:u('Commentadmin/check',array('check'=>1))}" data-subcheck="true">审核</button>
+        <button class="btn J_ajax_submit_btn" type="submit" data-action="{:u('Commentadmin/check',array('uncheck'=>1))}" data-subcheck="true">取消审核</button>
+        <button class="btn J_ajax_submit_btn" type="submit" data-action="{:u('Commentadmin/delete')}" data-subcheck="true" data-msg="你确定删除吗？">删除</button>
+      </div>
+    </div>
+  </form>
+</div>
+<script src="__ROOT__/statics/js/common.js{$js_debug}"></script>
+</body>
+</html>

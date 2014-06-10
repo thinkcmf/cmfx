@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <title>{$site_name} 登录</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <include file="Public:css" />
+</head>
+<body>
+<include file="Public:menu" />
+<div class="wrapper">
+	<include file="Public:header" />
+	
+    <div class="pg-opt pin">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>登录</h2>
+                </div>
+                <div class="col-md-6">
+                    <ol class="breadcrumb">
+                        <li><a href="__ROOT__/">首页</a></li>
+                        <li class="active">登录</li>
+                    </ol>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="slice bg-3 section">
+        <div class="w-section inverse">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3">
+                        <div class="w-section inverse">                       
+                            <div class="w-box sign-in-wr bg-5">
+                                
+                                <div class="form-header">
+                                    <h2>用户登录</h2>
+                                </div>
+                                <div class="form-body">
+                                    <form role="form" action="{:U('Member/index/dologin')}" method="post" class="form-light padding-15">
+                                        <div class="form-group">
+                                        	<label>账号</label>
+                                        	<input type="text" name="name" class="form-control" id="name" placeholder="">
+                                        </div>
+                                        <div class="form-group">
+                                        	<label>密码</label>
+                                        	<input type="password" name="passwd" class="form-control" id="passwd" placeholder="">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>验证码</label>
+                                            <div class="row">
+                                            	<div class="col-md-6">
+                                            		<input type="text" class="form-control" name="verify" id="verify" placeholder="" />
+                                            	</div>
+                                            	<div class="col-md-6">
+                                            		{:sp_verifycode_img('code_len=4&font_size=15&width=100&height=35&charset=1234567890')}
+                                        		</div>
+                                        	</div>
+                                        </div> 
+                          
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label class="checkbox"><input type="checkbox">下次自动登录</label>                        
+                                            </div>
+                                            <div class="col-md-6">
+                                                <button type="submit" class="btn btn-two pull-right">确定</button>                      
+                                            </div>
+                                        </div>
+                                    </form>
+                                    
+                                </div>
+                                <div class="form-footer">
+                                    <p>还没有账号? <a href="{:U('Member/index/register')}">点击此处注册账号</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <include file="Public:footer" />
+</div>
+
+<include file="Public:scripts" />
+
+</body>
+</html>

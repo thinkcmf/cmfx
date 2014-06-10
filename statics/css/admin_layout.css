@@ -1,0 +1,514 @@
+/*
+===================
+@explain: 系统后台框架结构
+===================
+*/
+body, div, dl, dt, dd, ul, ul li, form, p, th, td {margin: 0;padding: 0;}
+input, button{font-family: inherit;font-size: inherit;font-style: inherit;font-weight: inherit;}
+cite, em, strong, th {font-style: inherit;font-weight: inherit;}
+td, th, div {word-break:break-all;word-wrap:break-word;}
+table {border-collapse: collapse;border-spacing:0;}
+th {text-align: left;font-weight:100;}
+ul, ul li{list-style: none;}
+form {display:inline;}
+img {border: 0;}
+.placeholder{color:#999;}
+/*
+===================
+清除浮动
+* cc 作用于父模型
+===================
+*/
+.cc{
+	zoom:1;
+}
+.cc:after{
+	content:'\20';
+	display:block;
+	height:0;
+	clear:both;
+	visibility: hidden;
+}
+/*
+===================
+背景组合
+===================
+*/
+.tab td,
+.tabA_pre,
+.tabA_next,
+.tabA_pre_old,
+.tabA_next_old,
+.tabA li span,
+.tabA li .del,
+.menubar dt a,
+.menubar ul li a,
+.menuNext a,
+.search button,
+.refresh,
+.full_screen,
+.options{
+	background: url(../images/admin/layout/bg.png);
+}
+.logo{
+	background: url(../images/admin/layout/logo.png) center center no-repeat;
+}
+/*
+===================
+结构
+===================
+*/
+html{
+	_background-image:url(../images/blank.gif);
+	background-attachment:fixed;
+	-webkit-text-size-adjust:none;
+}
+html,
+body {
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
+	font-family: Arial;
+	color: #333;
+	font-size: 12px;
+	background:#F3F3F3;
+}
+iframe {
+	height: 100%;
+	width: 100%;
+	background:#f3f3f3
+}
+a {
+	color: #333;
+	text-decoration: none;
+}
+.wrap {
+	min-width: 880px;
+}
+/*
+===================
+头部
+===================
+*/
+.head {
+	height: 46px;
+	background:#3C86C5;
+}
+.head th {
+	width: 140px;
+	height:46px;
+}
+.logo {
+	display: block;
+	width: 140px;
+	height: 46px;
+	overflow: hidden;
+	text-indent: -2000em;
+}
+.nav {
+	float: left;
+	overflow: hidden;
+}
+.nav ul {
+	float: left;
+}
+.nav li {
+	float: left;
+	line-height: 30px;
+}
+.nav li a {
+	float: left;
+	display: block;
+	font-size: 12px;
+	color: #b5d4ea;
+	padding:0 10px;
+	text-align: center;
+}
+.nav li.current a{
+	background:url(../images/admin/layout/nav_cur.png) center 0 no-repeat;
+	font-weight: 700;
+	color:#fff;
+}
+.nav li a:hover {
+	color:#fff;
+}
+.login_info {
+	float: right;
+	font-size: 12px;
+	color: #b5d4ea;
+	line-height: 30px;
+	padding-right: 30px;
+	white-space: nowrap;
+}
+.login_info a {
+	color: #b5d4ea;
+	margin:0 5px;
+}
+.login_info a:hover {
+	color: #fff;
+}
+.login_info a.home{
+	background:#446d91;
+	border-radius:2px;
+	display:inline-block;
+	margin-right:15px;
+	padding:0 7px;
+	line-height:22px;
+}
+/*
+===================
+面包屑
+===================
+*/
+#breadCrumb{
+	position:absolute;
+	font-size:12px;
+	padding:10px 20px;
+}
+/*
+===================
+左侧菜单
+===================
+*/
+.content th {
+	background: #f2f2f2;
+	vertical-align: top;
+	font-weight: 100;
+}
+.menubar {
+	padding:10px 0;
+	overflow: hidden;
+	font-weight: 100;
+}
+.menubar dl {
+	padding: 0;
+	margin: 0;
+}
+.menubar dt {
+	font-size: 12px;
+}
+.menubar dt a {
+	display: block;
+	line-height: 25px;
+	height: 25px;
+	overflow: hidden;
+	padding: 0 10px 0 30px;
+	background-position:-265px 9px;
+	background-repeat:no-repeat;
+}
+.menubar dt a:hover {
+	background-color: #e9e9e9;
+}
+.menubar dt.current a{
+	background-color: #dbdada;
+	background-position:-265px -11px;
+}
+.menubar li.current a{
+	background-color: #dbdada;
+}
+.menubar dd {
+	padding-left: 16px;
+}
+.menubar ul li {
+	padding: 0;
+}
+.menubar ul li a {
+	display: block;
+	line-height:22px;
+	height:22px;
+	overflow: hidden;
+	padding: 0 10px 0 20px;
+	font-size: 12px;
+	background-position:-270px -30px;
+	background-repeat:no-repeat;
+}
+.menubar ul li a:hover{
+	background-color: #e9e9e9;
+}
+/*
+===================
+左侧菜滚动切换
+===================
+*/
+.menuNext {
+	height: 21px;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 140px;
+}
+.menuNext a {
+	float: left;
+	width: 70px;
+	height: 21px;
+	text-indent: -2000em;
+	overflow: hidden;
+}
+.menuNext a.pre{
+	background-position:0 -30px;
+}
+.menuNext a.next{
+	background-position:-70px -30px;
+}
+.menuNext a.pre:hover {
+	background-position: 0 -60px;
+}
+.menuNext a.next:hover {
+	background-position: -70px -60px;
+}
+.menuNext a.pre_old,
+.menuNext a.pre_old:hover {
+	background-position: 0 -90px;
+}
+.menuNext a.next_old,
+.menuNext a.next_old:hover {
+	background-position: -70px -90px;
+}
+/*
+===================
+选项区域
+===================
+*/
+.tab th,
+.tab td {
+	height: 30px;
+}
+.tab th {
+	background: #f2f2f2;
+	padding:5px 5px 0;
+	font-weight: 100;
+}
+.tab td {
+	vertical-align: top;
+	padding: 0;
+}
+/*
+===================
+搜索
+===================
+*/
+.search {
+	height:22px;
+	width: 128px;
+	overflow: hidden;
+	padding: 0;
+	border:1px solid #e5e5e5;
+	background:#fff;
+	position:relative;
+}
+.search input {
+	left:0;
+	top:2px;
+	border: 0 none;
+	padding:0 5px;
+	font: 12px Arial;
+	vertical-align: middle;
+	width: 105px;
+	background:none;
+	position:absolute;
+}
+.search input:focus{
+	outline:0 none;
+}
+.search button {
+	position:absolute;
+	top:3px;
+	right:5px;
+	border: 0 none;
+	height: 16px;
+	cursor: pointer;
+	width: 22px;
+	text-indent:-2000em;
+	overflow:hidden;
+	background-position:-95px 1px;
+}
+.gray {
+	color: #999;
+}
+/*
+===================
+选项卡
+===================
+*/
+.tab td{
+	background-position:0 -200px;
+	background-color:#f7f7f7;
+}
+.tabA{
+	position:relative;
+	height:30px;
+}
+.tabA ul {
+	line-height: 30px;
+	height: 30px;
+	overflow: hidden;
+	width:10000px;
+	border-right: 1px solid #dedede;
+}
+.tabA li {
+	float: left;
+	font-size: 12px;
+	border-left: 1px solid #dedede;
+}
+.tabA li span {
+	display: block;
+	line-height: 30px;
+	height: 30px;
+	padding: 0 10px 0 15px;
+	float: left;
+	white-space: nowrap;
+	cursor: pointer;
+	background-position: 999px 999px;
+}
+.tabA li span:hover {
+	background-position: 0 -240px;
+}
+.tabA li a {
+	outline: none;
+	float: left;
+	font-style: normal;
+	color: #999;
+	padding-right: 8px;
+}
+.tabA li a:hover {
+	color: #000;
+}
+.tabA li:focus{
+}
+.tabA li .del {
+	width: 7px;
+	height: 7px;
+	overflow: hidden;
+	display: block;
+	text-indent: -2000em;
+	background-position: -130px 0;
+	margin: 11px 0 0 0;
+	position: relative;
+	padding: 0;
+}
+.tabA li .del:hover {
+	background-position: -137px 0;
+}
+.tabA li.current .del {
+	background-position: -144px 0;
+}
+.tabA li.current .del:hover {
+	background-position: -151px 0;
+}
+.tabA li.current{
+	border-color:#72a8cf;
+}
+.tabA li.current span {
+	background:#72a8cf;
+	background-position: 0 -240px;
+}
+.tabA li.current a,
+.tabA li.current a:hover{
+	font-weight: 100;
+	color: #fff;
+}
+.tabA .fr {
+	margin-top: 10px;
+}
+.tabA_pre,
+.tabA_next,
+.tabA_pre_old,
+.tabA_next_old {
+	width: 24px;
+	height: 30px;
+	display: block;
+	overflow: hidden;
+	text-indent: -2000em;
+	position:absolute;
+}
+.tabA_pre {
+	background-position: 0 0;
+	left:0;
+	top:0;
+}
+.tabA_next {
+	background-position: -25px 0;
+	right:0;
+	top:0;
+}
+.tabA_pre_old {
+	background-position: -50px 0;
+	left:0;
+	top:0;
+}
+.tabA_next_old {
+	background-position: -75px 0;
+	right:0;
+	top:0;
+}
+/*
+===================
+内容区域管理
+===================
+*/
+.options {
+	position: absolute;
+	width:54px;
+	height:22px;
+	right: 25px;
+	top: 85px;
+	background-position:-180px 0;
+}
+.options a{
+	float:left;
+	height:22px;
+	line-height:22px;
+	width:27px;
+}
+.refresh,
+.full_screen{
+	text-indent:-2000em;
+	overflow:hidden;
+}
+/*刷新*/
+.refresh{
+	background-position:-243px -27px;
+}
+/*全屏*/
+.full_screen{
+	background-position:-173px -25px;
+}
+/*
+===================
+关闭js提醒
+===================
+*/
+.noscript {
+	background: #fffbbb;
+	line-height: 20px;
+	height: 20px;
+	text-align: center;
+	font-size: 12px;
+	position: absolute;
+	width: 100%;
+	left: 0;
+	top: 0;
+	padding:0;
+	margin:0;
+}
+/*
+===================
+加载状态
+===================
+*/
+.loading{
+	border:1px solid #e4e4e4;
+	background:#fffde3;
+	line-height:100%;
+	padding: 6px 10px;
+	position:absolute;
+	border-radius: 2px;
+	-webkit-border-radius: 2px;
+	box-shadow: 0 0 5px #e4e4e4;
+	-webkit-box-shadow: 0 0 5px #e4e4e4;
+	color:#222;
+	font-weight:700;
+	font-size:12px;
+	margin-left:10px;
+	top:85px;
+}

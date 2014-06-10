@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="keywords" content="页面出错" />
+	<meta name="description" content="页面出错">
+    <title>系统出错</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <include file="Public:css" />
+
+</head>
+<body>
+	<include file="Public:header" />
+	   
+    <div class="pg-opt pin">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>出错啦！</h2>
+                </div>                
+            </div>
+        </div>
+    </div>
+    
+    <section class="slice bg-2" style="padding:90px 0;">
+        <div class="w-section inverse">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="text-center">
+                            <h2><?php echo($error); ?></h2>
+                           <p>
+							页面自动 <a id="href" href="<?php echo($jumpUrl); ?>">跳转</a> 等待时间： <b id="wait"><?php echo($waitSecond); ?></b>
+							</p>
+                            <span class="clearfix"></span>
+    
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+	<include file="Public:footer" />
+</div>
+
+<!-- JavaScript -->
+<include file="Public:scripts" />
+<script type="text/javascript">
+(function(){
+var wait = document.getElementById('wait'),href = document.getElementById('href').href;
+var interval = setInterval(function(){
+	var time = --wait.innerHTML;
+	if(time <= 0) {
+		location.href = href;
+		clearInterval(interval);
+	};
+}, 1000);
+})();
+</script>
+</body>
+</html>

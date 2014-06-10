@@ -1,0 +1,107 @@
+<div id="asideMenu" class="aside-menu" style="z-index:9999;">
+	<form class="form-inline form-search">
+        <div class="input-group">
+            <span class="input-group-btn">
+                <button id="btnHideAsideMenu" class="btn btn-close" type="button" title="关闭"><i class="fa fa-times"></i></button>
+            </span>
+        </div>
+    </form>
+    <h5 class="side-section-title">侧边菜单</h5>
+   
+    <div class="nav">
+         <php>
+			$effected_id="";
+		  	$filetpl="<a href='\$href' target='\$target'>\$label</a>";
+		  	$foldertpl="<a href='\$href' target='\$target'>\$label</a>";
+		  	$ul_class="dropdown-menu" ;
+		  	$li_class="" ;
+		  	$style="";
+		  	$showlevel=6;
+		  	$dropdown='dropdown';
+		  	echo sp_get_menu("main",$effected_id,$filetpl,$foldertpl,$ul_class,$li_class,$style,$showlevel,$dropdown);
+		</php>
+    </div>
+        
+    <h5 class="side-section-title">联系我们</h5>
+    <div class="contact-info">
+        <h5>地址</h5>
+        <p>上海市徐汇区斜土路2601号</p>
+        
+        <h5>邮箱</h5>
+        <p>{$site_admin_email}</p>
+        
+        <h5>电话</h5>
+        <p>+021 3112 0248</p>
+    </div>
+</div>
+<div class="top-header">
+	<div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+            	<span class="aux-text hidden-xs">
+                    <a href="http://www.thinkcmf.com/">欢迎访问ThinkCMF官方</a>
+                </span>
+            	<div class="top-header-menu">
+                    <ul class="menu">
+                    	<if condition="strlen($_SESSION['MEMBER_id']) neq 0">
+							<li><a href="{:U('member/center/index')}">{$Think.session.MEMBER_name}
+							<if condition="getMesNum() neq 0">
+							<span class="fa fa-envelope" style="color:#FF4400;"> {:getMesNum()}</span>
+							</if>
+							</a></li>
+							<li id="navright"><a href="{:U('Member/index/logout')}"><span class="icon-signout"></span>退出</a></li>
+						<else />
+				            <li><a href="{:U('Member/index/register')}">注册</a></li>
+	                        <li class="aux-languages dropdown"><a href="{:U('Member/index/index')}"><span class="language name">登录</span></a>
+	                            <ul id="auxLanguages" class="sub-menu">
+	                                <li><a href="{:U('Member/index/index')}"><span class="login" style="margin-left:2px;"><i class="fa fa-user"></i>&nbsp;&nbsp;本站账号</span></a></li>
+	                                <li>
+	                                	<a href="{:U('Api/oauth/login',array('type'=>'qq'))}">
+	                                		<span class="language"><img width="14" height="14" src="__TMPL__Public/images/qq.png" />&nbsp;&nbsp;QQ登录</span>
+	                                	</a>
+	                                </li>
+	                                <li><a href="{:U('Api/oauth/login',array('type'=>'sina'))}"><span class="language"><img width="14"  src="__TMPL__Public/images/weibo.png" />&nbsp;&nbsp;微博登录</span></a></li>
+	                            </ul>
+	                        </li>
+				        </if>
+                        
+                    </ul>
+				</div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- nav -->
+<div>
+    <div class="navbar navbar-white" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+            	<button type="button" class="navbar-toggle navbar-toggle-aside-menu">
+                    <i class="fa fa-outdent icon-custom"></i>
+                </button>
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="__ROOT__/" >
+                	<img src="__TMPL__Public/images/boomerang-logo.png" height="45" alt="Boomerang Bootstrap Template Logo">
+                </a>
+            </div>
+            <div class="navbar-collapse collapse" id="main_nav">
+            	<php>
+					$effected_id="menu-header";
+				  	$filetpl="<a href='\$href' target='\$target'>\$label</a>";
+				  	$foldertpl="<a class='dropdown-toggle' data-toggle='dropdown' data-hover='dropdown' data-close-others='true' href='\$href' target='\$target'>\$label</a>";
+				  	$ul_class="dropdown-menu" ;
+				  	$li_class="" ;
+				  	$style="nav navbar-nav navbar-right";
+				  	$showlevel=6;
+				  	$dropdown='dropdown';
+				  	echo sp_get_menu("main",$effected_id,$filetpl,$foldertpl,$ul_class,$li_class,$style,$showlevel,$dropdown);
+				</php>
+            </div><!--/.nav-collapse -->
+        </div>
+    </div>
+</div>

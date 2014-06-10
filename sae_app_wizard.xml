@@ -1,0 +1,15 @@
+﻿<appwizard>
+	<platform> 
+		<services>
+			<service name="data"  params="public">Storage</service>
+			<service size="30M">Memcache</service>
+			<service>Mysql</service>
+			<service>KVDB</service>
+		</services>
+	</platform>
+
+	<code> 
+	<!-- 初始化页面地址：即应用安装成功后跳转的地址，可以将应用安装脚本或数据库导入脚本写在该文件中 -->
+	<initScript>index.php</initScript>
+	</code>
+</appwizard>

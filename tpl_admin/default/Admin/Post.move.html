@@ -1,0 +1,32 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<div class="wrap jj">
+  <div class="common-form">
+    <form method="post" class="J_ajaxForm" >
+      <div class="table_list">
+        <table cellpadding="0" cellspacing="0" class="table_form" width="100%">
+          <tbody>
+            <tr>
+              <td width="140">上级:</td>
+              <td>
+              	<select name="term_id" class="normal_select">
+					<foreach name="terms" item="vo">
+						<option value="{$vo.term_id}" >{$vo.spacer}{$vo.name}</option>
+					</foreach>
+				</select>
+			  </td>														
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="">
+        <div class="btn_wrap_pd">
+          <button class="btn btn_submit mr10 J_ajax_submit_btn" type="submit">移动</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/common.js{$js_debug}"></script>
+</body>
+</html>

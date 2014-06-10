@@ -1,0 +1,44 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<div class="wrap jj">
+  <div class="nav">
+      <ul class="cc">
+        <li class="current"><a href="{:U('collectadmin/userlist')}">粉丝列表</a></li>
+      </ul>
+  </div>
+  <div class="common-form">
+    <form method="post" class="J_ajaxForm" action="">
+      <div class="table_list">
+        <table cellpadding="0" cellspacing="0" class="table_form" width="100%">
+          <thead>
+			<tr class="">
+				<td class="bold">ID</td>
+				<td class="bold">昵称</td>
+				<td class="bold">头像</td>
+				<td class="bold">性别</td>
+				<td class="bold">关注时间</td>
+				<td class="bold">省</td>
+				<td class="bold">市</td>
+			</tr>
+		</thead>
+		<tbody>
+			<volist name="rst" id="vo">
+			<tr>
+				<td>{$vo['id']}</td>
+				<td>{$vo['nickname']}</td>
+				<td><img width="70" height="70" src="{$vo['headimgurl']}" /></td>
+				<td><if condition="$vo['sex'] eq 1">男<else />女</if></td>
+				<td><php> echo date("Y-m-d H:i:s", $vo['subscribe_time']); </php></td>
+				<td>{$vo['province']}</td>
+				<td>{$vo['city']}</td>
+			</tr>
+			</volist>
+		</tbody>
+        </table>
+      </div>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

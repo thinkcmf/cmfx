@@ -1,0 +1,46 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<div class="wrap jj">
+  <div class="common-form">
+    <form method="post" class="J_ajaxForm" action="#">
+      <div class="table_list">
+	    <table width="100%">
+	        <thead>
+	          <tr>
+	            <td align='center'>ID</td>
+	            <td>用户名</td>
+	            <td>昵称</td>
+	            <td>E-mail</td>
+	            <td>注册时间</td>
+	            <td>最后登录时间</td>
+	            <td>最后登录IP</td>
+	            <td align='center'>操作</td>
+	          </tr>
+	        </thead>
+	        <tbody>
+	        	<foreach name="lists" item="vo">
+	        	<tr>
+	            <td align='center'>{$vo.ID}</td>
+	            <td>{$vo.user_login_name}</td>
+	            <td>{$vo.user_nickname}</td>
+	            <td>{$vo.user_email}</td>
+	            <td>{:date('Y-m-d H:i:s', $vo['create_time'])}</td>
+	            <td>{:date('Y-m-d H:i:s', $vo['last_login_time'])}</td>
+	            <td>{$vo.last_login_ip}</td>
+	            <td align='center'>
+		            <a href="{:U('indexadmin/delete',array('id'=>$vo['ID']))}" class="J_ajax_del" >删除</a>
+		        </td>
+	          	</tr>
+	          	</foreach>
+			</tbody>
+	      </table>
+	      <div class="p10"><div class="pages">{$page}</div> </div>
+  </div>
+    </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/common.js{$js_debug}"></script>
+<script>
+</script>
+</body>
+</html>

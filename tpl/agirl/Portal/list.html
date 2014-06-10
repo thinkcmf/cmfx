@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>{$name}|{$site_seo_title}</title>
+	<meta name="keywords" content="{$name},{$site_seo_keywords}" />
+	<meta name="description" content="{$site_seo_description}">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <include file="Public:css" />
+	<style>
+	.wp-theme-3 ul.list-listings .listing-body{
+		overflow:hidden;
+		width:expression((this.parentNode.clientWidth/2-parseInt(this.currentStyle['paddingLeft'])-parseInt(this.currentStyle['paddingRight'])-4)+'px');
+	}
+	</style>
+</head>
+<body>
+<div class="wrapper">
+	<include file="Public:header" />
+	
+    <div class="pg-opt pin">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>{$name}</h2>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="slice bg-3 section">
+        <div class="w-section inverse">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <ul class="list-listings" style="width:100%">
+                        	<php>
+                        		$lists = sp_sql_posts_paged("cid:$cat_id;order:post_date DESC;",10);
+                        	</php>
+                        	<volist name="lists['posts']" id="vo">
+                        	<php>
+                        		$smeta=json_decode($vo['smeta'], true);
+                        	</php>
+                            <li>
+                                <div class="listing-image">
+                                	<if condition="!empty($smeta['thumb'])">
+                                		<img width="263" height="197" src="{:sp_get_asset_upload_path($smeta['thumb'])}" class="img-responsive" alt="">
+                                	<else/>
+                                		<img width="263" height="197" src="__TMPL__Public/images/default/list.jpg" class="img-responsive" alt="">
+                                	</if>
+                                    
+                                </div>
+                                <div class="listing-body">
+                                    <h3><a href="{:U('article/index',array('id'=>$vo['tid']))}">{$vo.post_title}</a></h3>
+                                    <h4>{$vo.post_date}</h4>
+                                    <p>
+                                    {$vo.post_excerpt}
+                                    </p>
+                                </div>
+                                <div class="listing-actions">
+                                    
+                                    <a href="{:U('article/index',array('id'=>$vo['tid']))}" class="btn btn-two">阅读详细</a>
+                                </div>
+                            </li>
+                            </volist>
+                        </ul>
+                        <ul class="pagination">
+                            {$lists['page']}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="slice bg-2 p-15 section">
+        <div class="cta-wr">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h1>
+                            <strong>Boomerang Bootstrap Template</strong> delivers content beyond the desktop. Make it yours!
+                        </h1>
+                    </div>
+                    <div class="col-md-4">
+                        <a class="btn btn-one btn-lg pull-right" title="" href="" target="blank">
+                        <i class="fa fa-bolt"></i> Get started now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <include file="Public:footer" />
+</div>
+    
+<!-- JavaScript -->
+<include file="Public:scripts" />
+
+</body>
+</html>

@@ -1,0 +1,68 @@
+<div class="col-md-12">
+    <div class="w-box blog-post">
+
+        <div class="comments-wr">
+            <h3 class="section-title">评论</h3>
+            
+            <foreach name="comments" item="vo">
+            	<div class="comment">
+	                <img src="__TMPL__Public/images/avatar.jpg"  alt="">
+	                <p>
+	                {$vo.content}
+	                </p>
+	                <span class="clearfix"></span>
+	            </div>
+            </foreach>
+            
+            
+        </div>
+    </div>
+    
+    <div class="w-box w-box-inverse inner">
+        <div class="comment-form">
+            <form class="form-light" action="{:u('comment/comment/post')}" method="post">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>称呼</label>
+                            <input type="text" class="form-control" placeholder="your full name" name="full_name">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>邮箱</label>
+                            <input type="email" class="form-control" placeholder="your email" name="email">
+                        </div>
+                    </div>
+                </div>           
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>内容</label>
+                            <textarea class="form-control" placeholder="Write your comment here" style="min-height:90px;"  name="content"></textarea>
+                        </div>
+                    </div>
+                </div>   
+                <div class="row">
+                    <div class="col-md-12">
+                      <div class="form-group">
+          <label>验证码</label>
+          <input type="text" class="form-control" placeholder="please enter the code"  name="verify">
+          {:sp_verifycode_img()}
+      </div>
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="col-md-12">
+                        <button   class="btn btn-two pull-right" title="" type="submit"><i class="fa fa-comment-o"></i>发表评论</button>
+                    </div>
+                </div>  
+                <input type="hidden" name="post_table" value="{:sp_authencode('posts')}"/>
+                <input type="hidden" name="post_id" value="{$post_id}"/>
+                <input type="hidden" name="to_uid" value="0"/>
+                <input type="hidden" name="parentid" value="0"/>
+                   
+            </form>
+        </div>
+    </div>
+</div>

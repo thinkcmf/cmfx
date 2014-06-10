@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>{$post_title}|{$term.name}|{$site_name}</title>
+	<meta name="keywords" content="{$post_keywords}" />
+	<meta name="description" content="{$post_excerpt}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <include file="Public:css" />
+</head>
+<body>
+<div class="wrapper">
+	<include file="Public:header" />
+
+    <div class="pg-opt pin">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>{$term.name}</h2>
+                </div>
+                <div class="col-md-6">
+                    <ol class="breadcrumb">
+                    	<li><a href="index.php">首页</a></li>
+                        <li class="active">{$term.name}</li>
+                    </ol>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    <div class="slice bg-3 animate-hover-slide section">
+        <div class="w-section inverse blog-grid">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="w-box blog-post">
+                                    <div class="figure">
+                                        <h2>{$post_title}</h2>
+                                        <ul class="meta-list">
+                                            <li>
+                                                <span>作者</span>
+                                                <span class="bold">&nbsp;{$user_login}&nbsp;{$post_date}</span>
+                                            </li>
+                                        </ul>
+                                        {$post_content}
+                                    </div>
+                                    <div>
+                                    	<ul class="pagination">
+				                            {$page}
+				                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">{:Comments("posts",$object_id)}</div>
+                
+            </div>
+        </div>
+    </div>
+    
+<include file="Public:footer" />
+</div>
+
+<!-- JavaScript -->
+<include file="Public:scripts" />
+
+</body>
+</html>

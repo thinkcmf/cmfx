@@ -1,0 +1,17 @@
+/*
+ * alert,confirm,prompt重写
+ * 其中window.alert 被替代重写
+ * 	   window.confirm 改写为ask方法
+ * 	   window.prompt 改写为input方法
+ * 作者：刘海艇
+ * 主页：www.worp.cn
+ * 日期：2014-03-09
+ */
+
+$(function(){(function($){window.channelLHT=true;var lht={};lht.queue=$("body")[0];lht.modalHtml='<div id="modalbg" class="modal-backdrop hide in"></div>'+'<div id="modalbox" class="modal hide">'+'<div class="modal-header">'+'<button class="modal-close">×</button>'+'<h3></h3>'+'</div>'+'<div class="modal-body"></div>'+'<div class="modal-footer">'+'<a class="btn btn-primary modal-sure" href="#">确定</a>'+'<a class="btn modal-close" href="#">取消</a>'+'</div>'+'</div>';lht.ask={html:'',title:'请选择...',yesText:'是',noText:'否',noBtnExist:true};lht.input={html:'',title:'提示',yesText:'确定',noText:'取消',defaultVal:'',noBtnExist:true};lht.alert={html:'',title:'提示',yesText:'确定',noBtnExist:false};lht.extend=function(options,type){if(lht[type]==='undefined')return false;if(typeof(options)==='string'||typeof(options)==='number'){options={html:options};}
+return jQuery.extend(lht[type],options);}
+lht.start=function(options,type){options=options||{};options=lht.extend(options,type);if(options===false)return false;$("body").append(lht.modalHtml);var mtotal=$("#modalbox, #modalbg").css('display','block'),mbox=$("#modalbox"),mhead=mbox.find('.modal-header h3').html(options.title),mbody=mbox.find('.modal-body').html(options.html),yesbtn=mbox.find('.modal-sure').text(options.yesText),nobtn=mbox.find('.modal-close');if(typeof(options.noText)==='string'&&options.noBtnExist){nobtn.eq(1).text(options.noText);}else{nobtn.remove();}
+document.onkeydown=function(event){if(event.keyCode==13){yesbtn.click();}};objs={'mtotal':mtotal,'yesbtn':yesbtn};if(options.noBtnExist)objs.nobtn=nobtn;if(type=="input")objs.input=mbody.append('<br><input type="text" value="'+options.defaultVal+'" style="margin-top:8px;" />').find("input");return objs;}
+window.ask=function(options,success,fail){$.queue(lht.queue,'lht',function(){window.channelLHT=false;var os=lht.start(options,'ask');var dtd=$.Deferred();　　var wait=function(dtd){os.yesbtn.bind('click',function(){os.mtotal.remove();dtd.resolve();});os.nobtn.bind('click',function(){os.mtotal.remove();dtd.reject();});　　　　return dtd;　　};　　$.when(wait(dtd))
+　　.then(success,fail).always(function(){$(os.yesbtn,os.nobtn).unbind();window.channelLHT=true;$.dequeue(lht.queue,'lht');});});if(window.channelLHT){$.dequeue(lht.queue,'lht');}};window.input=function(options,success){$.queue(lht.queue,'lht',function(){window.channelLHT=false;var os=lht.start(options,'input');var dtd=$.Deferred();　　var wait=function(dtd){os.yesbtn.bind('click',function(){os.mtotal.remove();dtd.resolve();});os.nobtn.bind('click',function(){os.mtotal.remove();dtd.reject();});　　　　return dtd;　　};　　$.when(wait(dtd))
+　　.done(function(){success(os.input.val());}).always(function(){$(os.yesbtn,os.nobtn).unbind();window.channelLHT=true;$.dequeue(lht.queue,'lht');});});if(window.channelLHT){$.dequeue(lht.queue,'lht');}};window.alert=function(options){$.queue(lht.queue,'lht',function(){window.channelLHT=false;var os=lht.start(options,'alert');os.yesbtn.bind('click',function(){os.mtotal.remove();$(os.yesbtn).unbind();window.channelLHT=true;$.dequeue(lht.queue,'lht');});});if(window.channelLHT){$.dequeue(lht.queue,'lht');}};})(jQuery);});

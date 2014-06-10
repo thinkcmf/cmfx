@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <title>{$site_name} 绑定本地帐户</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <include file="Public:css" />
+</head>
+<body>
+<div class="wrapper">
+	<include file="Public:header" />
+	
+    <div class="pg-opt pin">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>绑定本地账号</h2>
+                </div>
+                <div class="col-md-6">
+                    <ol class="breadcrumb">
+                        <li><a href="__APP__">首页</a></li>
+                        <li class="active">绑定本地账号</li>
+                    </ol>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="slice bg-3">
+        <div class="w-section inverse">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="text-center">
+                            <h2>欢迎使用{$site_name}</h2>
+                            <p style="font-size:16px;">注册并绑定本地账号后您才能享有会员资格</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2 col-sm-6 col-sm-offset-3">
+                        <div class="w-section inverse">                       
+                            <div class="w-box sign-in-wr bg-5">
+                                
+                                <div class="form-header">
+                                    <h2>创建本地账号</h2>
+                                </div>
+                                <div class="form-body">
+                                    <form class="form-light padding-15" action="{:U('Member/index/dobang')}" method="post">
+                                        <div class="form-group">
+                                            <label for="firstName">账号</label>
+                                            <input type="text" class="form-control" name="name" placeholder="">
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="email">邮箱</label>
+                                            <input type="email" class="form-control" name="email" placeholder="">
+                                        </div>
+                                                
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="pass">密码</label>
+                                                    <input type="password" class="form-control" name="pass" placeholder="">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="pass2">重复密码</label>
+                                                    <input type="password" class="form-control" name="repass" placeholder="">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <button class="btn btn-two pull-right" type="submit">确定绑定</button>                        
+                                            </div>
+                                        </div>
+                                    </form>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    </div>
+    
+    <include file="Public:footer" />
+</div>
+
+<include file="Public:scripts" />
+
+</body>
+</html>

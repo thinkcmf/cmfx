@@ -1,0 +1,17 @@
+[ 2014-06-10T11:51:57+08:00 ] 127.0.0.1 /index.php?g=Admin&m=public&a=dologin
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001043s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001725s ]
+SQL: SHOW COLUMNS FROM `sp_users` [ RunTime:0.046529s ]
+SQL: SELECT * FROM `sp_users` WHERE ( `user_login` = 'admin' ) LIMIT 1   [ RunTime:0.005448s ]
+NOTIC: [8] Undefined index: data D:\AppServ\www\cmf2\application\Common\Action\AppframeAction.class.php 第 62 行.
+
+[ 2014-06-10T11:52:03+08:00 ] 127.0.0.1 /index.php?g=Admin&m=public&a=dologin
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000934s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001586s ]
+SQL: SHOW COLUMNS FROM `sp_users` [ RunTime:0.006569s ]
+SQL: SELECT * FROM `sp_users` WHERE ( `user_login` = 'admin' ) LIMIT 1   [ RunTime:0.001011s ]
+SQL: UPDATE `sp_users` SET `user_login`='admin',`user_pass`='c535018ee9462215169ce810287d05cae21ada467a5289af',`user_nicename`='管理员',`user_email`='479923197@qq.com',`user_url`='',`last_login_ip`='127.0.0.1',`last_login_time`='2014-06-10 11:52:03',`create_time`='2013-12-11 00:00:00',`user_activation_key`='',`user_status`=1,`display_name`='',`role_id`=1 WHERE ( `ID` = '1' ) [ RunTime:0.003276s ]
+NOTIC: [8] Undefined index: data D:\AppServ\www\cmf2\application\Common\Action\AppframeAction.class.php 第 62 行.
+

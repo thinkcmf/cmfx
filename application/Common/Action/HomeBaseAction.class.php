@@ -94,9 +94,9 @@ class HomeBaseAction extends AppframeAction {
 		// 分析模板文件规则
 		if('' == $template) {
 			// 如果模板文件名为空 按照默认规则定位
-			$template = CONTROLLER_NAME . $depr . ACTION_NAME;
+			$template = "/".CONTROLLER_NAME . $depr . ACTION_NAME;
 		}elseif(false === strpos($template, '/')){
-			$template = CONTROLLER_NAME . $depr . $template;
+			$template = "/".CONTROLLER_NAME . $depr . $template;
 		}
 		
 		C("TMPL_PARSE_STRING.__TMPL__",__ROOT__."/".THEME_PATH);

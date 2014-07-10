@@ -90,9 +90,7 @@ class SlideAction extends AdminbaseAction{
 			}
 		}else{
 			$id = intval(I("get.id"));
-			$data['slide_status']=0;
-			$data['slide_id']=$id;
-			if ($this->slide_obj->delete()!==false) {
+			if ($this->slide_obj->delete($id)!==false) {
 				$this->success("删除成功！");
 			} else {
 				$this->error("删除失败！");

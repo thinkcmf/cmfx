@@ -20,10 +20,6 @@ class IndexAction extends HomeBaseAction {
 
     }
 	
-	function test(){
-		include UC_CLIENT_ROOT."client.php";
-		$uc_uid2=uc_user_register("1test", "666666", 'test11@126.com');
-	}
 
     //登录验证
     function dologin(){

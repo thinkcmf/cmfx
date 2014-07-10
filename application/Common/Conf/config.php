@@ -2,10 +2,14 @@
 $db = include 'conf/db.php';
 $config= include 'conf/config.php';
 $runtime_config=include "data/conf/config.php";
+if(empty($runtime_config)){
+	$runtime_config=array();
+}
 $configs= array(
 		"LOAD_EXT_FILE"=>"extend",
 		
-		'SHOW_PAGE_TRACE' =>true,
+		'SHOW_PAGE_TRACE'		=> false,
+		'TMPL_STRIP_SPACE'		=> true,// 是否去除模板文件里面的html空格与换行
 		'THIRD_UDER_ACCESS'		=> false, //第三方用户是否有全部权限，没有则需绑定本地账号
 		/* 标签库 */
 		'TAGLIB_BUILD_IN' => 'cx,Common\Lib\Taglib\TagLibSpadmin',
@@ -27,11 +31,12 @@ $configs= array(
 		'APP_AUTOLOAD_LAYER'    =>  'Action,Model', // 模块自动加载的类库后缀
 		
 		'SP_TMPL_PATH'     		=> 'tpl/',       // 前台模板文件根目录
-		'SP_DEFAULT_THEME'		=> 'agirl',       // 前台模板文件
+		'SP_DEFAULT_THEME'		=> 'simpleboot',       // 前台模板文件
 		'SP_TMPL_ACTION_ERROR' 	=> 'error', // 默认错误跳转对应的模板文件,注：相对于前台模板路径
 		'SP_TMPL_ACTION_SUCCESS' 	=> 'success', // 默认成功跳转对应的模板文件,注：相对于前台模板路径
+		'SP_ADMIN_STYLE'		=> 'flat',
 		'SP_ADMIN_TMPL_PATH'    => 'tpl_admin/',       // 各个项目后台模板文件根目录
-		'SP_ADMIN_DEFAULT_THEME'=> 'default',       // 各个项目后台模板文件
+		'SP_ADMIN_DEFAULT_THEME'=> 'simpleboot',       // 各个项目后台模板文件
 		'SP_ADMIN_TMPL_ACTION_ERROR' 	=> 'Admin/error.html', // 默认错误跳转对应的模板文件,注：相对于后台模板路径
 		'SP_ADMIN_TMPL_ACTION_SUCCESS' 	=> 'Admin/success.html', // 默认成功跳转对应的模板文件,注：相对于后台模板路径
 		

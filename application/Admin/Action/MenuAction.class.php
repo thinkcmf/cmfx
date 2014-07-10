@@ -36,7 +36,7 @@ class MenuAction extends AdminbaseAction {
 
         $tree->init($array);
         $str = "<tr>
-					<td><input name='listorders[\$id]' type='text' size='3' value='\$listorder' class='input'></td>
+					<td><input name='listorders[\$id]' type='text' size='3' value='\$listorder' class='input input-order'></td>
 					<td>\$id</td>
         			<td>\$app</td>
 					<td>\$spacer\$name</td>
@@ -160,12 +160,14 @@ class MenuAction extends AdminbaseAction {
     	$menus=$this->Menu->order(array("app" => "ASC","model" => "ASC","action" => "ASC"))->select();
     	$menus_tree=array();
     	
-    	$apps=Dir::getList(SPAPP);
+    	$apps=scandir(SPAPP);
+    	import('@.ORG.Dir');
+    	$dir=new \Dir();
     	foreach ($apps as $a){
     		if(is_dir(SPAPP.$a)){
     			if(!(strpos($a, ".") === 0)){
     				$menudir=SPAPP.$a."/Menu";
-    				Dir::del($menudir);
+    				$dir->del($menudir);
     			}
     		}
     	}

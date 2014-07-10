@@ -160,6 +160,7 @@ CREATE TABLE `sp_members` (
   `user_login_name` varchar(25) NOT NULL,
   `user_pass` varchar(64) NOT NULL DEFAULT '',
   `user_nickname` varchar(50) NOT NULL,
+  `user_pic_url` varchar(300) NOT NULL,
   `user_pic_assetid` int(8) NOT NULL,
   `sign_words` varchar(200) NOT NULL,
   `user_email` varchar(100) NOT NULL DEFAULT '',

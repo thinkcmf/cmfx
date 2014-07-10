@@ -35,7 +35,7 @@ class TermAction extends AdminbaseAction {
 		
 		$tree->init($array);
 		$str = "<tr>
-					<td><input name='listorders[\$id]' type='text' size='3' value='\$listorder' class='input'></td>
+					<td><input name='listorders[\$id]' type='text' size='3' value='\$listorder' class='input input-order'></td>
 					<td>\$id</td>
 					<td>\$spacer <a href='\$url' target='_blank'>\$name</a></td>
 	    			<td>\$taxonomys</td>

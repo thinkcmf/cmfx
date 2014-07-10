@@ -50,7 +50,7 @@ function sp_sql_posts($tag){
  * order:推荐方式(post_date) (desc/asc/rand())
  */
 
-function sp_sql_posts_paged($tag,$pagesize=20,$pagetpl='{first}{prev}&nbsp;{liststart}{list}{listend}&nbsp;{next}{last}'){
+function sp_sql_posts_paged($tag,$pagesize=20,$pagetpl='{first}{prev}{liststart}{list}{listend}{next}{last}'){
 	$where=array();
 	$tag=sp_param_lable($tag);
 	$field = !empty($tag['field']) ? $tag['field'] : '*';

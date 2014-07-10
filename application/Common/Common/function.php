@@ -459,11 +459,20 @@ function SendMail($address,$title,$message){
 	return($mail->Send());
 }
 
-function sp_get_asset_upload_path($file){
+function sp_get_asset_upload_path($file,$withhost=false){
 	if(strpos($file,"http")===0){
 		return $file;
 	}else{
-		return C("TMPL_PARSE_STRING.__UPLOAD__").$file;
+		$filepath=C("TMPL_PARSE_STRING.__UPLOAD__").$file;
+		if($withhost){
+			if(strpos($filepath,"http")!==0){
+				$http = 'http://';
+				$http =is_ssl()?'https://':$http;
+				$filepath = $http.$_SERVER['HTTP_HOST'].$filepath;
+			}
+		}
+		return $filepath;
+		
 	}                    			
                         		
 }

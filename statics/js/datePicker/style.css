@@ -25,7 +25,7 @@
 
 /* head. contains title, prev/next month controls and possible month/year selectors */
 #calhead{
-	background-color:#306ea6 ;
+	background:#306ea6 ;
 	background-position:0 -40px;
 	padding:5px 6px;
 	height:23px;
@@ -47,6 +47,9 @@
 	text-align:center;
 	width:155px;
 	line-height:20px;
+}
+#caltitle select{
+	width:auto;
 }
 #calnext, #calprev {
 	display:block;
@@ -161,4 +164,9 @@ a.caldisabled {
 }
 .caltime span{
 	margin-right:5px;
+}
+.caltime .btn{
+	padding: 4px 10px;
+	float: right !important;
+	background:#306ea6;
 }

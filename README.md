@@ -1,13 +1,9 @@
 UPDATE
 ===
-X1.0.0 alpha2
-修复SAE，linux下类库加载失败
-修复ueditor chrome模板功能bug
-修复文件上传bug
-
-
-X1.0.0 alpha
+X1.0.0
 全新的ThinkPHP 3.2.2架构，使用php命名空间，让开发快起来吧！
+
+·统一前后台UI框架为simpleboot(bootstrap 2.3.2 ThinkCMF优化版)
 ·集成Ucenter
 ·增加文章评论功能
 ·增加留言功能
@@ -17,6 +13,9 @@ X1.0.0 alpha
 ·优化后台ajax提交，未登陆时自动退出
 ·优化后台所有文章按发布时间递减排序
 ·修复后台密码会偶然不对的错误
+·修复SAE，linux下类库加载失败
+·修复ueditor chrome模板功能bug
+·修复文件上传bug
 
 
 INSTALL

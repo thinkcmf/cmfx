@@ -42,7 +42,7 @@ class NavAction extends AdminbaseAction {
 	
 		$tree->init($array);
 		$str = "<tr>
-				<td><input name='listorders[\$id]' type='text' size='3' value='\$listorder' class='input'></td>
+				<td><input name='listorders[\$id]' type='text' size='3' value='\$listorder' class='input input-order'></td>
 				<td>\$id</td>
 				<td >\$spacer\$label</td>
 			    <td>\$status</td>
@@ -101,7 +101,7 @@ class NavAction extends AdminbaseAction {
 	 */
 	public function add_post() {
 		if (IS_POST) {
-			if ($this->nav->create()) {
+			if ($this->nav->create($_POST)) {
 				$result=$this->nav->add();
 				if ($result!==false) {
 					$parentid = $_POST['parentid']==0?"0":$_POST['parentid'];
@@ -188,7 +188,7 @@ class NavAction extends AdminbaseAction {
 	 *  编辑
 	 */
 	public function edit_post() {
-		
+
 		if (IS_POST) {
 			$parentid=empty($_POST['parentid'])?"0":$_POST['parentid'];
 			if(empty($parentid)){
@@ -198,7 +198,7 @@ class NavAction extends AdminbaseAction {
 					
 				$_POST['path']=$parent['path']."-".$_POST['id'];
 			}
-			if ($this->nav->create()) {
+			if ($this->nav->create($_POST)) {
 				if ($this->nav->save() !== false) {
 					$this->success("保存成功！", U("nav/index"));
 				} else {
@@ -244,7 +244,7 @@ class NavAction extends AdminbaseAction {
 	
 	private function _select(){
 		$apps=scandir(SPAPP);
-		$host=(is_ssl() ? 'https' : 'http')."://".$_SERVER['HTTP_HOST'];
+		$host=(is_ssl() ? 'https' : 'http')."://".$_SERVER['HTTP_HOST'].":".$_SERVER['SERVER_PORT'];
 		$navs=array();
 		foreach ($apps as $a){
 		

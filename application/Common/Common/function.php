@@ -5,8 +5,60 @@ function get_current_admin_id(){
 	return $_SESSION['ADMIN_ID'];
 }
 
+function sp_is_user_login(){
+	return  !empty($_SESSION['user']);
+}
+
+function sp_get_current_user(){
+	if(isset($_SESSION['user'])){
+		return $_SESSION['user'];
+	}else{
+		return false;
+	}
+}
+
+function sp_update_current_user($user){
+	$_SESSION['user']=$user;
+}
+
 function get_current_userid(){
-	return $_SESSION['MEMBER_id'];
+	
+	if(isset($_SESSION['user'])){
+		return $_SESSION['user']['id'];
+	}else{
+		return 0;
+	}
+}
+
+function sp_get_current_userid(){
+	return get_current_userid();
+}
+
+/**
+ * 返回带协议的域名
+ */
+function sp_get_host(){
+	$host=$_SERVER["HTTP_HOST"];
+	$protocol=is_ssl()?"https://":"http://";
+	return $protocol.$host;
+}
+
+/**
+ * 获取用户头像相对网站根目录的地址
+ */
+function sp_get_user_avatar_url($avatar){
+	
+	if($avatar){
+		if(strpos($avatar, "http")===0){
+			return $avatar;
+		}else {
+			return __ROOT__."/".C("UPLOADPATH")."avatar/".$avatar;
+		}
+		
+	}else{
+		return $avatar;
+	}
+	
 }
 function sp_password($pw){
 	$decor=md5(C('DB_PREFIX'));
@@ -126,8 +178,11 @@ function sp_param_lable($tag = ''){
 	$param = array();
 	$array = explode(';',$tag);
 	foreach ($array as $v){
-		list($key,$val) = explode(':',trim($v));
-		$param[trim($key)] = trim($val);
+		$v=trim($v);
+		if(!empty($v)){
+			list($key,$val) = explode(':',$v);
+			$param[trim($key)] = trim($val);
+		}
 	}
 	return $param;
 }
@@ -149,6 +204,7 @@ function get_site_options(){
 		}
 		F("site_options", $site_options);
 	}
+	$site_options['site_tongji']=htmlspecialchars_decode($site_options['site_tongji']);
 	return $site_options;	
 }
 
@@ -250,21 +306,22 @@ function _sp_get_menu_datas($id){
 	}
 	$navs= $nav_obj->where("cid=$id")->order(array("listorder" => "ASC"))->select();
 	foreach ($navs as $key=>$nav){
-		$href=$nav['href'];
+		$href=htmlspecialchars_decode($nav['href']);
 		$hrefold=$href;
-		$href=unserialize(stripslashes($nav['href']));
-		if(empty($href)){
+		
+		if(strpos($hrefold,"{")){//序列 化的数据
+			$href=unserialize(stripslashes($nav['href']));
+			$default_app=strtolower(C("DEFAULT_MODULE"));
+			$href=strtolower(U($href['action'],$href['param']));
+			$g=C("VAR_MODULE");
+			$href=preg_replace("/\/$default_app\//", "/",$href);
+			$href=preg_replace("/$g=$default_app&/", "",$href);
+		}else{
 			if($hrefold=="home"){
 				$href=__ROOT__."/";
 			}else{
 				$href=$hrefold;
 			}
-		}else{
-			$default_app=strtolower(C("DEFAULT_GROUP"));
-			$href=U($href['action'],$href['param']);
-			$g=C("VAR_GROUP");
-			$href=preg_replace("/\/$default_app\//", "/",$href);
-			$href=preg_replace("/$g=$default_app&/", "",$href);
 		}
 		$nav['href']=$href;
 		$navs[$key]=$nav;
@@ -331,31 +388,7 @@ function insertMes($from, $to, $content, $targetid, $mestype){
 	return M('Message')->add($data);
 }
 
-/*
- * 作用：查看用户消息
- * 参数：$uid	查询用户id
- * 		$status		消息接受者id
- * 		$mestype可选值：topic_comment(话题评论)、topic_answer(话题回复)、topic_collect(话题收藏)、topic_love(喜欢)
- * 注意：查询时仅限于members,message,topic三张表，因此只能查询三张表中的信息
- */
-function getMes($uid, $type, $status=2){
-	$DbPre = C('DB_PREFIX');
-	$topic_comment = M()->query('select a.*,b.user_login_name,b.ID,c.topic_id,c.topic_cid,c.title
-    								from '.$DbPre.'message a
-    								left join '.$DbPre.'members b
-    								on a.mes_from=b.ID
-    								left join '.$DbPre.'topic c
-    								on a.target_id=c.topic_id
-    								where a.mes_status='.$status.' and mes_type=\''.$type.'\' and a.mes_to='.$uid
-									.' order by a.post_time desc');
-	return $topic_comment;
-}
 
-//获取站内消息数量
-function getMesNum(){
-	if(!isset($_SESSION["MEMBER_id"])) return;
-	return M('Message')->where('mes_status=2 and mes_to='.$_SESSION["MEMBER_id"])->count();
-}
 /**
  * 
  * @param unknown_type $navcatname
@@ -459,8 +492,45 @@ function SendMail($address,$title,$message){
 	return($mail->Send());
 }
 
+
+function sp_send_email($address,$subject,$message){
+	import("PHPMailer");
+	$mail=new \PHPMailer();
+	// 设置PHPMailer使用SMTP服务器发送Email
+	$mail->IsSMTP();
+	$mail->IsHTML(true);
+	// 设置邮件的字符编码，若不指定，则为'UTF-8'
+	$mail->CharSet='UTF-8';
+	// 添加收件人地址，可以多次使用来添加多个收件人
+	$mail->AddAddress($address);
+	// 设置邮件正文
+	$mail->Body=$message;
+	// 设置邮件头的From字段。
+	$mail->From=C('SP_MAIL_ADDRESS');
+	// 设置发件人名字
+	$mail->FromName='ThinkCMF';
+	// 设置邮件标题
+	$mail->Subject=$subject;
+	// 设置SMTP服务器。
+	$mail->Host=C('SP_MAIL_SMTP');
+	// 设置为"需要验证"
+	$mail->SMTPAuth=true;
+	// 设置用户名和密码。
+	$mail->Username=C('SP_MAIL_LOGINNAME');
+	$mail->Password=C('SP_MAIL_PASSWORD');
+	// 发送邮件。
+	if(!$mail->Send()) {
+		$mailerror=$mail->ErrorInfo;
+		return array("error"=>1,"message"=>$mailerror);
+	}else{
+		return array("error"=>0);
+	}
+}
+
 function sp_get_asset_upload_path($file,$withhost=false){
 	if(strpos($file,"http")===0){
+		return $file;
+	}else if(strpos($file,"/")===0){
 		return $file;
 	}else{
 		$filepath=C("TMPL_PARSE_STRING.__UPLOAD__").$file;
@@ -532,13 +602,39 @@ function sp_authencode($string){
 	return sp_authcode($string,"ENCODE");
 }
 
-function Comments($table,$post_id,$params){
+function Comments($table,$post_id,$params=array()){
 	return  R("Comment/Widget/index",array($table,$post_id,$params));
+}
+/**
+ * 获取评论
+ * @param string $tag
+ * @param array $where //按照thinkphp where array格式
+ */
+function sp_get_comments($tag="field:*;limit:0,5;order:createtime desc;",$where=array()){
+	$where=array();
+	$tag=sp_param_lable($tag);
+	$field = !empty($tag['field']) ? $tag['field'] : '*';
+	$limit = !empty($tag['limit']) ? $tag['limit'] : '5';
+	$order = !empty($tag['order']) ? $tag['order'] : 'createtime desc';
+	
+	//根据参数生成查询条件
+	$mwhere['status'] = array('eq',1);
+	
+	if(is_array($where)){
+		$where=array_merge($mwhere,$where);
+	}else{
+		$where=$mwhere;
+	}
+	
+	$comments_model=M("Comments");
+	
+	$comments=$comments_model->field($field)->where($where)->order($order)->limit($limit)->select();
+	return $comments;
 }
 
 function sp_file_write($file,$content){
 	
-	if(IS_SAE){
+	if(defined('IS_SAE') && IS_SAE){
 		$s=new SaeStorage();
 		$arr=explode('/',ltrim($file,'./'));
 		$domain=array_shift($arr);
@@ -561,7 +657,7 @@ function sp_asset_relative_url($asset_url){
 }
 
 function sp_content_page($content,$pagetpl='{first}{prev}&nbsp;{liststart}{list}{listend}&nbsp;{next}{last}'){
-	$contents=split('_ueditor_page_break_tag_',$content);
+	$contents=explode('_ueditor_page_break_tag_',$content);
 	$totalsize=count($contents);
 	import('Page');
 	$pagesize=1;
@@ -586,7 +682,7 @@ function sp_content_page($content,$pagetpl='{first}{prev}&nbsp;{liststart}{list}
 function sp_getad($ad){
 	$ad_obj= M("Ad");
 	$ad=$ad_obj->field("ad_content")->where("ad_name='$ad'")->find();
-	return $ad['ad_content'];
+	return htmlspecialchars_decode($ad['ad_content']);
 }
 
 /**
@@ -597,7 +693,7 @@ function sp_getad($ad){
 function sp_getslide($slide){
 	$slide_obj= M("SlideCat");
 	$join = "".C('DB_PREFIX').'slide as b on '.C('DB_PREFIX').'slide_cat.cid =b.slide_cid';
-	return $slide_obj->join($join)->where("cat_idname='$slide'")->select();
+	return $slide_obj->join($join)->where("cat_idname='$slide'")->order("listorder ASC")->select();
 
 }
 
@@ -607,6 +703,102 @@ function sp_getslide($slide){
  */
 function sp_getlinks(){
 	$links_obj= M("Links");
-	return  $links_obj->where("link_status=1")->select();
+	return  $links_obj->where("link_status=1")->order("listorder ASC")->select();
 }
 
+/**
+ * 检查用户对某个url,内容的可访问性，用于记录如是否赞过，是否访问过等等;开发者可以自由控制，对于没有必要做的检查可以不做，以减少服务器压力
+ * @param number $object 访问对象的id,格式：不带前缀的表名+id;如posts1表示xx_posts表里id为1的记录;如果object为空，表示只检查对某个url访问的合法性
+ * @param number $count_limit 访问次数限制,如1，表示只能访问一次
+ * @param boolean $ip_limit ip限制,false为不限制，true为限制
+ * @param number $expire 距离上次访问的最小时间单位s，0表示不限制，大于0表示最后访问$expire秒后才可以访问
+ * @return true 可访问，false不可访问
+ */
+function sp_check_user_action($object="",$count_limit=1,$ip_limit=false,$expire=0){
+	$common_action_log_model=M("CommonActionLog");
+	$action=MODULE_NAME."-".CONTROLLER_NAME."-".ACTION_NAME;
+	$userid=get_current_userid();
+	
+	$ip=get_client_ip();
+	
+	$where=array("user"=>$userid,"action"=>$action,"object"=>$object);
+	if($ip_limit){
+		$where['ip']=$ip;
+	}
+	
+	$find_log=$common_action_log_model->where($where)->find();
+	
+	$time=time();
+	if($find_log){
+		$common_action_log_model->where($where)->save(array("count"=>array("exp","count+1"),"last_time"=>$time,"ip"=>$ip));
+		if($find_log['count']>=$count_limit){
+			return false;
+		}
+		
+		if($expire>0 && ($time-$find_log['last_time'])<$expire){
+			return false;
+		}
+	}else{
+		$common_action_log_model->add(array("user"=>$userid,"action"=>$action,"object"=>$object,"count"=>array("exp","count+1"),"last_time"=>$time,"ip"=>$ip));
+	}
+	
+	return true;
+}
+/**
+ * 用于生成收藏内容用的key
+ * @param string $table 收藏内容所在表
+ * @param int $object_id 收藏内容的id
+ */
+function sp_get_favorite_key($table,$object_id){
+	$auth_code=C("AUTHCODE");
+	$string="$auth_code $table $object_id";
+	
+	return sp_authencode($string);
+}
+
+
+function sp_get_relative_url($url){
+	if(strpos($url,"http")===0){
+		$url=str_replace(array("https://","http://"), "", $url);
+		
+		$pos=strpos($url, "/");
+		if($pos===false){
+			return "";
+		}else{
+			$url=substr($url, $pos+1);
+			$url=preg_replace("/^".__ROOT__."\//", "", $url);
+			return $url;
+		}
+	}
+	return $url;
+}
+
+/**
+ * 
+ * @param string $tag
+ * @param array $where
+ * @return array
+ */
+
+function sp_get_users($tag="field:*;limit:0,8;order:create_time desc;",$where=array()){
+	$where=array();
+	$tag=sp_param_lable($tag);
+	$field = !empty($tag['field']) ? $tag['field'] : '*';
+	$limit = !empty($tag['limit']) ? $tag['limit'] : '8';
+	$order = !empty($tag['order']) ? $tag['order'] : 'create_time desc';
+	
+	//根据参数生成查询条件
+	$mwhere['user_status'] = array('eq',1);
+	$mwhere['user_type'] = array('eq',2);//default user
+	
+	if(is_array($where)){
+		$where=array_merge($mwhere,$where);
+	}else{
+		$where=$mwhere;
+	}
+	
+	$comments_model=M("Users");
+	
+	$comments=$comments_model->field($field)->where($where)->order($order)->limit($limit)->select();
+	return $comments;
+}

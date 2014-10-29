@@ -104,7 +104,6 @@ switch ($step) {
             $err++;
         }
         $folder = array('/',
-        	'conf',
             'install',
             'data',
         	'data/conf',
@@ -140,7 +139,7 @@ switch ($step) {
 
             $dbHost = trim($_POST['dbhost']);
             $dbPort = trim($_POST['dbport']);
-            $dbName = trim($_POST['dbname']);
+            $dbName = strtolower(trim($_POST['dbname']));
             $dbHost = empty($dbPort) || $dbPort == 3306 ? $dbHost : $dbHost . ':' . $dbPort;
             $dbUser = trim($_POST['dbuser']);
             $dbPwd = trim($_POST['dbpw']);
@@ -227,20 +226,19 @@ switch ($step) {
             if ($i == 999999)
                 exit;
             //更新配置信息
-            $site_options=<<<helllo
-            {
-            		"site_name":"$site_name",
-            		"site_host":"$site_url",
-            		"site_root":"",
-            		"site_icp":"",
-            		"site_admin_email":"$email",
-            		"site_tongji":"",
-            		"site_copyright":"",
-            		"site_seo_title":"$site_name",
-            		"site_seo_keywords":"$seo_keywords",
-            		"site_seo_description":"$seo_description"
-        }
-helllo;
+            $site_options=array(
+            		"site_name"=>$site_name,
+            		"site_host"=>$site_url,
+            		"site_root"=>"/",
+            		"site_icp"=>"",
+            		"site_admin_email"=>$email,
+            		"site_tongji"=>"",
+            		"site_copyright"=>"",
+            		"site_seo_title"=>$site_name,
+            		"site_seo_keywords"=>$seo_keywords,
+            		"site_seo_description"=>$seo_description
+            );
+            $site_options=json_encode($site_options);
             /* $site_options=array(
             		"site_name"=>"$site_name",
             		"site_host"=>"$site_url",
@@ -254,10 +252,6 @@ helllo;
             		"site_seo_description"=>"$seo_description",
             ); */
             mysql_query("INSERT INTO `{$dbPrefix}options` (option_value,option_name) VALUES ('$site_options','site_options')");
-            /*mysql_query("UPDATE `{$dbPrefix}config` SET  `value` = '$site_url' WHERE varname='siteurl' ");
-            mysql_query("UPDATE `{$dbPrefix}config` SET  `value` = '$sitefileurl' WHERE varname='sitefileurl' ");
-            mysql_query("UPDATE `{$dbPrefix}config` SET  `value` = '$seo_description' WHERE varname='siteinfo'");
-            mysql_query("UPDATE `{$dbPrefix}config` SET  `value` = '$seo_keywords' WHERE varname='sitekeywords'"); */
 
             //读取配置文件，并替换真实配置数据
             $strConfig = file_get_contents(SITEDIR . 'install/' . $configFile);
@@ -269,8 +263,8 @@ helllo;
             $strConfig = str_replace('#DB_PREFIX#', $dbPrefix, $strConfig);
             $strConfig = str_replace('#AUTHCODE#', sp_random_string(18), $strConfig);
             $strConfig = str_replace('#COOKIE_PREFIX#', sp_random_string(6) . "_", $strConfig);
-            @chmod(SITEDIR . '/conf/db.php',0777);
-            @file_put_contents(SITEDIR . '/conf/db.php', $strConfig);
+            @chmod(SITEDIR . '/data/conf/db.php',0777);
+            @file_put_contents(SITEDIR . '/data/conf/db.php', $strConfig);
 
             //插入管理员
             //生成随机认证码
@@ -280,7 +274,7 @@ helllo;
             $ip = get_client_ip();
             $ip =empty($ip)?"0.0.0.0":$ip;
             $password = sp_password($password, $dbPrefix);
-			$query ="INSERT INTO `{$dbPrefix}users` (ID,user_login,user_pass,user_nicename,user_email,user_url,create_time,user_activation_key,user_status,display_name,role_id,last_login_ip,last_login_time) VALUES ('1', '{$username}', '{$password}', '', '{$email}', '', '{$create_date}', '', '1', 'admin', '1','$ip','$create_date');";
+			$query ="INSERT INTO `{$dbPrefix}users` (id,user_login,user_pass,user_nicename,user_email,user_url,create_time,user_activation_key,user_status,role_id,last_login_ip,last_login_time) VALUES ('1', '{$username}', '{$password}', 'admin', '{$email}', '', '{$create_date}', '', '1', '1','$ip','$create_date');";
             mysql_query($query); 
 
             $message = '成功添加管理员<br />成功写入配置文件<br>安装完成．';

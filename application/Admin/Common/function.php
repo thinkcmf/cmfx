@@ -39,23 +39,5 @@ function sp_get_url_route(){
 	return $routes;
 }
 
-function sp_admin_get_tpl_file_list(){
-	$template_path=C("SP_TMPL_PATH").C("SP_DEFAULT_THEME")."/Portal/";
-	$files=scandir($template_path);
-	$tpl_files=array();
-	foreach ($files as $f){
-		if($f!="." || $f!=".."){
-			if(is_file($template_path.$f)){
-				$suffix=C("TMPL_TEMPLATE_SUFFIX");
-				$result=preg_match("/$suffix$/", $f);
-				if($result){
-					$tpl=str_replace($suffix, "", $f);
-					$tpl_files[$tpl]=$tpl;
-				}
-			}
-		}
-	}
-	return $tpl_files;
-}
 
 

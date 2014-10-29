@@ -698,6 +698,10 @@ Wind.ready(function() {
             artDialog         : 'artDialog/artDialog',
             iframeTools       : 'artDialog/iframeTools',
             xd                : 'xd',//Iframe跨域通信
+            
+            noty			  : 'noty/noty',
+            jcrop             : 'jcrop/js/jcrop',
+            ajaxfileupload    : 'ajaxfileupload',
 
 
 			//native js util plugs
@@ -708,7 +712,8 @@ Wind.ready(function() {
             colorPicker : 'colorPicker/style',
             artDialog   : 'artDialog/skins/default',
 			datePicker	: 'datePicker/style',
-            treeTable    : 'treeTable/treeTable'
+            treeTable   : 'treeTable/treeTable',
+            jcrop       : 'jcrop/css/jquery.Jcrop.min'
 		};
 
 	//add suffix and version

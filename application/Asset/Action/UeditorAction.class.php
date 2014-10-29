@@ -8,8 +8,8 @@ class UeditorAction extends Action {
 		
 		//上传处理类
 		$config=array(
-				'rootPath' => './',
-				'savePath' => './'. C("UPLOADPATH")."ueditor/",
+				'rootPath' => './'. C("UPLOADPATH"),
+				'savePath' => "ueditor/",
 				'maxSize' => 11048576,
 				'saveName'   =>    array('uniqid',''),
 				'exts'       =>    array('jpg', 'gif', 'png', 'jpeg'),

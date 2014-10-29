@@ -29,7 +29,7 @@ return array(
 	    //分页类
 	    "Page" => SPAPP_PATH.'Lib/Util/Page.class.php',
 	    "phpQuery"=>SPAPP_PATH.'Lib/Extend/phpQuery/phpQuery.php',
-		"ThinkSDK"=>SPAPP_PATH.'Lib/Extend/ThinkSDK/ThinkOauth.class.php',
+		"ThinkOauth"=>SPAPP_PATH.'Lib/Extend/ThinkSDK/ThinkOauth.class.php',
 	
 		//标签库
 		//"TagLibSpadmin"=>SPAPP_PATH.'Lib/Taglib/TagLibSpadmin.class.php',

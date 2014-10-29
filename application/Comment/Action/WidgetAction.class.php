@@ -5,11 +5,30 @@ class WidgetAction extends Action{
 	
 	function index($table,$post_id,$params){
 		$comment_model=D("Comments");
-		$comments=$comment_model->where(array("post_table"=>$table,"post_id"=>$post_id,"status"=>1))->order("createtime DESC")->select();
+		$comments=$comment_model->where(array("post_table"=>$table,"post_id"=>$post_id,"status"=>1))->order("createtime ASC")->select();
+		
+		$new_comments=array();
+		
+		$parent_comments=array();
+		
+		if(!empty($comments)){
+			foreach ($comments as $m){
+				if($m['parentid']==0){
+					$new_comments[$m['id']]=$m;
+				}else{
+					$path=explode("-", $m['path']);
+					$new_comments[$path[1]]['children'][]=$m;
+				}
+					
+				$parent_comments[$m['id']]=$m;
+			}
+		}
+		
 		$data['post_table']=sp_authencode($table);
 		$data['post_id']=$post_id;
 		$this->assign($data);
-		$this->assign("comments",$comments);
+		$this->assign("comments",$new_comments);
+		$this->assign("parent_comments",$parent_comments);
 		$tpl= (isset($params['tpl'])&& !empty($params['tpl']) )?$params['tpl']:"comment";
 		return $this->fetch(":$tpl");
 	}
@@ -28,7 +47,6 @@ class WidgetAction extends Action{
 	 */
 	public function parseTemplate($template='') {
 		$tmpl_path=C("SP_TMPL_PATH");
-		$app_name=APP_NAME==basename(dirname($_SERVER['SCRIPT_FILENAME'])) && ''==__APP__?'':APP_NAME.'/';
 	
 		// 获取当前主题名称
 		$theme      =    C('SP_DEFAULT_THEME');

@@ -3,11 +3,9 @@
     $.ajaxSetup({
         complete: function (jqXHR) {},
         data: {
-            __hash__: GV.TOKEN
         },
         error: function (jqXHR, textStatus, errorThrown) {
             //请求失败处理
-            alert(errorThrown ? errorThrown : '操作失败');
         }
     });
 
@@ -278,6 +276,9 @@
                     $this = $($_this),
                     href = $this.prop('href'),
                     msg = $this.data('msg');
+                if(!msg){
+                	msg="您确定要进行此操作吗？";
+                }
                 art.dialog({
                     title: false,
                     icon: 'question',

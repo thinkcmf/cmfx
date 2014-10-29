@@ -115,7 +115,7 @@ abstract class ThinkOauth{
     	if (class_exists($name)) {
     		return new $name($token);
     	} else {
-    		halt(L('_CLASS_NOT_EXIST_') . ':' . $name);
+    		E(L('_CLASS_NOT_EXIST_') . ':' . $name);
     	}
     }
 

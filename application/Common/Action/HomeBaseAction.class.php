@@ -14,27 +14,78 @@ class HomeBaseAction extends AppframeAction {
 		$this->assign($site_options);
 		$ucenter_syn=C("UCENTER_ENABLED");
 		if($ucenter_syn){
-			if(!isset($_SESSION["MEMBER_id"])){
+			if(!isset($_SESSION["user"])){
 				if(!empty($_COOKIE['thinkcmf_auth'])  && $_COOKIE['thinkcmf_auth']!="logout"){
 					$thinkcmf_auth=sp_authcode($_COOKIE['thinkcmf_auth'],"DECODE");
 					$thinkcmf_auth=explode("\t", $thinkcmf_auth);
 					$auth_username=$thinkcmf_auth[1];
-					$members_obj=M('Members');
-					$where['user_login_name']=$auth_username;
-					$member=$members_obj->where($where)->find();
-					if(!empty($member)){
+					$users_model=M('Users');
+					$where['user_login']=$auth_username;
+					$user=$users_model->where($where)->find();
+					if(!empty($user)){
 						$is_login=true;
-						$_SESSION["MEMBER_type"]='local';
-						$_SESSION["MEMBER_id"]=$member['ID'];
-						$_SESSION['MEMBER_name']=$auth_username;
-						$_SESSION['MEMBER_status']=$member['user_status'];
+						$_SESSION["user"]=$user;
 					}
 				}
 			}else{
 			}
 		}
 		
-	}		
+		if(sp_is_user_login()){
+			$this->assign("user",sp_get_current_user());
+		}
+		
+	}
+	
+	protected function check_login(){
+		if(!isset($_SESSION["user"])){
+			$this->error('您还没有登录！',__ROOT__."/");
+		}
+		
+	}
+	
+	protected function  check_user(){
+		
+		if($_SESSION["user"]['user_status']==2){
+			$this->error('您还没有激活账号，请激活后再使用！',U("user/login/active"));
+		}
+		
+		if($_SESSION["user"]['user_status']==0){
+			$this->error('此账号已经被禁止使用，请联系管理员！',__ROOT__."/");
+		}
+	}
+	
+	//发送邮件
+	protected  function _send_to_active(){
+		$option = M('Options')->where(array('option_name'=>'member_email_active'))->find();
+		if(!$option){
+			$this->error('网站未配置账号激活信息，请联系网站管理员');
+		}
+		$options = json_decode($option['option_value'], true);
+		//邮件标题
+		$title = $options['title'];
+		$uid=$_SESSION['user']['id'];
+		$username=$_SESSION['user']['user_login'];
+	
+		$activekey=md5($uid.time().uniqid());
+		$users_model=M("Users");
+	
+		$result=$users_model->where(array("id"=>$uid))->save(array("user_activation_key"=>$activekey));
+		if(!$result){
+			$this->error('激活码生成失败！');
+		}
+		//生成激活链接
+		$url = U('user/register/active',array("hash"=>$activekey), "", true);
+		//邮件内容
+		$template = $options['template'];
+		$content = str_replace(array('http://#link#','#username#'), array($url,$username),$template);
+	
+		$send_result=sp_send_email($_SESSION['user']['user_email'], $title, $content);
+	
+		if($send_result['error']){
+			$this->error('激活邮件发送失败！');
+		}
+	}
 	
 	/**
 	 * 加载模板和页面输出 可以返回输出内容
@@ -74,10 +125,17 @@ class HomeBaseAction extends AppframeAction {
 			cookie('think_template',$theme,864000);
 		}
 		
+		C('SP_DEFAULT_THEME',$theme);
+		
+		// 获取当前主题的模版路径
+		define('THEME_PATH',   $tmpl_path.$theme."/");
+		
+		C("TMPL_PARSE_STRING.__TMPL__",__ROOT__."/".THEME_PATH);
+		
+		C('SP_VIEW_PATH',$tmpl_path);
+		C('DEFAULT_THEME',$theme);
+		
 		if(is_file($template)) {
-			
-			// 获取当前主题的模版路径
-			define('THEME_PATH',   $tmpl_path.$theme."/");
 			return $template;
 		}
 		$depr       =   C('TMPL_FILE_DEPR');
@@ -88,8 +146,7 @@ class HomeBaseAction extends AppframeAction {
 		if(strpos($template,'@')){ // 跨模块调用模版文件
 			list($module,$template)  =   explode('@',$template);
 		}
-		// 获取当前主题的模版路径
-		define('THEME_PATH',   $tmpl_path.$theme."/");
+		
 		
 		// 分析模板文件规则
 		if('' == $template) {
@@ -98,11 +155,6 @@ class HomeBaseAction extends AppframeAction {
 		}elseif(false === strpos($template, '/')){
 			$template = "/".CONTROLLER_NAME . $depr . $template;
 		}
-		
-		C("TMPL_PARSE_STRING.__TMPL__",__ROOT__."/".THEME_PATH);
-		
-		C('SP_VIEW_PATH',$tmpl_path);
-		C('DEFAULT_THEME',$theme);
 		
 		$file=THEME_PATH.$module.$template.C('TMPL_TEMPLATE_SUFFIX');
 		if(!is_file($file)) E(L('_TEMPLATE_NOT_EXIST_').':'.$file);

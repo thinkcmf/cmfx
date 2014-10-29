@@ -4,7 +4,7 @@
  * 4
  * @处理标签函数
  * @以字符串方式传入,通过sp_param_lable函数解析为以下变量
- * ids:调用指定ID的一个或多个数据,如 1,2,3
+ * ids:调用指定id的一个或多个数据,如 1,2,3
  * cid:数据所在分类,可调出一个或多个分类数据,如 1,2,3 默认值为全部,在当前分类为:'.$cid.'
  * field:调用post指定字段,如(id,post_title...) 默认全部
  * limit:数据条数,默认值为10,可以指定从第几条开始,如3,8(表示共调用8条,从第3条开始)
@@ -31,8 +31,8 @@ function sp_sql_posts($tag){
 	}
 
 
-	$join = "".C('DB_PREFIX').'posts as b on a.object_id =b.ID';
-	$join2= "".C('DB_PREFIX').'users as c on b.post_author = c.ID';
+	$join = "".C('DB_PREFIX').'posts as b on a.object_id =b.id';
+	$join2= "".C('DB_PREFIX').'users as c on b.post_author = c.id';
 	$rs= M("TermRelationships");
 
 	$posts=$rs->alias("a")->join($join)->join($join2)->field($field)->where($where)->order($order)->limit($limit)->select();
@@ -43,7 +43,7 @@ function sp_sql_posts($tag){
  * 4
  * @ 处理标签函数
  * @ $tag以字符串方式传入,通过sp_param_lable函数解析为以下变量。例："cid:1,2;order:post_date desc,listorder desc;"
- * ids:调用指定ID的一个或多个数据,如 1,2,3
+ * ids:调用指定id的一个或多个数据,如 1,2,3
  * cid:数据所在分类,可调出一个或多个分类数据,如 1,2,3 默认值为全部,在当前分类为:'.$cid.'
  * field:调用post指定字段,如(id,post_title...) 默认全部
  * limit:数据条数,默认值为10,可以指定从第几条开始,如3,8(表示共调用8条,从第3条开始)
@@ -70,8 +70,8 @@ function sp_sql_posts_paged($tag,$pagesize=20,$pagetpl='{first}{prev}{liststart}
 		$where['object_id'] = array('in',$tag['ids']);
 	}
 
-	$join = "".C('DB_PREFIX').'posts as b on a.object_id =b.ID';
-	$join2= "".C('DB_PREFIX').'users as c on b.post_author = c.ID';
+	$join = "".C('DB_PREFIX').'posts as b on a.object_id =b.id';
+	$join2= "".C('DB_PREFIX').'users as c on b.post_author = c.id';
 	$rs= M("TermRelationships");
 	$totalsize=$rs->alias("a")->join($join)->join($join2)->field($field)->where($where)->count();
 	
@@ -113,8 +113,8 @@ function sp_sql_post($tid,$tag){
 	$where['tid'] = array('eq',$tid);
 
 
-	$join = "".C('DB_PREFIX').'posts as b on a.object_id =b.ID';
-	$join2= "".C('DB_PREFIX').'users as c on b.post_author = c.ID';
+	$join = "".C('DB_PREFIX').'posts as b on a.object_id =b.id';
+	$join2= "".C('DB_PREFIX').'users as c on b.post_author = c.id';
 	$rs= M("TermRelationships");
 
 	$posts=$rs->alias("a")->join($join)->join($join2)->field($field)->where($where)->find();
@@ -126,11 +126,11 @@ function sp_sql_post($tid,$tag){
  * @处理标签函数
  * @以字符串方式传入,通过sp_param_lable函数解析为以下变量
  * 返回符合条件的所有页面
- * ids:调用指定ID的一个或多个数据,如 1,2,3
+ * ids:调用指定id的一个或多个数据,如 1,2,3
  * field:调用post指定字段,如(id,post_title...) 默认全部
  * limit:数据条数,默认值为10,可以指定从第几条开始,如3,8(表示共调用8条,从第3条开始)
  * order:推荐使用方式(post_date) (desc/asc/rand())
- * 使用：ids:1,2;field:post_date,post_content;limit:10;order:post_date DESC,ID;
+ * 使用：ids:1,2;field:post_date,post_content;limit:10;order:post_date DESC,id;
  */
 function sp_sql_pages($tag){
 	$where=array();
@@ -154,11 +154,11 @@ function sp_sql_pages($tag){
  * 7
  * @处理标签函数
  * @以字符串方式传入,通过sp_param_lable函数解析为以下变量
- * 返回指定ID=$ID的页面
+ * 返回指定id=$id的页面
  */
-function sp_sql_page($ID){
+function sp_sql_page($id){
 	$where=array();
-	$where['ID'] = array('eq',$ID);
+	$where['id'] = array('eq',$id);
 
 	$rs= M("Posts");
 	$post=$rs->where($where)->find();
@@ -206,11 +206,11 @@ function sp_get_child_terms($term_id){
  * @处理标签函数
  * @以字符串方式传入,通过sp_param_lable函数解析为以下变量
  * 返回符合条件的所有分类
- * ids:调用指定ID的一个或多个数据,如 1,2,3
+ * ids:调用指定id的一个或多个数据,如 1,2,3
  * field:调用post指定字段,如(id,post_title...) 默认全部
  * limit:数据条数,默认值为10,可以指定从第几条开始,如3,8(表示共调用8条,从第3条开始)
  * order:path (desc/asc/rand())
- * 使用：ids:1,2;field:post_date,post_content;limit:10;order:post_date DESC,ID;
+ * 使用：ids:1,2;field:post_date,post_content;limit:10;order:post_date DESC,id;
  */
 function sp_get_terms($tag){
 	
@@ -230,4 +230,23 @@ function sp_get_terms($tag){
 	$term_obj= M("Terms");
 	$terms=$term_obj->field($field)->where($where)->order($order)->limit($limit)->select();
 	return $terms;
+}
+
+function sp_admin_get_tpl_file_list(){
+	$template_path=C("SP_TMPL_PATH").C("SP_DEFAULT_THEME")."/Portal/";
+	$files=scandir($template_path);
+	$tpl_files=array();
+	foreach ($files as $f){
+		if($f!="." || $f!=".."){
+			if(is_file($template_path.$f)){
+				$suffix=C("TMPL_TEMPLATE_SUFFIX");
+				$result=preg_match("/$suffix$/", $f);
+				if($result){
+					$tpl=str_replace($suffix, "", $f);
+					$tpl_files[$tpl]=$tpl;
+				}
+			}
+		}
+	}
+	return $tpl_files;
 }

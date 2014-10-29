@@ -19,12 +19,12 @@ class AdminbaseAction extends AppframeAction {
 		$this->assign("js_debug",APP_DEBUG?"?v=$time":"");
 	}
 
-    function _initialize() {
+    function _initialize(){
        parent::_initialize();
     	if(isset($_SESSION['ADMIN_ID'])){
     		$users_obj= D("Users");
     		$id=$_SESSION['ADMIN_ID'];
-    		$user=$users_obj->where("ID=$id")->find();
+    		$user=$users_obj->where("id=$id")->find();
     		if(!$this->check_access($user['role_id'])){
     			$this->error("您没有访问权限！");
     			exit();

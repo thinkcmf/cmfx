@@ -11,34 +11,40 @@ class PublicAction extends AdminbaseAction {
     //后台登陆界面
     public function login() {
     	if(isset($_SESSION['ADMIN_ID'])){//已经登录
-    		$this->success("已登录！",U("Index/index"));
+    		$this->success(L('LOGIN_SUCCESS'),U("Index/index"));
     	}else{
-    		$this->display();
+    		if(empty($_SESSION['adminlogin'])){
+    			header("Content-Type:text/html; charset=utf-8");
+    			$this->error("请从后台管理入口登录!",__ROOT__."/");
+    		}else{
+    			$this->display();
+    		}
+    		
     	}
     }
     
     public function logout(){
-    	session('[destroy]'); 
+    	session('ADMIN_ID',null); 
     	$this->redirect("public/login");
     }
     
     public function dologin(){
     	$name = I("post.username");
     	if(empty($name)){
-    		$this->error("用户名或邮箱不能为空！");
+    		$this->error(L('USERNAME_OR_EMAIL_EMPTY'));
     	}
     	$pass = I("post.password");
     	if(empty($pass)){
-    		$this->error("密码不能为空！");
+    		$this->error(L('PASSWORD_REQUIRED'));
     	}
     	$verrify = I("post.verify");
     	if(empty($verrify)){
-    		$this->error("验证码不能为空！");
+    		$this->error(L('CAPTCHA_REQUIRED'));
     	}
     	//验证码
     	if($_SESSION['_verify_']['verify']!=strtolower($verrify))
     	{
-    		$this->error("验证码错误！");
+    		$this->error(L('CAPTCHA_NOT_RIGHT'));
     	}else{
     		$user = D("Users");
     		if(strpos($name,"@")>0){//邮箱登陆
@@ -48,24 +54,22 @@ class PublicAction extends AdminbaseAction {
     		}
     		
     		$result = $user->where($where)->find();
-    		if($result != null)
-    		{
-    			if($result['user_pass'] == sp_password($pass))
-    			{
+    		if($result != null && $result['user_type']==1){
+    			if($result['user_pass'] == sp_password($pass)){
     				//登入成功页面跳转
-    				$_SESSION["ADMIN_ID"]=$result["ID"];
+    				$_SESSION["ADMIN_ID"]=$result["id"];
     				$_SESSION['name']=$result["user_login"];
     				session("roleid",$result['role_id']);
     				$result['last_login_ip']=get_client_ip();
     				$result['last_login_time']=date("Y-m-d H:i:s");
     				$user->save($result);
     				setcookie("admin_username",$name,time()+30*24*3600,"/");
-    				$this->success("登录验证成功！",U("Index/index"));
+    				$this->success(L('LOGIN_SUCCESS'),U("Index/index"));
     			}else{
-    				$this->error("密码错误！");
+    				$this->error(L('PASSWORD_NOT_RIGHT'));
     			}
     		}else{
-    			$this->error("用户名不存在！");
+    			$this->error(L('USERNAME_NOT_EXIST'));
     		}
     	}
     }

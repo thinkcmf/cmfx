@@ -24,7 +24,7 @@ class CommonModel extends Model {
         $tables = array();
         $data = $this->query("SHOW TABLES");
         foreach ($data as $k => $v) {
-            $tables[] = $v['Tables_in_' . C("DB_NAME")];
+            $tables[] = $v['Tables_in_' . strtolower(C("DB_NAME"))];
         }
         return $tables;
     }

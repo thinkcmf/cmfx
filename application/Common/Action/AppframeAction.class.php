@@ -1,6 +1,7 @@
 <?php
 namespace Common\Action;
 use Think\Action;
+use Think\Controller;
 /**
  * Appframe项目公共Action
  */
@@ -66,7 +67,7 @@ class AppframeAction extends Action {
         switch (strtoupper($type)) {
             case 'JSON' :
                 // 返回JSON数据格式到客户端 包含状态信息
-                header('Content-Type:text/html; charset=utf-8');
+                header('Content-Type:application/json; charset=utf-8');
                 exit(json_encode($return));
             case 'XML' :
                 // 返回xml格式数据
@@ -81,6 +82,10 @@ class AppframeAction extends Action {
                 // 返回可执行的js脚本
                 header('Content-Type:text/html; charset=utf-8');
                 exit($return);
+            case 'AJAX_UPLOAD':
+            	// 返回JSON数据格式到客户端 包含状态信息
+            	header('Content-Type:text/html; charset=utf-8');
+            	exit(json_encode($return));
             default :
                 // 用于扩展其他返回格式数据
                 tag('ajax_return', $return);
@@ -131,6 +136,28 @@ class AppframeAction extends Action {
     //空操作
     public function _empty() {
         $this->error('该页面不存在！');
+    }
+    
+    /**
+     * 检查操作频率
+     * @param int $duration 距离最后一次操作的时长
+     */
+    protected function check_last_action($duration){
+    	
+    	$action=MODULE_NAME."-".CONTROLLER_NAME."-".ACTION_NAME;
+    	$time=time();
+    	
+    	if(!empty($_SESSION['last_action']['action']) && $action==$_SESSION['last_action']['action']){
+    		$mduration=$time-$_SESSION['last_action']['time'];
+    		if($duration>$mduration){
+    			$this->error("您的操作太过频繁，请稍后再试~~~");
+    		}else{
+    			$_SESSION['last_action']['time']=$time;
+    		}
+    	}else{
+    		$_SESSION['last_action']['action']=$action;
+    		$_SESSION['last_action']['time']=$time;
+    	}
     }
 
 }

@@ -96,12 +96,12 @@
           </tr>
           <tr>
             <td class="tar">密码：</td>
-            <td><input type="text" name="manager_pwd" id="J_manager_pwd" class="input" autoComplete="off"></td>
+            <td><input type="password" name="manager_pwd" id="J_manager_pwd" class="input" autoComplete="off"></td>
             <td><div id="J_install_tip_manager_pwd"></div></td>
           </tr>
           <tr>
             <td class="tar">重复密码：</td>
-            <td><input type="text" name="manager_ckpwd" class="input" autoComplete="off"></td>
+            <td><input type="password" name="manager_ckpwd" class="input" autoComplete="off"></td>
             <td><div id="J_install_tip_manager_ckpwd"></div></td>
           </tr>
           <tr>

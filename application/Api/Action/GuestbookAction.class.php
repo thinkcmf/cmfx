@@ -23,6 +23,7 @@ class GuestbookAction extends AppframeAction{
 			if ($this->guestbook_model->create()) {
 				$result=$this->guestbook_model->add();
 				if ($result!==false) {
+					$_SESSION['_verify_']['verify']="";
 					$this->success("留言成功！");
 				} else {
 					$this->error("留言失败！");

@@ -9,7 +9,11 @@ class IndexAction extends HomeBaseAction {
     //首页
 	public function index() {
     	$this->display(":index");
-    }   
+    }
+    
+    function test(){
+    	echo unserialize("ddd");
+    }
 
 }
 

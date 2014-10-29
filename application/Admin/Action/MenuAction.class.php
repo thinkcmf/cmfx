@@ -24,18 +24,26 @@ class MenuAction extends AdminbaseAction {
         $tree = new \Tree();
         $tree->icon = array('&nbsp;&nbsp;&nbsp;│ ', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ ');
         $tree->nbsp = '&nbsp;&nbsp;&nbsp;';
-        foreach ($result as $r) {
-            $r['str_manage'] = '<a href="' . U("Menu/add", array("parentid" => $r['id'], "menuid" => $_GET['menuid'])) . '">添加子菜单</a> | <a target="_blank" href="' . U("Menu/edit", array("id" => $r['id'], "menuid" => $_GET['menuid'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("Menu/delete", array("id" => $r['id'], "menuid" => I("get.menuid")) ). '">删除</a> ';
-            $r['status'] = $r['status'] ? "显示" : "隐藏";
+        
+        $newmenus=array();
+        foreach ($result as $m){
+        	$newmenus[$m['id']]=$m;
+        	 
+        }
+        foreach ($result as $n=> $r) {
+        	
+        	$result[$n]['level'] = $this->_get_level($r['id'], $newmenus);
+        	$result[$n]['parentid_node'] = ($r['parentid']) ? ' class="child-of-node-' . $r['parentid'] . '"' : '';
+        	
+            $result[$n]['str_manage'] = '<a href="' . U("Menu/add", array("parentid" => $r['id'], "menuid" => $_GET['menuid'])) . '">添加子菜单</a> | <a target="_blank" href="' . U("Menu/edit", array("id" => $r['id'], "menuid" => $_GET['menuid'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("Menu/delete", array("id" => $r['id'], "menuid" => I("get.menuid")) ). '">删除</a> ';
+            $result[$n]['status'] = $r['status'] ? "显示" : "隐藏";
             if(APP_DEBUG){
-            	$r['app']=$r['app']."/".$r['model']."/".$r['action'];
+            	$result[$n]['app']=$r['app']."/".$r['model']."/".$r['action'];
             }
-            $array[] = $r;
-            
         }
 
-        $tree->init($array);
-        $str = "<tr>
+        $tree->init($result);
+        $str = "<tr id='node-\$id' \$parentid_node>
 					<td><input name='listorders[\$id]' type='text' size='3' value='\$listorder' class='input input-order'></td>
 					<td>\$id</td>
         			<td>\$app</td>
@@ -46,6 +54,23 @@ class MenuAction extends AdminbaseAction {
         $categorys = $tree->get_tree(0, $str);
         $this->assign("categorys", $categorys);
         $this->display();
+    }
+    
+    /**
+     * 获取菜单深度
+     * @param $id
+     * @param $array
+     * @param $i
+     */
+    protected function _get_level($id, $array = array(), $i = 0) {
+    
+    	if ($array[$id]['parentid']==0 || empty($array[$array[$id]['parentid']]) || $array[$id]['parentid']==$id){
+    		return  $i;
+    	}else{
+    		$i++;
+    		return $this->_get_level($array[$id]['parentid'],$array,$i);
+    	}
+    
     }
     
     public function lists(){
@@ -295,7 +320,7 @@ class MenuAction extends AdminbaseAction {
     
     public function spmy_getactions(){
     	$apps_r=array("Comment");
-    	$groups=explode(",", C("APP_GROUP_LIST"));
+    	$groups=C("MODULE_ALLOW_LIST");
     	$group_count=count($groups);
     	$newmenus=array();
     	$g=I("get.app");
@@ -324,11 +349,12 @@ class MenuAction extends AdminbaseAction {
     									continue;
     								}
     							}
-    							//echo $g."/".$m;
     							$class=A($g."/".$m);
-    							$base_methods=get_class_methods("AdminbaseAction");
+    							$adminbaseaction=new \Common\Action\AdminbaseAction();
+    							$base_methods=get_class_methods($adminbaseaction);
     							$methods=get_class_methods($class);
     							$methods=array_diff($methods, $base_methods);
+    							
     							foreach ($methods as $a){
     								if(!(strpos($a, "_") === 0) && !(strpos($a, "spmy_") === 0)){
     									$where['app']=$g;

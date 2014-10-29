@@ -12,11 +12,7 @@ class GuestbookModel extends CommonModel{
 	);
 	
 	protected $_auto = array (
-			array('full_name','htmlspecialchars',1,'function') , // 对full_name字段在新增的时候使htmlspecialchars函数处理
-			array('msg','htmlspecialchars',1,'function'), // 对msg字段在新增的时候回调htmlspecialchars方法
-			array('title','htmlspecialchars',1,'function'), // 对title字段在新增的时候回调htmlspecialchars方法
 			array('createtime','mDate',1,'callback'), // 对msg字段在新增的时候回调htmlspecialchars方法
-			
 	);
 	
 	function mDate(){

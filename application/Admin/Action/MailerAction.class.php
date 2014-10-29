@@ -42,7 +42,7 @@ class MailerAction extends AdminbaseAction {
     }
     
     public function active_post(){
-    	$configs['SP_MEMBER_EMAIL_ACTIVE'] = $_POST['lightup'];
+    	$configs['SP_MEMBER_EMAIL_ACTIVE'] = intval($_POST['lightup']);
     	sp_set_dynamic_config($configs);
 
     	if(!empty($_POST['option_id'])) $data['option_id']=intval($_POST['option_id']);
@@ -50,8 +50,14 @@ class MailerAction extends AdminbaseAction {
     	$stripChar = '?<*>\'\"';
     	$_POST['options']['title'] = preg_replace('/['.$stripChar.']/s','',$_POST['options']['title']);
     	$data['option_value']= json_encode($_POST['options']);
-    	$rst2 = M('Options')->add($data, array(), true);
-    	if ($rst2) {
+    	$posts_model= M('Options');
+    	if($posts_model->where("option_name='member_email_active'")->find()){
+    		$rst2 = $posts_model->where("option_name='member_email_active'")->save($data);
+    	}else{
+    		$rst2 = $posts_model->add($data);
+    	}
+    	
+    	if ($rst2!==false) {
     		$this->success("保存成功！");
     	} else {
     		$this->error("保存失败！");

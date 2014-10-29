@@ -20,7 +20,7 @@ class AdAction extends AdminbaseAction{
 	}
 	function add_post(){
 		if(IS_POST){
-			if ($this->ad_obj->create()) {
+			if ($this->ad_obj->create()){
 				if ($this->ad_obj->add()!==false) {
 					$this->success("添加成功！", U("ad/index"));
 				} else {

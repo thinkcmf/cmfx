@@ -10,7 +10,7 @@ class UserAction extends AdminbaseAction{
 		$this->role_obj = D("Role");
 	}
 	function index(){
-		$users=$this->users_obj->where("user_status=1")->select();
+		$users=$this->users_obj->where(array("user_type"=>1))->select();
 		$roles_src=$this->role_obj->select();
 		$roles=array();
 		foreach ($roles_src as $r){
@@ -49,7 +49,7 @@ class UserAction extends AdminbaseAction{
 		$roles=$this->role_obj->where("status=1")->select();
 		$this->assign("roles",$roles);
 			
-		$user=$this->users_obj->where("ID=$id")->find();
+		$user=$this->users_obj->where(array("id"=>$id))->find();
 		$this->assign($user);
 		$this->display();
 	}
@@ -80,10 +80,8 @@ class UserAction extends AdminbaseAction{
 		if($id==1){
 			$this->error("最高管理员不能删除！");
 		}
-		$uid=get_current_admin_id();
-		$posts_obj = D("Posts");
-		$posts_obj->where("post_author='$uid'")->save(array("post_author"=>1));
-		if ($this->users_obj->where("ID=$id")->delete()!==false) {
+		
+		if ($this->users_obj->where("id=$id")->delete()!==false) {
 			$this->success("删除成功！");
 		} else {
 			$this->error("删除失败！");
@@ -93,7 +91,7 @@ class UserAction extends AdminbaseAction{
 	
 	function userinfo(){
 		$id=get_current_admin_id();
-		$user=$this->users_obj->where("ID='$id'")->find();
+		$user=$this->users_obj->where(array("id"=>$id))->find();
 		$this->assign($user);
 		$this->display();
 	}

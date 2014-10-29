@@ -36,15 +36,22 @@ class SettingAction extends AdminbaseAction{
 			
 			$configs["SP_DEFAULT_THEME"]=$_POST['options']['site_tpl'];
 			$configs["DEFAULT_THEME"]=$_POST['options']['site_tpl'];
+			$configs["SP_ADMIN_STYLE"]=$_POST['options']['site_adminstyle'];
 			$configs["URL_MODEL"]=$_POST['options']['urlmode'];
 			$configs["URL_HTML_SUFFIX"]=$_POST['options']['html_suffix'];
 			$configs["UCENTER_ENABLED"]=empty($_POST['options']['ucenter_enabled'])?0:1;
+			$configs["COMMENT_NEED_CHECK"]=empty($_POST['options']['comment_need_check'])?0:1;
 				
 			sp_set_dynamic_config($configs);//sae use same function
 				
 			$data['option_name']="site_options";
 			$data['option_value']=json_encode($_POST['options']);
-			$r=$this->options_obj->add($data,array(),true);
+			if($this->options_obj->where("option_name='site_options'")->find()){
+				$this->options_obj->where("option_name='site_options'")->save($data);
+			}else{
+				$r=$this->options_obj->add($data);
+			}
+			
 			
 			if ($r!==false) {
 				$this->success("保存成功！");
@@ -70,7 +77,7 @@ class SettingAction extends AdminbaseAction{
 			}
 			$user_obj = D("Users");
 			$uid=get_current_admin_id();
-			$admin=$user_obj->where("ID=$uid")->find();
+			$admin=$user_obj->where(array("id"=>$uid))->find();
 			$old_password=$_POST['old_password'];
 			$password=$_POST['password'];
 			if(sp_password($old_password)==$admin['user_pass']){
@@ -79,7 +86,7 @@ class SettingAction extends AdminbaseAction{
 						$this->error("新密码不能和原始密码相同！");
 					}else{
 						$data['user_pass']=sp_password($password);
-						$data['ID']=$uid;
+						$data['id']=$uid;
 						$r=$user_obj->save($data);
 						if ($r!==false) {
 							$this->success("修改成功！");

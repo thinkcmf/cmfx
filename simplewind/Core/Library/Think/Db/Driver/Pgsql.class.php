@@ -128,9 +128,13 @@ class Pgsql extends Db{
     public function last_insert_id() {
         $query  =   "SELECT LASTVAL() AS insert_id";
         $result =   pg_query($this->_linkID,$query);
-        list($last_insert_id)   =   pg_fetch_array($result,null,PGSQL_ASSOC);
+        /* list($last_insert_id)   =   pg_fetch_array($result,null,PGSQL_ASSOC);
         pg_free_result($result);
-        return $last_insert_id;
+        return $last_insert_id; */
+        
+        $arr = pg_fetch_array($result,null,PGSQL_ASSOC);
+        pg_free_result($result);
+        return $arr['insert_id'];
     }
 
     /**

@@ -170,7 +170,7 @@ class MenuModel extends CommonModel {
                 //附带参数
               $fu = "";
                 if ($a['data']) {
-                    $fu = "?" . $a['data'];
+                    $fu = "?" . htmlspecialchars_decode($a['data']);
                 }
                 $array = array(
                     "icon" => $a['icon'],

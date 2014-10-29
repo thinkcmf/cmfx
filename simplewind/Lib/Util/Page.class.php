@@ -225,9 +225,9 @@ class Page {
             if ($cfg ['listsidelong'] < $pStart) {
                 for ($i = 1; $i <= $cfg ['listsidelong']; $i++) {
 					if ($this->Static && $i == 1) {
-						$pListStart .= '<a href="' . $this->PageLink['index'] . '">' . str_replace('*', $i, $cfg ['list']) . '</a> '.$this->linkwraper_after;
+						$pListStart .= $this->linkwraper_pre.'<a href="' . $this->PageLink['index'] . '">' . str_replace('*', $i, $cfg ['list']) . '</a> '.$this->linkwraper_after;
                      } else {
-                        $pListStart .= '<a href="' . str_replace('*', $i, $cfg ['link']) . '">' . str_replace('*', $i, $cfg ['list']) . '</a> '.$this->linkwraper_after;
+                        $pListStart .= $this->linkwraper_pre.'<a href="' . str_replace('*', $i, $cfg ['link']) . '">' . str_replace('*', $i, $cfg ['list']) . '</a> '.$this->linkwraper_after;
                     }
                 }
                 $pListStart .= ($cfg ['listsidelong'] + 1) == $pStart ? '' : $cfg ['more'] . ' ';

@@ -16,11 +16,11 @@ class PageAction extends HomeBaseAction{
 	
 	public function nav_index(){
 		$navcatname="页面";
-		$datas=sp_sql_pages("field:ID,post_title;");
+		$datas=sp_sql_pages("field:id,post_title;");
 		$navrule=array(
 				"action"=>"Page/index",
 				"param"=>array(
-						"id"=>"ID"
+						"id"=>"id"
 				),
 				"label"=>"post_title");
 		exit( sp_get_nav4admin($navcatname,$datas,$navrule) );

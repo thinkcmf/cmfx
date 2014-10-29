@@ -3,11 +3,9 @@
     $.ajaxSetup({
         complete: function (jqXHR) {},
         data: {
-            __hash__: GV.TOKEN
         },
         error: function (jqXHR, textStatus, errorThrown) {
             //请求失败处理
-            alert(errorThrown ? errorThrown : '操作失败');
         }
     });
 
@@ -42,52 +40,6 @@
         });
     }
 
-
-    //提交按钮是否固定底部
-    //setBtnWrap();
-    $(window).on('resize', function () {
-        setBtnWrap(true);
-    });
-
-    function setBtnWrap(reset) {
-        if (parent.Wind && parent.Wind.art) {
-            //过滤弹窗
-            return;
-        }
-
-        if ($('body').height() <= $(window).height()) {
-            $('div.btn_wrap').removeClass('btn_wrap');
-        } else {
-            if (reset) {
-                var par = $('button.J_ajax_submit_btn:last').parent().parent();
-                if (!par.attr('class')) {
-                    //class一定为空
-                    par.addClass('btn_wrap');
-                }
-            }
-        }
-    }
-
-    //iframe页面f5刷新
-    $(document).on('keydown', function (event) {
-        var e = window.event || event;
-        if (e.keyCode == 116) {
-            e.keyCode = 0;
-
-            var $doc = $(parent.window.document),
-                id = $doc.find('#B_history .current').attr('data-id'),
-                iframe = $doc.find('#iframe_' + id);
-            try{
-                if (iframe[0].contentWindow) {
-                    //common.js
-                    reloadPage(iframe[0].contentWindow);
-                }
-            }catch(err){}
-            //!ie
-            return false;
-        }
-
-    });
 
     //所有加了dialog类名的a链接，自动弹出它的href
     if ($('a.J_dialog').length) {
@@ -192,11 +144,25 @@
                         
                         if (data.referer) {
                             //返回带跳转地址
+                        	var wait=btn.data("wait");
                             if(window.parent.art){
                                 //iframe弹出页
-                                window.parent.location.href = data.referer;
+                            	if(wait){
+                            		setTimeout(function(){
+                            			window.parent.location.href = data.referer;
+                            		},wait);
+                        		}else{
+                        			window.parent.location.href = data.referer;
+                        		}
+                                
                             }else{
-                                window.location.href = data.referer;
+                            	if(wait){
+                            		setTimeout(function(){
+                            			window.location.href = data.referer;
+                            		},wait);
+                        		}else{
+                        			window.location.href = data.referer;
+                        		}
                             }
                         } else {
                         	if (data.state === 'success') {
@@ -271,39 +237,49 @@
     
     
     if ($('a.J_ajax_dialog_btn').length) {
-        Wind.use('artDialog', function () {
+        Wind.use('noty', function () {
             $('.J_ajax_dialog_btn').on('click', function (e) {
                 e.preventDefault();
                 var $_this = this,
                     $this = $($_this),
                     href = $this.prop('href'),
                     msg = $this.data('msg');
-                art.dialog({
-                    title: false,
-                    icon: 'question',
-                    content: msg,
-                    follow: $_this,
-                    close: function () {
-                        $_this.focus();; //关闭时让触发弹窗的元素获取焦点
-                        return true;
-                    },
-                    ok: function () {
-                    	
-                        $.getJSON(href).done(function (data) {
-                            if (data.state === 'success') {
-                                if (data.referer) {
-                                    location.href = data.referer;
-                                } else {
-                                    reloadPage(window);
-                                }
-                            } else if (data.state === 'fail') {
-                                art.dialog.alert(data.info);
-                            }
-                        });
-                    },
-                    cancelVal: '关闭',
-                    cancel: true
+                
+                noty({
+   				 	text: msg,
+   					type:'confirm',
+   					layout:"center",
+   					timeout: false,
+   					modal: true,
+   				   	buttons: [
+   				   	{
+   				   		addClass: 'btn btn-primary',
+   				   		text: '确定',
+   				   		onClick: function($noty){
+   				   			$noty.close();
+	   				   		$.getJSON(href).done(function (data) {
+	                            if (data.state === 'success') {
+	                                if (data.referer) {
+	                                    location.href = data.referer;
+	                                } else {
+	                                    reloadPage(window);
+	                                }
+	                            } else if (data.state === 'fail') {
+	                                art.dialog.alert(data.info);
+	                            }
+	                        });
+   				   		}
+   				   	},
+   				   	{
+   				   		addClass: 'btn btn-danger',
+   				   		text: '取消',
+   				   		onClick: function($noty) {
+   				   			$noty.close();
+   				   		}
+   				   	}
+   					]
                 });
+                
             });
 
         });
@@ -336,157 +312,6 @@
         });
     }
 
-    //拾色器
-    var color_pick = $('.J_color_pick');
-    if (color_pick.length) {
-        Wind.use('colorPicker', function () {
-            color_pick.each(function () {
-                $(this).colorPicker({
-                    default_color: 'url("' + GV.DIMAUB + 'statics/images/transparent.png")', //写死
-                    callback: function (color) {
-                        var em = $(this).find('em'),
-                            input = $(this).next('.J_hidden_color');
-
-                        em.css('background', color);
-                        input.val(color.length === 7 ? color : '');
-                    }
-                });
-            });
-        });
-    }
-
-    //字体配置
-    if ($('.J_font_config').length) {
-        Wind.use('colorPicker', function () {
-            var elem = $('.color_pick');
-            elem.each(function () {
-                var panel = $(this).parent('.J_font_config');
-                var bg_elem = $(this).find('.J_bg');
-                $(this).colorPicker({
-                    default_color: 'url("' + GV.DIMAUB + 'statics/images/transparent.png")',
-                    callback: function (color) {
-                        bg_elem.css('background', color);
-                        panel.find('.case').css('color', color.length === 7 ? color : '');
-                        panel.find('.J_hidden_color').val(color.length === 7 ? color : '');
-                    }
-                });
-            });
-        });
-        //加粗、斜体、下划线的处理
-        $('.J_bold,.J_italic,.J_underline').on('click', function () {
-            var panel = $(this).parents('.J_font_config');
-            var c = $(this).data('class');
-            if ($(this).prop('checked')) {
-                panel.find('.case').addClass(c);
-            } else {
-                panel.find('.case').removeClass(c);
-            }
-        });
-    }
-
-    /*复选框全选(支持多个，纵横双控全选)。
-     *实例：版块编辑-权限相关（双控），验证机制-验证策略（单控）
-     *说明：
-     *	"J_check"的"data-xid"对应其左侧"J_check_all"的"data-checklist"；
-     *	"J_check"的"data-yid"对应其上方"J_check_all"的"data-checklist"；
-     *	全选框的"data-direction"代表其控制的全选方向(x或y)；
-     *	"J_check_wrap"同一块全选操作区域的父标签class，多个调用考虑
-     */
-
-    if ($('.J_check_wrap').length) {
-        var total_check_all = $('input.J_check_all');
-
-        //遍历所有全选框
-        $.each(total_check_all, function () {
-            var check_all = $(this),
-                check_items;
-
-            //分组各纵横项
-            var check_all_direction = check_all.data('direction');
-            check_items = $('input.J_check[data-' + check_all_direction + 'id="' + check_all.data('checklist') + '"]');
-
-            //点击全选框
-            check_all.change(function (e) {
-                var check_wrap = check_all.parents('.J_check_wrap'); //当前操作区域所有复选框的父标签（重用考虑）
-
-                if ($(this).attr('checked')) {
-                    //全选状态
-                    check_items.attr('checked', true);
-
-                    //所有项都被选中
-                    if (check_wrap.find('input.J_check').length === check_wrap.find('input.J_check:checked').length) {
-                        check_wrap.find(total_check_all).attr('checked', true);
-                    }
-
-                } else {
-                    //非全选状态
-                    check_items.removeAttr('checked');
-
-                    //另一方向的全选框取消全选状态
-                    var direction_invert = check_all_direction === 'x' ? 'y' : 'x';
-                    check_wrap.find($('input.J_check_all[data-direction="' + direction_invert + '"]')).removeAttr('checked');
-                }
-
-            });
-
-            //点击非全选时判断是否全部勾选
-            check_items.change(function () {
-
-                if ($(this).attr('checked')) {
-
-                    if (check_items.filter(':checked').length === check_items.length) {
-                        //已选择和未选择的复选框数相等
-                        check_all.attr('checked', true);
-                    }
-
-                } else {
-                    check_all.removeAttr('checked');
-                }
-
-            });
-
-
-        });
-
-    }
-
-    /*li列表添加&删除(支持多个)，实例(“验证机制-添加验证问题”，“附件相关-添加附件类型”)：
-		<ul id="J_ul_list_verify" class="J_ul_list_public">
-			<li><input type="text" value="111" ><a class="J_ul_list_remove" href="#">[删除]</a></li>
-			<li><input type="text" value="111" ><a class="J_ul_list_remove" href="#">[删除]</a></li>
-		</ul>
-		<a data-related="verify" class="J_ul_list_add" href="#">添加验证</a>
-
-		<ul id="J_ul_list_rule" class="J_ul_list_public">
-			<li><input type="text" value="111" ><a class="J_ul_list_remove" href="#">[删除]</a></li>
-			<li><input type="text" value="111" ><a class="J_ul_list_remove" href="#">[删除]</a></li>
-		</ul>
-		<a data-related="rule" class="J_ul_list_add" href="#">添加规则</a>
-	*/
-    var ul_list_add = $('a.J_ul_list_add');
-    if (ul_list_add.length) {
-        var new_key = 0;
-
-        //添加
-        ul_list_add.click(function (e) {
-            e.preventDefault();
-            new_key++;
-            var $this = $(this);
-
-            //"new_"字符加上唯一的key值，_li_html 由列具体页面定义
-            var $li_html = $(_li_html.replace(/new_/g, 'new_' + new_key));
-
-            $('#J_ul_list_' + $this.data('related')).append($li_html);
-            $li_html.find('input.input').first().focus();
-        });
-
-        //删除
-        $('ul.J_ul_list_public').on('click', 'a.J_ul_list_remove', function (e) {
-            e.preventDefault();
-            $(this).parents('li').remove();
-        });
-    }
-
     //日期选择器
     var dateInput = $("input.J_date")
     if (dateInput.length) {
@@ -505,86 +330,285 @@
         });
     }
 
-    //图片上传预览
-    if ($("input.J_upload_preview").length) {
-        Wind.use('uploadPreview', function () {
-            $("input.J_upload_preview").uploadPreview();
-        });
-    }
-
-    //代码复制
-    var copy_btn = $('a.J_copy_clipboard'); //复制按钮
-    if (copy_btn.length) {
-        Wind.use('dialog', 'textCopy', function () {
-            for (i = 0, len = copy_btn.length; i < len; i++) {
-                var item = $(copy_btn[i]);
-                item.textCopy({
-                    content: $('#' + item.data('rel')).val()
-                });
-            }
-        });
-    }
-
-    //tab
-    var tabs_nav = $('ul.J_tabs_nav');
-    if (tabs_nav.length) {
-        Wind.use('tabs', function () {
-            tabs_nav.tabs('.J_tabs_contents > div');
-        });
-    }
-
-    //radio切换显示对应区块
-    var radio_change = $('.J_radio_change');
-    if (radio_change.length) {
-
-        var radio_c = radio_change.find('input:checked');
-        if (radio_c.length) {
-            radio_c.each(function () {
-                var $this = $(this);
-                //页面载入
-                change($this.data('arr'), $this.parents('.J_radio_change'));
+    var $J_count_btn=$('a.J_count_btn');
+    if ($J_count_btn.length) {
+        Wind.use('noty', function () {
+        	$J_count_btn.on('click', function (e) {
+                e.preventDefault();
+                var $this = $(this),
+                    href = $this.prop('href');
+                
+                $.post(href,{},function(data){
+                	
+                	if (data.state === 'success') {
+                		
+                		var $count=$this.find(".count");
+                		var count=parseInt($count.text());
+                		$count.text(count+1);
+                		if(data.info){
+                			noty({text: data.info,
+                        		type:'success',
+                        		layout:'center'
+                        	});
+                		}
+                		
+                		
+                    } else if (data.state === 'fail') {
+                    	noty({text: data.info,
+                    		type:'error',
+                    		layout:'center'
+                    	});
+                    }
+                	
+                	
+                },"json");
+                
             });
-        }
 
-        //切换radio
-        $('.J_radio_change input:radio').on('change', function () {
-            change($(this).data('arr'), $(this).parents('.J_radio_change'));
         });
-
     }
-
-    function change(str, radio_change) {
-        var rel = $(radio_change.data('rel'));
-        if (rel.length) {
-            rel.hide();
-        } else {
-            $('.J_radio_tbody, .J_radio_change_items').hide();
-        }
-
-        if (str) {
-            var arr = new Array();
-            arr = str.split(",");
-
-
-            $.each(arr, function (i, o) {
-                $('#' + o).show();
+    
+    //
+    var $J_action_btn=$('a.J_action_btn');
+    if ($J_action_btn.length) {
+        Wind.use('noty', function () {
+        	$J_action_btn.on('click', function (e) {
+                e.preventDefault();
+                var $this = $(this),
+                    href = $this.prop('href');
+                
+                $.post(href,{},function(data){
+                	
+                	if (data.state === 'success') {
+                		
+                		if(data.info){
+                			noty({text: data.info,
+                        		type:'success',
+                        		layout:'center'
+                        	});
+                		}
+                		
+                		
+                    } else if (data.state === 'fail') {
+                    	noty({text: data.info,
+                    		type:'error',
+                    		layout:'center'
+                    	});
+                    }
+                	
+                	
+                },"json");
+                
             });
-        }
-    }
 
-    /*
-     * 默认头像
-     */
-    var avas = $('img.J_avatar');
-    if (avas.length) {
-        avatarError(avas);
+        });
+    }
+    
+    var $J_favorite_btn=$('a.J_favorite_btn');
+    if ($J_favorite_btn.length) {
+        Wind.use('noty', function () {
+        	$J_favorite_btn.on('click', function (e) {
+                e.preventDefault();
+                var $this = $(this),
+                    href = $this.prop('href'),
+                    url = $this.data("url"),
+                    key = $this.data("key"),
+                    title = $this.data("title"),
+                    description = $this.data("description");
+                
+                
+                $.post(href,{url:url,key:key,title:title,description:description},function(data){
+                	
+                	if (data.state === 'success') {
+                		
+                		if(data.info){
+                			noty({text: data.info,
+                        		type:'success',
+                        		layout:'center'
+                        	});
+                		}
+                		
+                		
+                    } else if (data.state === 'fail') {
+                    	noty({text: data.info,
+                    		type:'error',
+                    		layout:'center'
+                    	});
+                    }
+                	
+                	
+                },"json");
+                
+            });
+
+        });
+    }
+    
+    var $comment_form=$(".comment-area .comment-form");
+    if($comment_form.length){
+    	Wind.use("ajaxForm",function(){
+    		
+    		$(".J_ajax_submit_btn",$comment_form).on("click",function(e){
+        		var btn=$(this),
+        			form=btn.parents(".comment-form");
+        		e.preventDefault();
+        		
+        		var url= btn.data('action') ? btn.data('action') : form.attr('action');
+        		var data=form.serialize()+"&url="+encodeURIComponent(location.href);
+        		$.ajax({
+        			url:url,
+        			dataType: 'json',
+        			type: "POST",
+        			beforeSend:function(){
+        				 var text = btn.text();
+
+                         //按钮文案、状态修改
+                         btn.text(text + '中...').prop('disabled', true).addClass('disabled');
+        			},
+        			data:data,
+        			success: function (data, textStatus, jqXHR) {
+                        var text = btn.text();
+
+                        //按钮文案、状态修改
+                        btn.removeClass('disabled').text(text.replace('中...', '')).parent().find('span').remove();
+                        btn.removeProp('disabled').removeClass('disabled');
+                        if (data.state === 'success') {
+                            $('<span class="tips_success">' + data.info + '</span>').appendTo(btn.parent()).fadeIn('slow').delay(1000).fadeOut(function () {
+                            });
+                        } else if (data.state === 'fail') {
+                            $('<span class="tips_error">' + data.info + '</span>').appendTo(btn.parent()).fadeIn('fast');
+                            btn.removeProp('disabled').removeClass('disabled');
+                        }
+                        
+                        if (data.state === 'success') {
+                    		var $comments=form.siblings(".comments");
+                    		var comment_tpl=btn.parents(".comment-area").find(".comment-tpl").html();
+                    		var $comment_tpl=$(comment_tpl);
+                    		$comment_tpl.attr("data-id",data.data.id);
+                    		var $comment_postbox=form.find(".comment-postbox");
+                    		var comment_content=$comment_postbox.val();
+                    		$comment_tpl.find(".comment-content .content").html(comment_content);
+                    		$comments.append($comment_tpl);
+                    		$comment_postbox.val("");
+                    	}
+                        
+                    }
+        			
+        			
+        		});
+        		
+        		return false;
+        		
+        	});
+    	});
+    	
     }
 
 
 })();
 
+function comment_reply(obj){
+	
+	$(".comments .comment-reply-submit").hide();
+	var $this=$(obj);
+	var $comment_body=$this.parents(".comments > .comment> .comment-body");
+	
+	var commentid=$this.parents(".comment").data("id");
+	
+	var $comment_reply_submit=$comment_body.find(".comment-reply-submit");
+	
+	if($comment_reply_submit.length){
+		$comment_reply_submit.show();
+	}else{
+		var comment_reply_box_tpl=$comment_body.parents(".comment-area").find(".comment-reply-box-tpl").html();
+		$comment_reply_submit=$(comment_reply_box_tpl);
+		$comment_body.append($comment_reply_submit);
+	}
+	$comment_reply_submit.find(".textbox").focus();
+	$comment_reply_submit.data("replyid",commentid);
+}
+
+function comment_submit(obj){
+	
+	Wind.use('noty', function () {
+		
+		var $this=$(obj);
+		
+		var $comment_reply_submit=$this.parents(".comment-reply-submit");
+		
+		var $reply_textbox=$comment_reply_submit.find(".textbox");
+		var reply_content=$reply_textbox.val();
+		
+		if(reply_content==''){
+			$reply_textbox.focus();
+			return;
+		}
+		
+		var $comment_body=$this.parents(".comments > .comment> .comment-body");
+		
+		var comment_tpl=$comment_body.parents(".comment-area").find(".comment-tpl").html();
+		
+		var $comment_tpl=$(comment_tpl);
+		
+		var replyid=$comment_reply_submit.data('replyid');
+		
+		var $comment=$(".comments [data-id='"+replyid+"']");
+		
+		var username=$comment.data("username");
+		
+		var comment_content="回复 "+username+":"+reply_content;
+		$comment_tpl.find(".comment-content .content").html(comment_content);
+		$comment_reply_submit.before($comment_tpl);
+		
+		var $comment_form=$this.parents(".comment-area").find(".comment-form");
+		
+		var comment_url=$comment_form.attr("action");
+		
+		var post_table=$comment_form.find("[name='post_table']").val();
+		var post_id=$comment_form.find("[name='post_id']").val();
+		
+		var uid=$comment.data("uid");
+		
+		$.post(comment_url,
+		{
+			post_table:post_table,
+			post_id:post_id,
+			to_uid:uid,
+			parentid:replyid,
+			content:reply_content,
+			url:encodeURIComponent(location.href)
+		},function(data){
+			if(data.status==0){
+				noty({text: data.info,
+            		type:'error',
+            		layout:'center'
+            	});
+				$comment_tpl.remove();
+			}
+			
+			if(data.status==1){
+				$comment_tpl.attr("data-id",data.data.id);
+				$reply_textbox.val('');
+			}
+			
+		},'json');
+		
+		
+		$comment_reply_submit.hide();
+		
+		
+		
+	});
+	
+}
+
 //重新刷新页面，使用location.reload()有可能导致重新提交
 function reloadPage(win) {
+	if(win){
+		
+	}else{
+		win=window;
+	}
     var location = win.location;
     location.href = location.pathname + location.search;
 }
@@ -667,24 +691,6 @@ function popPos(wrap) {
         top: top + (ie6 ? $(document).scrollTop() : 0),
         left: ($(window).width() - wrap.innerWidth()) / 2
     }).show();
-}
-
-
-/*
- * 头像的错误处理
- */
-function avatarError(avatars) {
-    avatars.each(function () {
-        this.onerror = function () {
-            this.onerror = null;
-            this.src = GV.URL.IMAGE_RES + '/face/face_' + $(this).data('type') + '.jpg'; //替代头像
-            this.setAttribute('alt', '默认头像');
-
-            //隐藏恢复默认头像
-            $('#J_set_def').hide();
-        }
-        this.src = this.src;
-    });
 }
 
 //新窗口打开

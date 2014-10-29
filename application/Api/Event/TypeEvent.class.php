@@ -9,12 +9,13 @@
 // | Author: 麦当苗儿 <zuojiazi.cn@gmail.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
 // TypeEvent.class.php 2013-02-27
+namespace Api\Event;
 
 class TypeEvent{
 	//登录成功，获取腾讯QQ用户信息
 	public function qq($token){
 		//import("ORG.ThinkSDK.ThinkOauth");
-		$qq   = ThinkOauth::getInstance('qq', $token);
+		$qq   = \ThinkOauth::getInstance('qq', $token);
 		$data = $qq->call('user/get_user_info');
 
 		if($data['ret'] == 0){
@@ -47,7 +48,7 @@ class TypeEvent{
 
 	//登录成功，获取新浪微博用户信息
 	public function sina($token){
-		$sina = ThinkOauth::getInstance('sina', $token);
+		$sina = \ThinkOauth::getInstance('sina', $token);
 		$data = $sina->call('users/show', "uid={$sina->openid()}");
 
 		if($data['error_code'] == 0){

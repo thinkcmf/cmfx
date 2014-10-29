@@ -1,0 +1,55 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<div class="wrap J_check_wrap">
+  	<ul class="nav nav-tabs">
+     <li><a href="{:U('menu/index')}">后台菜单</a></li>
+     <li><a href="{:U('menu/add')}">添加菜单</a></li>
+     <if condition="APP_DEBUG">
+     	<li class="active"><a href="{:U('menu/lists')}">所有菜单</a></li>
+     	<li><a href="{:U('menu/spmy_import_menu')}">恢复菜单</a></li>
+     	<li><a href="{:U('menu/spmy_export_menu')}">备份菜单</a></li>
+     </if>
+    </ul>
+   <div style="margin-bottom:10px;">
+   <a class="btn" type="submit" href="{:u('menu/spmy_getactions')}">导入新菜单</a>
+   </div>
+  <form class="form-horizontal J_ajaxForm" action="{:U('Menu/listorders')}" method="post">
+    <div class="table_list">
+      <table width="100%" class="table table-hover">
+        <thead>
+          <tr>
+            <th width="80">排序</th>
+            <th width="100">ID</th>
+            <th>菜单英文名称</th>
+            <th width="80">状态</th>
+            <th width="200">管理操作</th>
+          </tr>
+        </thead>
+        <foreach name="menus" item="vo">
+        	<tr>
+				<td><input name="listorders[{$vo.id}]" type="text" size="3" value="{$vo.listorder}" class="input input-order"></td>
+				<td>{$vo.id}</td>
+				<td>{$vo.name}:{$vo.app}/{$vo.model}/{$vo.action}</td>
+			    <td>
+			    	<if condition="$vo['status'] eq 1">
+			    	显示
+			    	<else/>
+			    	隐藏
+			    	</if>
+			    </td>
+				<td>
+					<a href="{:u('menu/edit',array('id'=>$vo['id']))}" target="_blank">修改</a> | 
+					<a class="J_ajax_del" href="{:u('menu/delete',array('id'=>$vo['id']))}">删除</a> 
+				</td>
+			</tr>
+        </foreach>
+      </table>
+    </div>
+    <div class="form-actions">
+        <button class="btn btn-primary btn_submit mr10 J_ajax_submit_btn" type="submit">排序</button>
+    </div>
+  </form>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+</body>
+</html>

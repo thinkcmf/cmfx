@@ -1,0 +1,146 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<div class="wrap jj">
+  <div class="common-form">
+    <form method="post" class="form-horizontal J_ajaxForm" action="{:U('nav/edit_post')}">
+      <input type="hidden" class="input" name="id" value="{$id}">
+      <div class="table_list">
+        <table cellpadding="2" cellspacing="2" class="table_form" width="100%">
+          <tbody>
+          	<tr>
+              <td width="180">菜单分类:</td>
+              <td>
+              	<select name="cid" id="navcid_select" class="normal_select">
+              		<foreach name="navcats" item="vo">
+              			<php>$navcid_selected=$navcid==$vo['navcid']?"selected":"";</php>
+		             	<option value="{$vo.navcid}" {$navcid_selected}>{$vo.name}</option>
+              		</foreach>
+              	</select>
+			  </td>
+            </tr>
+            <tr>
+              <td>上级:</td>
+              <td>
+              	<select name="parentid" class="normal_select">
+              		<option value="0">/</option>
+              		{$nav_trees}
+              	</select>
+			  </td>
+            </tr>
+            <tr>
+              <td>标签:</td>
+              <td><input type="text" class="input" name="label" value="{$label}"><span class="must_red">*</span></td>
+            </tr>
+            <tr>
+              <td>地址:</td>
+              <td>
+              	<input type="radio" name="nav" id="outlink">
+              	<input type="text" class="input" name="href" id="outlink_input" value="http://" />
+              	
+				<input type="radio" name="nav" id="selecturl">
+              	<select name="href" id="selecthref" class="normal_select">
+                  <option disabled="disabled">默认</option>
+                  <option value="home">&nbsp;&nbsp;&nbsp;&nbsp;首页</option>
+                  <foreach name="navs" item="vo">
+	            	<option disabled="disabled">{$vo.name}</option>
+	            	<foreach name="vo['items']" item="voo">
+	            		<option value='{$voo.rule}'>&nbsp;&nbsp;&nbsp;&nbsp;{$voo.label}</option>
+	            	</foreach>
+	              </foreach>
+                </select>
+                <!-- 
+              	<textarea readonly="readonly" rows="5" cols="57" id="href_input">{$href}</textarea>
+              	<input type="hidden" name="href" id="u_input" value='{$hrefold}' />
+              	 -->
+              </td>
+            </tr>
+            <tr>
+              <td>打开方式:</td>
+              <td>
+              	<select name="target">
+              		<option value="">默认方式</option>
+              		<option value="_blank">新窗口打开</option>
+              	</select>
+			  </td>
+            </tr>
+            <tr>
+              <td>图标:</td>
+              <td><input type="text" class="input" name="icon" value="{$icon}"></td>
+            </tr>
+            <tr>
+              <td>显示:</td>
+              <td>
+              	<select name="status" class="normal_select">
+              		<option value="1">显示</option>
+              		<option value="0">隐藏</option>
+              	</select>
+			  </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn_submit J_ajax_submit_btn">更新</button>
+            <a class="btn" href="__URL__">返回</a>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+<script>
+$(function(){
+	$("#navcid_select").change(function(){
+		location.href=location.href+"&cid="+$(this).val();
+	});
+	
+	$("#selecthref").click(function(){
+		checkChange(2);
+	});
+	$("input[name='href']").click(function(){
+		checkChange(1);
+	});
+	
+	var opt = $("#selecthref option[value='"+'{$hrefold}'+"']");
+	if(opt.length > 0){
+		opt.attr('selected','selected');
+		checkChange(2);
+	}else{
+		checkChange(1);
+		$('#outlink_input').val('{$hrefold}');
+	}
+	
+	function checkChange(i){
+		if(i==1){
+			//自动输入url
+			$('#outlink_input').attr('name','href');
+			$('#selecthref').removeAttr('name');
+			$('#outlink').attr({'checked':'checked', 'name':'nav'});
+		}else{
+			//选择链接url
+			$('#selecthref').attr('name','href');
+			$('#outlink_input').removeAttr('name');
+			$('#selecturl').attr({'checked':'checked', 'name':'nav'});
+		}
+	}
+	/*
+ 	Wind.use('ajaxForm','artDialog','iframeTools', function () {
+	 	$("#href_input").click(function(){
+	 		art.dialog.data('menu_url', $("#href_input").val());
+	 		art.dialog.open("{:u('nav/select')}", {
+                title: "选择链接地址",
+                close: function () {
+        			var checked_v = art.dialog.data('checked_v');
+        			var checked_u = art.dialog.data('checked_u');
+        			if (checked_v !== undefined) $('#href_input').val(checked_v);
+        			if (checked_u !== undefined) $('#u_input').val(checked_u);
+        		}
+            },false);
+		});
+    });
+	*/
+});
+
+
+</script>
+</body>
+</html>

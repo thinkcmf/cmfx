@@ -1,0 +1,66 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<div class="wrap jj">
+	<ul class="nav nav-tabs">
+        <li class="active"><a href="#A" data-toggle="tab">QQ互联登录设置</a></li>
+        <li><a href="#B" data-toggle="tab">新浪微博登录设置</a></li>
+  </ul>
+  
+  <div class="common-form">
+    <form method="post" class="J_ajaxForm" action="{:U('oauthadmin/setting_post')}">
+	    <div class="tabbable">
+	        <div class="tab-content">
+	          <div class="tab-pane active" id="A">
+	          	<table width="100%" cellpadding="2" cellspacing="2" >
+			        <tbody>
+			        	<tr>
+			        		<td width="120">APPkey</td>
+			        		<td><input type="text" class="input mr5" name="qq_key" value="{$Think.config.THINK_SDK_QQ.APP_KEY}" /></td>
+			        	</tr>
+			        	<tr>
+			        		<td>APPsecret</td>
+			        		<td><input type="text" class="input mr5" name="qq_sec" value="{$Think.config.THINK_SDK_QQ.APP_SECRET}" /></td>
+			        	</tr>
+			        	<tr>
+			        		<td colspan="2"><a href="http://connect.qq.com/" target="_blank">点击此处</a>获取QQ互联APPKey及APPsecret</td>
+			        	</tr>
+					</tbody>
+			    </table>
+	          </div>
+	          <div class="tab-pane" id="B">
+	          	<table width="100%">
+		        <tbody>
+		        	<tr>
+		        		<td width="120">APPkey</td>
+		        		<td><input type="text" class="input mr5" name="sina_key" value="{$Think.config.THINK_SDK_SINA.APP_KEY}" /></td>
+		        	</tr>
+		        	<tr>
+		        		<td>APPsecret</td>
+		        		<td><input type="text" class="input mr5" name="sina_sec" value="{$Think.config.THINK_SDK_SINA.APP_SECRET}" /></td>
+		        	</tr>
+		        	<tr>
+		        		<td>授权回调页：</td>
+		        		<td>{$callback_uri_root}sina</td>
+		        	</tr>
+		        	<tr>
+		        		<td>取消授权回调页：</td>
+		        		<td>{:sp_get_host()}</td>
+		        	</tr>
+		        	<tr>
+		        		<td colspan="2"><a href="http://open.weibo.com/" target="_blank">点击此处</a>获取新浪微博APPKey及APPsecret</td>
+		        	</tr>
+				</tbody>
+		    </table>
+	          </div>
+	        </div>
+	   </div>
+      <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn_submit J_ajax_submit_btn">确定</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+
+</body>
+</html>

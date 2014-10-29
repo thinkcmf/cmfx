@@ -1,0 +1,141 @@
+<admintpl file="header" />
+<body class="J_scroll_fixed">
+<div class="wrap J_check_wrap">
+  <ul class="nav nav-tabs">
+     <li class="active"><a href="javascript:;">所有文章</a></li>
+     <li><a href="{:U('AdminPost/add',array('term'=>empty($term['term_id'])?'':$term['term_id']))}"  target="_self">添加文章</a></li>
+  </ul>
+  <form class="well form-search" method="post" action="{:u('AdminPost/index')}">
+    <div class="search_type cc mb10">
+      <div class="mb10"> 
+        <span class="mr20">分类：
+        <select class="select_2" name="term">
+          	<option value='0' >全部</option>
+          	{$taxonomys}
+        </select>
+        &nbsp;&nbsp;时间：
+        <input type="text" name="start_time" class="input length_2 J_date" value="{$formget.start_time|default=''}" style="width:80px;" autocomplete="off">-<input type="text" class="input length_2 J_date" name="end_time" value="{$formget.end_time}" style="width:80px;" autocomplete="off">
+        
+        <!-- 
+        <select class="select_2" name="searchtype" style="width:70px;">
+          <option value='0' >标题</option>
+        </select>
+         -->
+               &nbsp; &nbsp;关键字：
+        <input type="text" class="input length_2" name="keyword" style="width:200px;" value="{$formget.keyword}" placeholder="请输入关键字...">
+        <input type="submit" class="btn" value="搜索"/>
+        </span>
+      </div>
+    </div>
+  </form>
+  <form class="J_ajaxForm" action="" method="post">
+    <div class="table_list">
+      <table width="100%" class="table table-hover">
+        <thead>
+	          <tr>
+	            <th width="16"><label><input type="checkbox" class="J_check_all" data-direction="x" data-checklist="J_check_x"></label></th>
+	            <th width="50">排序</th>
+	            <th>ID</th>
+	            <th>标题</th>
+	            <th>点击量</th>
+                <th width="50">摘要</th>
+                <th width="50">缩略图</th>
+	            <th width="80">发布人</th>
+	            <th width="120"><span>发布时间</span></th>
+	            <th width="50">状态</th>
+	            <th width="120">操作</th>
+	          </tr>
+        </thead>
+        	<php>$status=array("1"=>"已审核","0"=>"未审核");</php>
+        	<foreach name="posts" item="vo">
+	        	<tr>
+		            <td><input type="checkbox" class="J_check" data-yid="J_check_y" data-xid="J_check_x" name="ids[]" value="{$vo.tid}" ></td>
+		            <td><input name='listorders[{$vo.tid}]' class="input input-order"  type='text' size='3' value='{$vo.listorder}'></td>
+		            <td><a>{$vo.tid}</a></td>
+		            <td>
+		            	<a href="{:U('portal/article/index',array('id'=>$vo['tid']))}" target="_blank">
+		            		<span>{$vo.post_title}</span>
+		            	</a>
+		            </td>
+		            <td>{$vo.post_hits}</td>
+                    <td><php> $excerpt_status = empty($vo['post_excerpt'])?"未填写":'已填写';</php>{$excerpt_status}
+                    </td>
+    	            <td>
+    	            <php>$smeta=json_decode($vo['smeta'],true);</php>
+    	            	<if condition="!empty($smeta['thumb'])"> 
+    	            		<a href="{:sp_get_asset_upload_path($smeta['thumb'])}" target='_blank'>查看</a>
+						</if>
+    	            </td>
+		            <td>{$users[$vo['post_author']]['user_login']}</td>
+		            <td>{$vo.post_date}</td>
+		            <td>{$status[$vo['post_status']]}</td>
+		            <td>
+		            	<a href="javascript:open_iframe_dialog('{:u('comment/commentadmin/index',array('post_id'=>$vo['id']))}','评论列表')">查看评论</a> |
+		            	<a href="{:U('AdminPost/edit',array('term'=>empty($term['term_id'])?'':$term['term_id'],'id'=>$vo['id']))}" target="_blank" >修改</a>|
+		            	<a href="{:U('AdminPost/delete',array('term'=>empty($term['term_id'])?'':$term['term_id'],'tid'=>$vo['tid']))}" class="J_ajax_del" >删除</a>
+					</td>
+	          	</tr>
+          </foreach>
+          </table>
+          <div class="pagination">{$Page}</div>
+     
+    </div>
+    <div class="form-actions">
+        <label class="checkbox inline" for="check_all"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y" id="check_all">全选</label>                
+        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/listorders')}">排序</button>
+        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/check',array('check'=>1))}" data-subcheck="true" >审核</button>
+        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/check',array('uncheck'=>1))}" data-subcheck="true" >取消审核</button>
+        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/delete')}" data-subcheck="true" data-msg="你确定删除吗？">删除</button>
+        <button class="btn btn-primary" type="button" id="J_Content_remove">批量移动</button>
+      </div>
+  </form>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+<script>
+
+function refersh_window() {
+    var refersh_time = getCookie('refersh_time');
+    if (refersh_time == 1) {
+        window.location="{:u('AdminPost/index',$formget)}";
+    }
+}
+setInterval(function(){
+	refersh_window();
+}, 2000);
+$(function () {
+	setCookie("refersh_time",0);
+    Wind.use('ajaxForm','artDialog','iframeTools', function () {
+        //批量移动
+        $('#J_Content_remove').click(function (e) {
+            var str = 0;
+            var id = tag = '';
+            $("input[name='ids[]']").each(function () {
+                if ($(this).attr('checked')) {
+                    str = 1;
+                    id += tag + $(this).val();
+                    tag = ',';
+                }
+            });
+            if (str == 0) {
+				art.dialog.through({
+					id:'error',
+					icon: 'error',
+					content: '您没有勾选信息，无法进行操作！',
+					cancelVal: '关闭',
+					cancel: true
+				});
+                return false;
+            }
+            var $this = $(this);
+            art.dialog.open("__ROOT__/index.php?g=portal&m=AdminPost&a=move&ids=" + id, {
+                title: "批量移动",
+                width:"80%"
+            });
+        });
+    });
+});
+
+
+</script>
+</body>
+</html>

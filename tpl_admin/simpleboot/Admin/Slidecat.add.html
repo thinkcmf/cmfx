@@ -1,0 +1,37 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<div class="wrap jj">
+  <ul class="nav nav-tabs">
+     <li><a href="{:U('slidecat/index')}">幻灯片分类</a></li>
+     <li class="active"><a href="{:U('slidecat/add')}">添加幻灯片分类 </a></li>
+  </ul>
+  <div class="common-form">
+    <form method="post" class="form-horizontal J_ajaxForm" action="{:U('slidecat/add_post')}">
+      <div class="table_list">
+        <table cellpadding="2" cellspacing="2"  width="100%">
+          <tbody>
+            <tr>
+              <td>分类名称:</td>
+              <td><input type="text" class="input" name="cat_name" value=""><span class="must_red">*</span></td>
+            </tr>
+            <tr>
+              <td>分类标识:</td>
+              <td><input type="text" class="input" name="cat_idname" value=""><span class="must_red">*</span><span style="margin-left:15px;">英文字母+数字+“_”</span></td>
+            </tr>
+            <tr>
+              <td>备注:</td>
+              <td><textarea name="cat_remark" rows="5" cols="57">{$remark}</textarea></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="form-actions">
+           <button class="btn btn-primary btn_submit J_ajax_submit_btn"type="submit">添加</button>
+      		<a class="btn" href="__URL__">返回</a>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+</body>
+</html>

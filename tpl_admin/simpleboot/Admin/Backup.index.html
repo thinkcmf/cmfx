@@ -1,0 +1,57 @@
+<admintpl file="header"/>
+
+<body class="J_scroll_fixed">
+<div class="wrap jj">
+  <ul class="nav nav-tabs">
+     <li class="active"><a href="{:U('Admin/backup/index')}">数据备份</a></li>
+  </ul>
+  <div class="common-form">
+        <form action="{:U('Admin/backup/index_post')}" method="post">
+	        <div class="table_list">
+	        <table width="100%" cellspacing="0" class="table_form">
+	            <tr>
+	        	    <td width="150" align="right">每个分卷文件大小 :</td>
+	        	    <td>
+	                    <input type="text" name="sizelimit" class="input" value="{$sizelimit}" size="10"> K
+	                    &nbsp;&nbsp;(推荐10M以下)
+	                </td>
+	          	</tr>
+	            <tr>
+	        	    <td align="right">备份名称 :</td>
+	        	    <td><input type="text" name="backup_name" class="input" value="{$backup_name}"></td>
+	          	</tr>
+	            <tr>
+	        	    <td align="right">备份类型 :</td>
+	        	    <td>
+	                	<label><input type="radio" checked="checked" value="full" name="backup_type" onclick="javascript:$('#J_showtables').hide();"> 全部备份<font class="gray">备份数据库所有表</font> &nbsp;&nbsp;</label>
+	                    <label><input type="radio" value="custom" name="backup_type" onclick="javascript:$('#J_showtables').show();"> 自定义备份<font class="gray">根据自行选择备份数据表</font></label>
+	                </td>
+	          	</tr>
+	            <tr id="J_showtables">
+	                <td align="right">
+	                    <label><input name="selectall" type="checkbox" checked="checked" value="" onclick="javascript:$('.J_checkitem').attr('checked', this.checked);" /> 选择全部 :</label>
+	                </td>
+	                <td colspan="2">
+	                    <volist name="tables" id="val">
+	                        <label class="checkbox inline" style="width:200px;"><input name="backup_tables[{$val}]" type="checkbox" value="-1" checked="checked" class="J_checkitem" />&nbsp;&nbsp;{$val}</label>
+	                    </volist>
+	                </td>
+	            </tr>
+	          	<tr>
+	        	    <td></td>
+	        	    <td><input type="submit" name="dosubmit" value=" 开始备份数据 " class="btn btn_submit btn-primary"></td>
+	          	</tr>
+	        </table>
+	        </div>
+        </form>
+    </div>
+</div>
+<style type="text/css">
+#J_showtables{display:none;}
+.checkbox.inline{
+	margin-left: 10px;
+}
+</style>
+<script src="__ROOT__/statics/js/common.js"></script>
+</body>
+</html>

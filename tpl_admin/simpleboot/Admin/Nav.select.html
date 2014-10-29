@@ -1,0 +1,76 @@
+<admintpl file="header"/>
+<style>
+.navcat_tr{
+	background-color: #f9f9f9;
+}
+
+</style>
+<body class="J_scroll_fixed" style="min-width:500px;">
+<div class="wrap jj" style="padding:5px;">
+  <admintpl file="nav"/>
+  <div class="common-form">
+    <form method="post" class="J_ajaxForm" >
+      <!-- <div class="h_a">链接类型</div> -->
+      <div class="table_list">
+        <table cellpadding="0" cellspacing="0" class="table_form" width="100%">
+          <tbody>
+          	<tr>
+          		<td><input type="radio" name="nav" id="self"></td>
+              	<td>自定义链接</td>
+              	<td><input type="text" class="input" id="self_input" /></td>
+            </tr>
+          	<tr class="navcat_tr">
+	              <td colspan="3">首页</td>
+	        </tr>
+          	<tr>
+          		<td><input type="radio" name="nav" value="home" data-urlrule='home'></td>
+              	<td>首页</td>
+              	<td></td>
+            </tr>
+            <foreach name="navs" item="vo">
+            	<tr class="navcat_tr">
+	              <td colspan="3">{$vo.name}</td>
+	            </tr>
+            	<foreach name="vo['items']" item="voo">
+            		<tr>
+            			<td><input type="radio" name="nav" value="{$voo.url}" data-urlrule='{$voo.rule}'></td>
+		              	<td>{$voo.label}</td>
+		              	<td>{$voo.url}</td>
+		            </tr>
+            	</foreach>
+            </foreach>
+          </tbody>
+        </table>
+      </div>
+      <div class="">
+        <div class="btn_wrap_pd">
+          <button class="btn btn_submit mr10 J_ajax_submit_btn" type="submit" id="sure">确定</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+<script>
+
+
+$(function(){
+	Wind.use('ajaxForm','artDialog','iframeTools', function () {
+		if (art.dialog.data('menu_url')) {
+			$("input[name='nav'][value='"+art.dialog.data('menu_url')+"']").attr('checked','checked');
+		};
+    });
+	
+	$('#sure').click(function(){
+		var checked = $("input:checked"),
+			checked_v = checked.val(),
+			checked_u = checked.attr('data-urlrule');
+		art.dialog.data('checked_v', checked_v);
+		art.dialog.data('checked_u', checked_u);
+		art.dialog.close();
+	});
+});
+</script>
+
+</body>
+</html>

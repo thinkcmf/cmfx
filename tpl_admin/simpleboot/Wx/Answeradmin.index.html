@@ -1,0 +1,54 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<style>
+.input-xlarge{width:100%;}
+</style>
+<div class="wrap jj">
+  <ul class="nav nav-tabs">
+     <li class="active"><a href="{:U('Wx/answeradmin/index')}">默认回复</a></li>
+  </ul>
+  <div class="common-form">
+      <div class="h_a">关注用户欢迎词</div>
+      <div class="table_list">
+       <form method="post" class="J_ajaxForm" action="{:U('Wx/answeradmin/index_post')}">
+        <table cellpadding="0" cellspacing="0" class="table table-hover" width="100%">
+          <tbody>
+            <tr>
+				<td><textarea class="input-xlarge" id="welcome" name="ANSWER_WELCOME" rows="3">{:wx_val('ANSWER_WELCOME')}</textarea></td>
+			</tr>
+			<tr>
+				<td><button class="btn btn_submit btn-primary mr10 J_ajax_submit_btn" type="submit">更新</button></td>
+			</tr>
+           </tbody>
+        </table>
+        </form>
+      </div>
+      <div class="h_a">默认回复</div>
+      <div class="table_list">
+       <form method="post" class="J_ajaxForm" action="{:U('Wx/answeradmin/index_post')}">
+        <table cellpadding="0" cellspacing="0" class="table table-hover" width="100%">
+          <tbody>
+            <tr>
+				<td><textarea class="" id="ANSWER_DEFAULT_1" name="ANSWER_DEFAULT_1" rows="3"
+					>{:wx_val('ANSWER_DEFAULT_1')}</textarea></td>
+				<td><textarea class="" id="ANSWER_DEFAULT_2" name="ANSWER_DEFAULT_2" rows="3"
+					>{:wx_val('ANSWER_DEFAULT_2')}</textarea></td>
+				<td><textarea class="" id="ANSWER_DEFAULT_3" name="ANSWER_DEFAULT_3" rows="3"
+					>{:wx_val('ANSWER_DEFAULT_3')}</textarea></td>
+				<td><textarea class="" id="ANSWER_DEFAULT_4" name="ANSWER_DEFAULT_4" rows="3"
+					>{:wx_val('ANSWER_DEFAULT_4')}</textarea></td>
+			</tr>
+			<tr>
+				<td colspan="4"><button class="btn btn_submit btn-primary mr10 J_ajax_submit_btn" type="submit">更新</button></td>
+			</tr>
+          </tbody>
+        </table>
+        </form>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+
+</body>
+</html>

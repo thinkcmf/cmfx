@@ -1,0 +1,53 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<div class="wrap J_check_wrap">
+   <ul class="nav nav-tabs">
+     <li class="active"><a href="{:U('user/index')}">管理员</a></li>
+     <li><a href="{:U('user/add')}">添加管理员</a></li>
+  </ul>
+   <div class="table_list">
+   <table width="100%" cellspacing="0" class="table table-hover">
+        <thead>
+          <tr>
+            <th width="50">ID</th>
+            <th>用户名</th>
+            <th>所属角色</th>
+            <th>最后登录IP</th>
+            <th>最后登录时间</th>
+            <th>E-mail</th>
+            <th width="120">管理操作</th>
+          </tr>
+        </thead>
+        <tbody>
+        <foreach name="users" item="vo">
+          <tr>
+            <td>{$vo.id}</td>
+            <td>{$vo.user_login}</td>
+            <td>{$roles[$vo['role_id']]['name']}</td>
+            <td>{$vo.last_login_ip}</td>
+            <td>
+	            <if condition="$vo['last_login_time'] eq 0">
+	            该用户还没登陆过
+	            <else />
+	            {$vo.last_login_time}
+	            </if>
+            </td>
+            <td>{$vo.user_email}</td>
+            <td>
+	            <if condition="$vo['id'] eq 1">
+	            <font color="#cccccc">修改</font> | 
+	            <font color="#cccccc">删除</font>
+	            <else />
+	            <a href='{:U("user/edit",array("id"=>$vo["id"]))}'>修改</a> | 
+	            <a class="J_ajax_del" href="{:U('user/delete',array('id'=>$vo['id']))}">删除</a>
+	            </if>
+            </td>
+          </tr>
+         </foreach>
+        </tbody>
+      </table>
+   </div>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+</body>
+</html>

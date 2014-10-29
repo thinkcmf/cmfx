@@ -1,0 +1,125 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<style>
+#url_ul{display:none; min-width:135px; background-color:#fcfcfc; border:1px solid #ccc; max-height:250px; overflow-y:auto;}
+#url_ul span{display:block; cursor:pointer; padding:2px; color:#000;}
+#url_ul span:hover{background-color:#F0F0F0;}
+#url_ul span.disabled{color:#999; cursor:default;}
+</style>
+<div class="wrap jj">
+  <ul class="nav nav-tabs">
+     <li><a href="{:U('menuadmin/index')}">后台菜单</a></li>
+     <li class="active"><a href="{:U('menuadmin/add')}">添加菜单</a></li>
+  </ul>
+  <div class="common-form">
+    <form method="post" class="form-horizontal J_ajaxForm" action="{:U('Menuadmin/add_post')}">
+      <div class="h_a">菜单信息</div>
+      <div class="table_list">
+        <table cellpadding="2" cellspacing="2" class="table_form" width="100%">
+          <tbody>
+            <tr>
+              <td width="180">上级:</td>
+              <td><select name="parentid" class="normal_select">
+                  <option value="0">作为一级菜单</option>
+                  <foreach name="menu_list" item="vo">
+                     <option value="{$vo['menu_id']}">{$vo['menu_name']}</option>
+                  </foreach>
+                </select></td>
+            </tr>
+            <tr>
+              <td>显示名称:</td>
+              <td><input type="text" class="input" name="name" value="" id="name" maxlength="8"></td>
+            </tr>
+            <tr>
+              <td>类型:</td>
+              <td><select name="type">
+                  <option value="view" selected>超链接</option>
+                  <option value="click">点击事件</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td>URL</td>
+              
+              <td>
+	              	<php>
+		              	$host = (is_ssl() ? 'https' : 'http')."://".$_SERVER['HTTP_HOST'];
+		            </php>
+              		
+	              <div id="urlsetbox" style="position:relative; padding:0;">
+	              		<input type="text" class="input" name="url" id="url_input" value="" autocomplete="off">
+	              		<div id="url_ul" style="position:absolute;left:0;top:30px;" class="hide"> 
+							  <span data="{$host}">首页</span>
+			                  <foreach name="navs" item="vo">
+				            	<span class="disabled">{$vo.name}</span>
+				            	<foreach name="vo['items']" item="voo">
+				            		<span data='{$host}{$voo.url}'>&nbsp;&nbsp;&nbsp;&nbsp;{$voo.label}</span>
+				            	</foreach>
+				              </foreach>
+						</div>
+	              </div>
+              </td>
+            </tr>
+            <tr>
+              <td>点击事件key</td>
+              <td><input type="text" class="input disabled" name="key" value="" disabled="disabled"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="form-actions">
+           <button class="btn btn-primary btn_submit J_ajax_submit_btn"type="submit">添加</button>
+      		<a class="btn" href="__URL__">返回</a>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/wind.js"></script>
+<script src="__ROOT__/statics/js/common.js"></script>
+<script>
+$(function(){
+	var _parentid = $('select[name="parentid"]'),
+		_name = $('#name'),
+		_type = $("select[name='type']"),
+		_url = $("input[name='url']"),
+		_key = $("input[name='key']");
+	_parentid.change(function(){
+		if($(this).val()==0){
+			if(_name.val().length > 4) alert('一级菜单最多4个汉字!');
+		}else{
+			if(_name.val().length > 7) alert('二级菜单最多7个汉字!');
+		}
+	});
+	_name.change(function(){
+		if(_parentid.val()==0){
+			if($(this).val().length > 4) alert('一级菜单最多4个汉字!');
+		}else{
+			if($(this).val().length > 7) alert('二级菜单最多7个汉字!');
+		}
+	});
+	_type.change(function(){
+		if($(this).val()=='view'){
+			_url.removeAttr('disabled').removeClass('disabled');
+			_key.attr('disabled', 'disabled').addClass('disabled');
+		}else{
+			_key.removeAttr('disabled').removeClass('disabled');
+			_url.attr('disabled', 'disabled').addClass('disabled');
+		}
+	});
+	
+	$("#url_input").click(function(e){
+		e.stopPropagation();
+		$('#url_ul').css('display','block');
+	});
+	$(document).click(function(){
+		$('#url_ul').css('display','none');
+    });
+	$('#url_ul span').not('.disabled').click(function(e){
+		e.stopPropagation();
+		$("#url_input").val($(this).attr("data"));
+		$('#url_ul').css('display','none');
+	});
+});
+</script>
+</body>
+</html>

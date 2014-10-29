@@ -1,0 +1,28 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<div class="wrap jj">
+  <ul class="nav nav-tabs">
+     <li class="active"><a href="{:U('User/userinfo')}">修改信息</a></li>
+     <li><a href="{:U('setting/password')}">修改密码</a></li>
+  </ul>
+  <div class="common-form">
+    <form class="form-horizontal J_ajaxForm" method="post" action="{:U('User/userinfo_post')}">
+        <fieldset>
+          <div class="control-group">
+            <label class="control-label" for="input01">昵称:</label>
+            <div class="controls">
+              <input type="hidden" class="input" name="id" value="{$id}">
+              <input type="text" class="input-xlarge" name="user_nicename" value="{$user_nicename}">
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn_submit  J_ajax_submit_btn">更新</button>
+          </div>
+        </fieldset>
+      </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+<admintpl file="footer"/>
+</body>
+</html>

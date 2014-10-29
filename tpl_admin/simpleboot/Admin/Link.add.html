@@ -1,0 +1,48 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<div class="wrap jj">
+  <ul class="nav nav-tabs">
+     <li><a href="{:U('link/index')}">友情链接</a></li>
+     <li class="active"><a href="{:U('link/add')}">添加链接</a></li>
+  </ul>
+  <div class="common-form">
+    <form method="post" class="form-horizontal J_ajaxForm" action="{:U('link/add_post')}">
+      <div class="table_list">
+        <table cellpadding="2" cellspacing="2" width="100%">
+          <tbody>
+            <tr>
+              <td width="180">链接名称:</td>
+              <td><input type="text" class="input" name="link_name" value=""><span class="must_red">*</span></td>
+            </tr>
+            <tr>
+              <td>链接地址:</td>
+              <td><input type="text" class="input" name="link_url"  value=""><span class="must_red">*</span></td>
+            </tr>
+            <tr>
+              <td>打开方式:</td>
+              <td>
+              	<select name="link_target" class="normal_select">
+              		<foreach name="targets" item="vo">
+              			<option value="{$key}">{$vo}</option>
+              		</foreach>
+              	</select>
+              </td>
+            </tr>
+            <tr>
+              <td>描述:</td>
+              <td><textarea name="link_description" rows="5" cols="57"></textarea></td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+      <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn_submit J_ajax_submit_btn">添加</button>
+            <a class="btn" href="__URL__">返回</a>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<div class="wrap jj">
+  <div class="common-form">
+    <form method="post" class="J_ajaxForm" action="#">
+      <div class="table_list">
+	    <table class="table table-hover">
+	        <thead>
+	          <tr>
+	            <th align='center'>ID</th>
+	            <th>用户名</th>
+	            <th>昵称</th>
+	            <th>头像</th>
+	            <th>E-mail</th>
+	            <th>注册时间</th>
+	            <th>最后登录时间</th>
+	            <th>最后登录IP</th>
+	            <th>状态</th>
+	            <th align='center'>操作</th>
+	          </tr>
+	        </thead>
+	        <tbody>
+	        	<php>$user_statuses=array("0"=>"已拉黑","1"=>"正常","2"=>"未验证")</php>
+	        	<foreach name="lists" item="vo">
+	        	<tr>
+	            <td align='center'>{$vo.id}</td>
+	            <td>{$vo.user_login|default='第三方用户'}</td>
+	            <td>{$vo.user_nicename|default='未填写'}</td>
+	            <td><img width="25" height="25" src="{:U('user/public/avatar',array('id'=>$vo['id']))}" /></td>
+	            <td>{$vo.user_email}</td>
+	            <td>{$vo.create_time}</td>
+	            <td>{$vo.last_login_time}</td>
+	            <td>{$vo.last_login_ip}</td>
+	            <td>{$user_statuses[$vo['user_status']]}</td>
+	            <td align='center'>
+		            <a href="{:U('indexadmin/ban',array('id'=>$vo['id']))}" class="J_ajax_dialog_btn" data-msg="您确定要拉黑此用户吗？">拉黑</a>|
+		            <a href="{:U('indexadmin/cancelban',array('id'=>$vo['id']))}" class="J_ajax_dialog_btn" data-msg="您确定要启用此用户吗？">启用</a>
+		        </td>
+	          	</tr>
+	          	</foreach>
+			</tbody>
+	      </table>
+	      <div class="pagination">{$page}</div>
+  </div>
+    </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+<script>
+</script>
+</body>
+</html>

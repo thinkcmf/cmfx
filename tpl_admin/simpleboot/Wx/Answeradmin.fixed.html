@@ -1,0 +1,161 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<div class="wrap jj">
+  <ul class="nav nav-tabs">
+     <li class="active"><a href="{:U('answeradmin/fixed')}">固定回复</a></li>
+  </ul>
+  <div class="common-form">
+    <form method="post" class="J_ajaxForm" action="">
+      <div class="table_list">
+        <table cellpadding="0" cellspacing="0" class="table table-hover" width="100%">
+          <thead>
+		<tr>
+			<th></th>
+			<th>预设</th>
+			<th>回复内容</th>
+			<th>操作</th>
+		</tr>
+		</thead>
+		<tbody>
+			<volist name="result" id="vo">
+			<tr rel="{$vo.id}">
+				<td><input type="checkbox" name="check[]" ></td>
+				<td><input type="text" class="input" name="" value="{$vo['key']}" ></td>
+				<td><input type="text" class="input" name="" value="{$vo['value']}" ></td>
+				<td><a href="javascript:void(0)" onclick="answer_del(this);">删除</a>|
+					<a href="javascript:void(0)" onclick="answer_submit(this);">确定</a></td>
+			</tr>
+			</volist>
+			<tr>
+				<td><input type="checkbox" name="check[]" ></td>
+				<td><input type="text" name="" class="input" value="" ></td>
+				<td><input type="text" name="" class="input" value="" ></td>
+				<td><a href="javascript:void(0)" onclick="answer_del(this);">删除</a>|
+					<a href="javascript:void(0)" onclick="answer_submit(this);">确定</a></td>
+			</tr>
+			<tr>
+				<td><input type="checkbox" onclick="answer_check_all();" id="check_box" /></td>
+				<td>
+					<a href="javascript:void(0)" onclick="answer_del_all();">删除</a> | 
+					<a href="javascript:void(0)" onclick="answer_add();">添加项</a>
+				</td>
+				<td colspan="2"></td>
+			</tr>
+		</tbody>
+        </table>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+<script type="text/javascript">
+	Wind.use("artDialog", function () {
+		window.ask = function(con, func){
+			art.dialog({
+		        content: con,
+		        icon: 'question',
+		        lock: true,
+		        ok:function(){
+		        	func();
+		        }
+		    });
+		}
+	});
+		
+  	//全选
+	function answer_check_all(){
+		if($("#check_box").is(':checked')){
+			$("tbody [type='checkbox']").not('#check_box').each(function(){
+				$(this).attr('checked', true);
+			});
+		}else{
+			$("tbody [type='checkbox']").not('#check_box').each(function(){
+				$(this).attr("checked", false);
+			});
+		}
+	}
+	//删除选中项
+	function answer_del_all(){
+		var _id = '';
+		$("tbody [type='checkbox']:checked").not('#check_box').each(function(){
+			_id += $(this).parents('tr').attr('rel')+',';
+		});
+		ask('删除全部选中项？',function(){
+	        	$.post('{:U("Wx/answeradmin/fixed_post")}',
+						{id:_id},
+					function(data){
+						if(data.status==1){
+							$(this).parents('tr').remove();
+						}else{
+							alert(data.info);
+						}
+				},'json');
+	    });
+	}
+	//新增项
+	var insert_tr='<tr><td><input type="checkbox" name="check[]" ></td>';
+		insert_tr+='<td><input type="text" name="" class="input" value="" ></td>';
+		insert_tr+='<td><input type="text" name="" class="input" value="" ></td>';
+		insert_tr+='<td><a href="javascript:void(0)" onclick="answer_del(this)">删除</a>|';
+		insert_tr+='<a href="javascript:void(0)" onclick="answer_submit(this)">确定</a></td></tr>';
+	function answer_add(){
+		$('table tr').last().before(insert_tr);
+	}
+	//单项删除
+	function answer_del(o){
+		ask('确定删除当前项吗？',function(){
+	        	var _id = $(o).parents('tr').attr('rel');
+				$.post("{:U('Wx/answeradmin/fixed_post')}",
+						{id:_id},
+					function(data){
+						if(data.status==1){
+							$(o).parents('tr').remove();
+						}else{
+							alert(data.info);
+						}
+				},'json');
+	    });
+	}
+	//确定
+	function answer_submit(o){
+		var p=$(o).parents('tr'),
+			_k=p.find(':text').eq(0).val(),
+			_v=p.find(':text').eq(1).val();
+		$.post("{:U('Wx/Answeradmin/fixed_post')}",
+			{k:_k, v:_v},
+		function(data){
+			if(data.status==1){
+				document.location.reload();
+			}else{
+				alert(data.info);
+			}
+		},'json');
+	}	
+</script>
+<style type="text/css">
+	#tip_keys{
+		position:absolute;
+		border:1px solid #ccc;
+		padding:2px 4px;
+		background-color:#fcfcfc;
+		display:none; 
+		width:150px; 
+		line-height:30px;
+	}
+	#tip_keys span{
+		color:#444;
+		display:block;
+		width:100%;
+		border-bottom:1px dashed #eee;
+	}
+	#tip_keys span:hover{
+		font-weight:bold;
+		border-bottom:1px dashed #aaa;
+		color:#000;
+	}
+</style>
+<div id="tip_keys">
+	<span></span>
+</div>
+</body>
+</html>

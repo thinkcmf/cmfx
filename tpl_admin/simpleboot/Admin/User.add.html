@@ -1,0 +1,50 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<div class="wrap jj">
+  <ul class="nav nav-tabs">
+     <li><a href="{:U('user/index')}">管理员</a></li>
+     <li class="active"><a href="{:U('user/add')}">添加管理员</a></li>
+  </ul>
+  <div class="common-form">
+    <form method="post" class="form-horizontal J_ajaxForm" action="{:U('User/add_post')}">
+      <div class="table_list">
+        <table cellpadding="2" cellspacing="2" class="table_form" width="100%">
+          <tbody>
+            <tr>
+              <td width="180">用户名:</td>
+              <td><input type="text" class="input" name="user_login" value=""></td>
+            </tr>
+            <tr>
+              <td>密码:</td>
+              <td><input type="password" class="input" name="user_pass" value="" ></td>
+            </tr>
+            <tr>
+              <td>邮箱:</td>
+              <td><input type="text" class="input" name="user_email" value=""></td>
+            </tr>
+            <tr>
+              <td>角色:</td>
+              <td>
+ 				<select name="role_id"  class="normal_select">
+ 					<foreach name="roles" item="vo">
+ 						<option value="{$vo.id}">{$vo.name}</option>
+ 					</foreach>
+                  
+                </select>
+				</td>
+            </tr>
+           
+            
+          </tbody>
+        </table>
+      </div>
+      <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn_submit J_ajax_submit_btn">添加</button>
+            <a class="btn" href="__URL__">返回</a>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+</body>
+</html>

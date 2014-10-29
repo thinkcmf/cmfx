@@ -1,0 +1,80 @@
+<admintpl file="header" />
+<body class="J_scroll_fixed">
+<div class="wrap J_check_wrap">
+  <ul class="nav nav-tabs">
+     <li class="active"><a href="{:U('slide/index')}">所有幻灯片</a></li>
+     <li><a href="{:U('slide/add')}">添加幻灯片</a></li>
+  </ul>
+  <form class="well form-search" method="post" id="cid_form">
+    <div class="search_type cc mb10">
+      <div class="mb10"> 
+        <select class="select_2" name="cid"style="width:100px;" id="selected_cid">
+          <option value=''>全部</option>
+          <foreach name="categorys" item="vo">
+          	<php>$cid_select=$vo['cid']===$slide_cid?"selected":"";</php>
+          	<option value="{$vo.cid}" {$cid_select}>{$vo.cat_name}</option>
+          </foreach>
+        </select>
+      </div>
+    </div>
+  </form>
+  <form class="J_ajaxForm" action="" method="post">
+    <div class="table_list">
+      <table width="100%" class="table table-hover">
+        <thead>
+	          <tr>
+	            <th width="16"><label><input type="checkbox" class="J_check_all" data-direction="x" data-checklist="J_check_x"></label></th>
+	            <th width="50">排序</th>
+	            <th width="100">ID</th>
+	            <th>标题</th>
+	            <th>描述</th>
+	            <th width="120">操作</th>
+	          </tr>
+        </thead>
+        	<foreach name="slides" item="vo">
+	        	<tr>
+		            <td><input type="checkbox" class="J_check" data-yid="J_check_y" data-xid="J_check_x" name="ids[]" value="{$vo.slide_id}"></td>
+		            <td><input name='listorders[{$vo.slide_id}]' class="input input-order mr5"  type='text' size='3' value='{$vo.listorder}'></td>
+		            <td>{$vo.slide_id}</td>
+		            <td>{$vo.slide_name}</td>
+    	            <td><php> $excerpt = mb_substr($vo[slide_des], 0, 48, 'utf-8'); echo $excerpt;</php></td>
+                    <td><php> $smeta = substr($vo[slide_url], 0, 10); if(strlen($smeta)>= 10){echo "有";}</php></td>
+                    <td><php> $smeta = substr($vo[slide_pic], 0, 32); if(strlen($smeta)>= 30){echo "<a href='$smeta' target='_blank'>查看</a>";}</php></td>
+		            <td>
+		            	<a href="{:U('slide/edit',array('id'=>$vo['slide_id']))}">修改</a>|
+		            	<a href="{:U('slide/delete',array('id'=>$vo['slide_id']))}" class="J_ajax_del" >删除</a>
+					</td>
+	          	</tr>
+          </foreach>
+          </table>
+      <div class="p10"><div class="pages">  </div> </div>
+     
+    </div>
+    <div class="form-actions">
+            <label class="checkbox inline" for="check_all"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y" id="check_all">全选</label>  
+	        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('slide/listorders')}">排序</button>              
+	        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:U('slide/delete')}" data-subcheck="true" >删除</button>
+      </div>
+  </form>
+</div>
+<script src="__ROOT__/statics/js/common.js?"></script>
+<script>
+setCookie('refersh_time', 0);
+function refersh_window() {
+    var refersh_time = getCookie('refersh_time');
+    if (refersh_time == 1) {
+        window.location.reload();
+    }
+}
+setInterval(function(){
+	refersh_window()
+}, 3000);
+$(function () {
+	$("#selected_cid").change(function(){
+		$("#cid_form").submit();
+	});
+});
+
+</script>
+</body>
+</html>

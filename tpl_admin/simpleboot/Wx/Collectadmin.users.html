@@ -1,0 +1,80 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<div class="wrap jj">
+   <ul class="nav nav-tabs">
+     <li class="active"><a href="{:U('collectadmin/users')}">关注趋势</a></li>
+  </ul>
+  <div class="common-form">
+    <div id="container" style="width: 800px; height: 400px; margin: 0 auto"></div>
+  </div>
+</div>
+<script type="text/javascript" src="__ROOT__/statics/js/jquery142.js"></script>
+<js href="__ROOT__/statics/highcharts/highcharts.js" />
+<js href="__ROOT__/statics/highcharts/modules/exporting.js" />
+<script type="text/javascript">
+var chart;
+$(document).ready(function() {
+	chart = new Highcharts.Chart({
+		chart: {
+            renderTo: 'container',
+            defaultSeriesType: 'line'
+        },
+        title: {
+            text: '用户关注度趋势如图'
+        },
+        subtitle: {
+    		text: '最近一周统计',
+    		align: 'center'
+        },
+        credits: {
+			enabled: false //去掉highcharts.com
+		},
+        xAxis: {
+            categories: ['6天前','5天前','4天前','3天前','2天前','1天前','今天']
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: '人/次'
+            },
+            plotLines: [{
+				value: 0,
+				width: 1,
+				color: '#808080'
+			}]
+        },
+        legend: {
+            backgroundColor: '#FFFFFF'
+        },
+        tooltip: {
+            formatter: function() {
+                return ''+
+                    this.series.name +': '+ this.y;
+            }
+        },
+        /* 叠加
+        plotOptions: {
+            series: {
+                stacking: 'normal'
+            }
+        },
+        */
+        series: [{
+            name: '关注数量总数',
+            data: [<php> echo join(',',array_reverse($rst['usercount'][0]));</php>]
+        },{
+            name: '新增关注数量',
+            data: [
+            	<php> echo join(',',array_reverse($rst['subscribe'][0]));</php>
+            ]
+        },{
+            name: '取消关注数量',
+            data: [
+				<php> echo join(',',array_reverse($rst['unsubscribe'][0]));</php>
+			]
+        }]
+	});
+});
+</script>
+</body>
+</html>

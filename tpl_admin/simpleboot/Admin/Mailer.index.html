@@ -1,0 +1,50 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<div class="wrap jj">
+	<ul class="nav nav-tabs">
+     <li class="active"><a href="#" data-toggle="tab">SMTP配置</a></li>
+  </ul>
+  <div class="common-form">
+    <form method="post" class="form-horizontal J_ajaxForm" action="{:U('Admin/mailer/index_post')}">
+	    <table cellpadding="2" cellspacing="2">
+	        <tbody>
+	        	<tr>
+	        		<td width="100">邮箱地址:</td>
+	        		<td>
+	        			<input type="text" class="input mr5" name="address" value="{$Think.config.SP_MAIL_ADDRESS}" />
+	        			<span class="must_red">*</span>
+	        		</td>
+	        	</tr>
+	        	<tr>
+	        		<td>SMTP服务器:</td>
+	        		<td>
+	        			<input type="text" class="input mr5" name="smtp" value="{$Think.config.SP_MAIL_SMTP}" />
+	        			<span class="must_red">*</span>
+	        		</td>
+	        	</tr>
+	        	<tr>
+	        		<td>邮箱登录帐号:</td>
+	        		<td>
+	        			<input type="text" class="input mr5" name="loginname" value="{$Think.config.SP_MAIL_LOGINNAME}" />
+	        			<span class="must_red">*</span>
+	        		</td>
+	        	</tr>
+	        	<tr>
+	        		<td>邮箱登录密码:</td>
+	        		<td>
+	        			<input type="password" class="input mr5" name="password" value="{$Think.config.SP_MAIL_PASSWORD}" />
+	        			<span class="must_red">*</span>
+	        		</td>
+	        	</tr>
+			</tbody>
+	    </table>
+  		<div class="form-actions">
+            <button type="submit" class="btn btn-primary btn_submit  J_ajax_submit_btn">确定</button>
+       </div>
+    </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+
+</body>
+</html>

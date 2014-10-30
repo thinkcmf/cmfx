@@ -31,7 +31,7 @@ $configs= array(
 		'VAR_CONTROLLER'        =>  'm',    // 默认控制器获取变量
 		'VAR_ACTION'            =>  'a',    // 默认操作获取变量
 		
-		'APP_USE_NAMESPACE'     =>   true, // 关闭应用的命名空间定义
+		'APP_USE_NAMESPACE'     =>   false, // 关闭应用的命名空间定义
 		'APP_AUTOLOAD_LAYER'    =>  'Action,Model', // 模块自动加载的类库后缀
 		
 		'SP_TMPL_PATH'     		=> 'tpl/',       // 前台模板文件根目录

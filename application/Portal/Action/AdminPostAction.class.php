@@ -258,6 +258,78 @@ class AdminPostAction extends AdminbaseAction {
 		}
 	}
 	
+	function top(){
+		if(isset($_POST['ids']) && $_GET["top"]){
+			$data["istop"]=1;
+				
+			$tids=join(",",$_POST['ids']);
+			$objectids=$this->terms_relationship->field("object_id")->where("tid in ($tids)")->select();
+			$ids=array();
+			foreach ($objectids as $id){
+				$ids[]=$id["object_id"];
+			}
+			$ids=join(",", $ids);
+			if ( $this->posts_obj->where("id in ($ids)")->save($data)!==false) {
+				$this->success("置顶成功！");
+			} else {
+				$this->error("置顶失败！");
+			}
+		}
+		if(isset($_POST['ids']) && $_GET["untop"]){
+				
+			$data["istop"]=0;
+			$tids=join(",",$_POST['ids']);
+			$objectids=$this->terms_relationship->field("object_id")->where("tid in ($tids)")->select();
+			$ids=array();
+			foreach ($objectids as $id){
+				$ids[]=$id["object_id"];
+			}
+			$ids=join(",", $ids);
+			if ( $this->posts_obj->where("id in ($ids)")->save($data)) {
+				$this->success("取消置顶成功！");
+			} else {
+				$this->error("取消置顶失败！");
+			}
+		}
+	}
+	
+	function recommend(){
+		if(isset($_POST['ids']) && $_GET["recommend"]){
+			$data["recommended"]=1;
+	
+			$tids=join(",",$_POST['ids']);
+			$objectids=$this->terms_relationship->field("object_id")->where("tid in ($tids)")->select();
+			$ids=array();
+			foreach ($objectids as $id){
+				$ids[]=$id["object_id"];
+			}
+			$ids=join(",", $ids);
+			if ( $this->posts_obj->where("id in ($ids)")->save($data)!==false) {
+				$this->success("推荐成功！");
+			} else {
+				$this->error("推荐失败！");
+			}
+		}
+		if(isset($_POST['ids']) && $_GET["unrecommend"]){
+	
+			$data["recommended"]=0;
+			$tids=join(",",$_POST['ids']);
+			$objectids=$this->terms_relationship->field("object_id")->where("tid in ($tids)")->select();
+			$ids=array();
+			foreach ($objectids as $id){
+				$ids[]=$id["object_id"];
+			}
+			$ids=join(",", $ids);
+			if ( $this->posts_obj->where("id in ($ids)")->save($data)) {
+				$this->success("取消推荐成功！");
+			} else {
+				$this->error("取消推荐失败！");
+			}
+		}
+	}
+	
+	
+	
 	
 	function move(){
 		if(IS_POST){

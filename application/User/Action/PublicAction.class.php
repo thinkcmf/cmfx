@@ -15,8 +15,6 @@ class PublicAction extends HomeBaseAction {
 		$find_user=$users_model->field('avatar')->where(array("id"=>$id))->find();
 		
 		$avatar=$find_user['avatar'];
-		
-		$image = new \Think\Image();
 		$should_show_default=false;
 		
 		if(empty($avatar)){
@@ -28,13 +26,16 @@ class PublicAction extends HomeBaseAction {
 				$avatar_dir=C("UPLOADPATH")."avatar/";
 				$avatar=$avatar_dir.$avatar;
 				if(file_exists($avatar)){
-					$image->open($avatar);
-					$mime= $image->mime();
-					header("Content-type: $mime");
-					$image->save(null);
+					$imageInfo = getimagesize($avatar);
+					if ($imageInfo !== false) {
+						$mime=$imageInfo['mime'];
+						header("Content-type: $mime");
+						echo file_get_contents($avatar);
+					}else{
+						$should_show_default=true;
+					}
 				}else{
 					$should_show_default=true;
-				
 				}
 			}
 			
@@ -42,10 +43,13 @@ class PublicAction extends HomeBaseAction {
 		}
 		
 		if($should_show_default){
-			$image->open("statics/images/headicon.png");
-			$mime= $image->mime();
-			header("Content-type: $mime");
-			$image->save(null);
+			$imageInfo = getimagesize("statics/images/headicon.png");
+			if ($imageInfo !== false) {
+				$mime=$imageInfo['mime'];
+				header("Content-type: $mime");
+				echo file_get_contents("statics/images/headicon.png");
+			}
+			
 		}
 		exit();
 		

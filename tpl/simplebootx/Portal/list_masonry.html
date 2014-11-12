@@ -35,18 +35,18 @@
                             
                       	<if condition="!empty($smeta['thumb'])">
 						<div class="item-image">
-                      		<a href="{:U('article/index',array('id'=>$vo['tid']))}">
+                      		<a href="{:leuu('article/index',array('id'=>$vo['tid']))}">
 								<img  src="{:sp_get_asset_upload_path($smeta['thumb'])}" class="img-responsive" alt="{$vo.post_title}">
 							</a>
 						</div>
                       	<else/>
                       	</if>
                      
-                            <h3><a href="{:U('article/index',array('id'=>$vo['tid']))}">{$vo.post_title}</a></h3>
+                            <h3><a href="{:leuu('article/index',array('id'=>$vo['tid']))}">{$vo.post_title}</a></h3>
                             <hr>
                         </div>
                         <div class="body">
-                        	<a href="{:U('article/index',array('id'=>$vo['tid']))}">{$vo.post_excerpt}</a>
+                        	<a href="{:leuu('article/index',array('id'=>$vo['tid']))}">{$vo.post_excerpt}</a>
                         </div>
                         <div class="footer">
                         	<div class="pull-left"><span class="meta">{$vo.post_date}</span></div>

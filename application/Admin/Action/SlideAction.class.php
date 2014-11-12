@@ -18,13 +18,17 @@ class SlideAction extends AdminbaseAction{
 				array("cid"=>"0","cat_name"=>"默认分类"),
 		);
 		$categorys=$this->slidecat_obj->field("cid,cat_name")->where("cat_status!=0")->select();
-		$categorys=array_merge($cates,$categorys);
+		if($categorys){
+			$categorys=array_merge($cates,$categorys);
+		}else{
+			$categorys=$cates;
+		}
 		$this->assign("categorys",$categorys);
-		$where="slide_status!=0";
+		$where="";
 		$cid=0;
 		if(isset($_POST['cid']) && $_POST['cid']!=""){
 			$cid=$_POST['cid'];
-			$where="slide_status!=0 and slide_cid=$cid";
+			$where="slide_cid=$cid";
 		}
 		$this->assign("slide_cid",$cid);
 		$slides=$this->slide_obj->where($where)->order("listorder ASC")->select();
@@ -97,6 +101,27 @@ class SlideAction extends AdminbaseAction{
 			}
 		}
 		
+	}
+	
+	function toggle(){
+		if(isset($_POST['ids']) && $_GET["display"]){
+			$ids = implode(",", $_POST['ids']);
+			$data['slide_status']=1;
+			if ($this->slide_obj->where("slide_id in ($ids)")->save($data)!==false) {
+				$this->success("显示成功！");
+			} else {
+				$this->error("显示失败！");
+			}
+		}
+		if(isset($_POST['ids']) && $_GET["hide"]){
+			$ids = implode(",", $_POST['ids']);
+			$data['slide_status']=0;
+			if ($this->slide_obj->where("slide_id in ($ids)")->save($data)!==false) {
+				$this->success("隐藏成功！");
+			} else {
+				$this->error("隐藏失败！");
+			}
+		}
 	}
 	
 	//排序

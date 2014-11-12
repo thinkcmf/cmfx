@@ -101,6 +101,10 @@ class HomeBaseAction extends AppframeAction {
 		parent::display($this->parseTemplate($templateFile), $charset, $contentType);
 	}
 	
+	public function fetch($templateFile='',$content='',$prefix=''){
+		return parent::fetch($this->parseTemplate($templateFile),$content,$prefix);
+	}
+	
 	/**
 	 * 自动定位模板文件
 	 * @access protected

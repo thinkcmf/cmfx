@@ -1,7 +1,6 @@
 <?php
 namespace Common\Action;
 use Think\Action;
-use Think\Controller;
 /**
  * Appframe项目公共Action
  */

@@ -11,7 +11,6 @@ class RegisterAction extends HomeBaseAction {
 	}
 	
 	function doregister(){
-	
     	
 		if($_SESSION['_verify_']['verify']!=strtolower($_POST['verify'])){
     		$this->error("验证码错误！");
@@ -38,6 +37,12 @@ class RegisterAction extends HomeBaseAction {
     	$stripChar = '?<*.>\'"';
     	if(preg_match('/['.$stripChar.']/is', $username)==1){
     		$this->error('用户名中包含'.$stripChar.'等非法字符！');
+    	}
+    	
+    	$banned_usernames=explode(",", sp_get_cmf_settings("banned_usernames"));
+    	
+    	if(in_array($username, $banned_usernames)){
+    		$this->error("此用户名禁止使用！");
     	}
     	
     	if(strlen($password) < 5 || strlen($password) > 20){

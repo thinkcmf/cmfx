@@ -35,7 +35,7 @@ define('SPSTATIC',   'statics/');
 //定义缓存存放路径
 define("RUNTIME_PATH", SITE_PATH . "/data/runtime/");
 //版本号
-define("SIMPLEWIND_CMF_VERSION", 'X1.1.0');
+define("SIMPLEWIND_CMF_VERSION", 'X1.2.0');
 
 if(function_exists('saeAutoLoader') || isset($_SERVER['HTTP_BAE_ENV_APPID'])){
 	

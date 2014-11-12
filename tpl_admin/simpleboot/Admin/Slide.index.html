@@ -20,6 +20,9 @@
   </form>
   <form class="J_ajaxForm" action="" method="post">
     <div class="table_list">
+    	<php>
+        		$status=array("1"=>"显示","0"=>"隐藏");
+        </php>
       <table width="100%" class="table table-hover">
         <thead>
 	          <tr>
@@ -28,6 +31,9 @@
 	            <th width="100">ID</th>
 	            <th>标题</th>
 	            <th>描述</th>
+	            <th>链接</th>
+	            <th>图片</th>
+	            <th width="45">状态</th>
 	            <th width="120">操作</th>
 	          </tr>
         </thead>
@@ -37,9 +43,16 @@
 		            <td><input name='listorders[{$vo.slide_id}]' class="input input-order mr5"  type='text' size='3' value='{$vo.listorder}'></td>
 		            <td>{$vo.slide_id}</td>
 		            <td>{$vo.slide_name}</td>
-    	            <td><php> $excerpt = mb_substr($vo[slide_des], 0, 48, 'utf-8'); echo $excerpt;</php></td>
-                    <td><php> $smeta = substr($vo[slide_url], 0, 10); if(strlen($smeta)>= 10){echo "有";}</php></td>
-                    <td><php> $smeta = substr($vo[slide_pic], 0, 32); if(strlen($smeta)>= 30){echo "<a href='$smeta' target='_blank'>查看</a>";}</php></td>
+    	            <td><php> $slide_des = mb_substr($vo['slide_des'], 0, 48, 'utf-8'); echo $slide_des;</php></td>
+                    <td>{$vo.slide_url}</td>
+                    <td>
+	                    <php>
+	                    if(!empty($vo['slide_pic'])){
+	                    </php>
+	                    <a href="{:sp_get_asset_upload_path($vo['slide_pic'])}" target="_blank">查看</a>
+	                    <php>}</php>
+                    </td>
+                    <td>{$status[$vo['slide_status']]}</td>
 		            <td>
 		            	<a href="{:U('slide/edit',array('id'=>$vo['slide_id']))}">修改</a>|
 		            	<a href="{:U('slide/delete',array('id'=>$vo['slide_id']))}" class="J_ajax_del" >删除</a>
@@ -52,7 +65,9 @@
     </div>
     <div class="form-actions">
             <label class="checkbox inline" for="check_all"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y" id="check_all">全选</label>  
-	        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('slide/listorders')}">排序</button>              
+	        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('slide/listorders')}">排序</button>
+	        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('slide/toggle',array('display'=>1))}" data-subcheck="true" >显示</button>
+        	<button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('slide/toggle',array('hide'=>1))}" data-subcheck="true" >隐藏</button>
 	        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:U('slide/delete')}" data-subcheck="true" >删除</button>
       </div>
   </form>

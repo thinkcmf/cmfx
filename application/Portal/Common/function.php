@@ -82,6 +82,7 @@ function sp_sql_posts_paged($tag,$pagesize=20,$pagetpl='{first}{prev}{liststart}
 	$PageParam = C("VAR_PAGE");
 	$page = new \Page($totalsize,$pagesize);
 	$page->setLinkWraper("li");
+	$page->__set("PageParam", $PageParam);
 	$page->SetPager('default', $pagetpl, array("listlong" => "6", "first" => "首页", "last" => "尾页", "prev" => "上一页", "next" => "下一页", "list" => "*", "disabledclass" => ""));
 	$posts=$rs->alias("a")->join($join)->join($join2)->field($field)->where($where)->order($order)->limit($page->firstRow . ',' . $page->listRows)->select();
 
@@ -197,7 +198,7 @@ function sp_get_child_terms($term_id){
 
 	$term_id=intval($term_id);
 	$term_obj = M("Terms");
-	$terms=$term_obj->where("status=1 and parent=$term_id")->select();
+	$terms=$term_obj->where("status=1 and parent=$term_id")->order("listorder asc")->select();
 	
 	return $terms;
 }

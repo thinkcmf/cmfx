@@ -9,7 +9,7 @@ class AdAction extends AdminbaseAction{
 		$this->ad_obj = D("Ad");
 	}
 	function index(){
-		$ads=$this->ad_obj->where("status!=0")->select();
+		$ads=$this->ad_obj->select();
 		$this->assign("ads",$ads);
 		$this->display();
 	}
@@ -60,12 +60,32 @@ class AdAction extends AdminbaseAction{
 	 */
 	function delete(){
 		$id = I("get.id",0,"intval");
-		$data['status']=0;
 		$data['ad_id']=$id;
-		if ($this->ad_obj->save($data)!==false) {
+		if ($this->ad_obj->delete()!==false) {
 			$this->success("删除成功！");
 		} else {
 			$this->error("删除失败！");
+		}
+	}
+	
+	function toggle(){
+		if(isset($_POST['ids']) && $_GET["display"]){
+			$ids = implode(",", $_POST['ids']);
+			$data['status']=1;
+			if ($this->ad_obj->where("ad_id in ($ids)")->save($data)!==false) {
+				$this->success("显示成功！");
+			} else {
+				$this->error("显示失败！");
+			}
+		}
+		if(isset($_POST['ids']) && $_GET["hide"]){
+			$ids = implode(",", $_POST['ids']);
+			$data['status']=0;
+			if ($this->ad_obj->where("ad_id in ($ids)")->save($data)!==false) {
+				$this->success("隐藏成功！");
+			} else {
+				$this->error("隐藏失败！");
+			}
 		}
 	}
 	

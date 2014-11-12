@@ -46,7 +46,7 @@
 		        	<ul class="unstyled">
 		        		<foreach name="hot_articles" item="vo">
 		        			<php>$top=$key<3?"top3":"";</php>
-							<li class="{$top}"><i>{$key+1}</i><a title="{$vo.post_title}" href="{:U('article/index',array('id'=>$vo['tid']))}">{$vo.post_title}</a></li>
+							<li class="{$top}"><i>{$key+1}</i><a title="{$vo.post_title}" href="{:leuu('article/index',array('id'=>$vo['tid']))}">{$vo.post_title}</a></li>
 						</foreach>
 					</ul>
 				</div>

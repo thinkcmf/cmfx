@@ -44,6 +44,30 @@ function sp_get_host(){
 }
 
 /**
+ * 获取前台模板根目录
+ */
+function sp_get_theme_path(){
+	// 获取当前主题名称
+	$tmpl_path=C("SP_TMPL_PATH");
+	$theme      =    C('SP_DEFAULT_THEME');
+	if(C('TMPL_DETECT_THEME')) {// 自动侦测模板主题
+		$t = C('VAR_TEMPLATE');
+		if (isset($_GET[$t])){
+			$theme = $_GET[$t];
+		}elseif(cookie('think_template')){
+			$theme = cookie('think_template');
+		}
+		if(!file_exists($tmpl_path."/".$theme)){
+			$theme  =   C('SP_DEFAULT_THEME');
+		}
+		cookie('think_template',$theme,864000);
+	}
+
+	return __ROOT__.'/'.$tmpl_path.$theme."/";
+}
+
+
+/**
  * 获取用户头像相对网站根目录的地址
  */
 function sp_get_user_avatar_url($avatar){
@@ -130,6 +154,25 @@ function sp_clear_cache(){
 				$global_mc->flush();
 			}
 			
+			$no_need_delete=array("THINKCMF_DYNAMIC_CONFIG");
+			$kv = new SaeKV();
+			// 初始化KVClient对象
+			$ret = $kv->init();
+			// 循环获取所有key-values
+			$ret = $kv->pkrget('', 100);
+			while (true) {
+				foreach($ret as $key =>$value){
+                    if(!in_array($key, $no_need_delete)){
+                    	$kv->delete($key);
+                    }
+                }
+				end($ret);
+				$start_key = key($ret);
+				$i = count($ret);
+				if ($i < 100) break;
+				$ret = $kv->pkrget('', 100, $start_key);
+			}
+			
 		}
 	
 }
@@ -207,6 +250,30 @@ function get_site_options(){
 	$site_options['site_tongji']=htmlspecialchars_decode($site_options['site_tongji']);
 	return $site_options;	
 }
+
+function sp_get_site_options(){
+	get_site_options();
+}
+
+
+function sp_get_cmf_settings($key=""){
+	$cmf_settings = F("cmf_settings");
+	if(empty($cmf_settings)){
+		$options_obj = M("Options");
+		$option = $options_obj->where("option_name='cmf_settings'")->find();
+		if($option){
+			$cmf_settings = json_decode($option['option_value'],true);
+		}else{
+			$cmf_settings = array();
+		}
+		F("cmf_settings", $cmf_settings);
+	}
+	if(!empty($key)){
+		return $cmf_settings[$key];
+	}
+	return $cmf_settings;
+}
+
 
 
 
@@ -312,7 +379,7 @@ function _sp_get_menu_datas($id){
 		if(strpos($hrefold,"{")){//序列 化的数据
 			$href=unserialize(stripslashes($nav['href']));
 			$default_app=strtolower(C("DEFAULT_MODULE"));
-			$href=strtolower(U($href['action'],$href['param']));
+			$href=strtolower(leuu($href['action'],$href['param']));
 			$g=C("VAR_MODULE");
 			$href=preg_replace("/\/$default_app\//", "/",$href);
 			$href=preg_replace("/$g=$default_app&/", "",$href);
@@ -681,7 +748,7 @@ function sp_content_page($content,$pagetpl='{first}{prev}&nbsp;{liststart}{list}
 
 function sp_getad($ad){
 	$ad_obj= M("Ad");
-	$ad=$ad_obj->field("ad_content")->where("ad_name='$ad'")->find();
+	$ad=$ad_obj->field("ad_content")->where("ad_name='$ad' and status=1")->find();
 	return htmlspecialchars_decode($ad['ad_content']);
 }
 
@@ -693,7 +760,7 @@ function sp_getad($ad){
 function sp_getslide($slide){
 	$slide_obj= M("SlideCat");
 	$join = "".C('DB_PREFIX').'slide as b on '.C('DB_PREFIX').'slide_cat.cid =b.slide_cid';
-	return $slide_obj->join($join)->where("cat_idname='$slide'")->order("listorder ASC")->select();
+	return $slide_obj->join($join)->where("cat_idname='$slide' and slide_status=1")->order("listorder ASC")->select();
 
 }
 
@@ -766,7 +833,9 @@ function sp_get_relative_url($url){
 			return "";
 		}else{
 			$url=substr($url, $pos+1);
-			$url=preg_replace("/^".__ROOT__."\//", "", $url);
+			$root=preg_replace("/^\//", "", __ROOT__);
+			$root=str_replace("/", "\/", $root);
+			$url=preg_replace("/^".$root."\//", "", $url);
 			return $url;
 		}
 	}
@@ -801,4 +870,273 @@ function sp_get_users($tag="field:*;limit:0,8;order:create_time desc;",$where=ar
 	
 	$comments=$comments_model->field($field)->where($where)->order($order)->limit($limit)->select();
 	return $comments;
+}
+
+/**
+ * URL组装 支持不同URL模式
+ * @param string $url URL表达式，格式：'[模块/控制器/操作#锚点@域名]?参数1=值1&参数2=值2...'
+ * @param string|array $vars 传入的参数，支持数组和字符串
+ * @param string $suffix 伪静态后缀，默认为true表示获取配置值
+ * @param boolean $domain 是否显示域名
+ * @return string
+ */
+function leuu($url='',$vars='',$suffix=true,$domain=false){
+	$routes=sp_get_routes();
+	if(empty($routes)){
+		return U($url,$vars,$suffix,$domain);
+	}else{
+		// 解析URL
+		$info   =  parse_url($url);
+		$url    =  !empty($info['path'])?$info['path']:ACTION_NAME;
+		if(isset($info['fragment'])) { // 解析锚点
+			$anchor =   $info['fragment'];
+			if(false !== strpos($anchor,'?')) { // 解析参数
+				list($anchor,$info['query']) = explode('?',$anchor,2);
+			}
+			if(false !== strpos($anchor,'@')) { // 解析域名
+				list($anchor,$host)    =   explode('@',$anchor, 2);
+			}
+		}elseif(false !== strpos($url,'@')) { // 解析域名
+			list($url,$host)    =   explode('@',$info['path'], 2);
+		}
+		
+		// 解析子域名
+		//TODO?
+		
+		// 解析参数
+		if(is_string($vars)) { // aaa=1&bbb=2 转换成数组
+			parse_str($vars,$vars);
+		}elseif(!is_array($vars)){
+			$vars = array();
+		}
+		if(isset($info['query'])) { // 解析地址里面参数 合并到vars
+			parse_str($info['query'],$params);
+			$vars = array_merge($params,$vars);
+		}
+		
+		$vars_src=$vars;
+		
+		ksort($vars);
+		
+		// URL组装
+		$depr       =   C('URL_PATHINFO_DEPR');
+		$urlCase    =   C('URL_CASE_INSENSITIVE');
+		if('/' != $depr) { // 安全替换
+			$url    =   str_replace('/',$depr,$url);
+		}
+		// 解析模块、控制器和操作
+		$url        =   trim($url,$depr);
+		$path       =   explode($depr,$url);
+		$var        =   array();
+		$varModule      =   C('VAR_MODULE');
+		$varController  =   C('VAR_CONTROLLER');
+		$varAction      =   C('VAR_ACTION');
+		$var[$varAction]       =   !empty($path)?array_pop($path):ACTION_NAME;
+		$var[$varController]   =   !empty($path)?array_pop($path):CONTROLLER_NAME;
+		if($maps = C('URL_ACTION_MAP')) {
+			if(isset($maps[strtolower($var[$varController])])) {
+				$maps    =   $maps[strtolower($var[$varController])];
+				if($action = array_search(strtolower($var[$varAction]),$maps)){
+					$var[$varAction] = $action;
+				}
+			}
+		}
+		if($maps = C('URL_CONTROLLER_MAP')) {
+			if($controller = array_search(strtolower($var[$varController]),$maps)){
+				$var[$varController] = $controller;
+			}
+		}
+		if($urlCase) {
+			$var[$varController]   =   parse_name($var[$varController]);
+		}
+		$module =   '';
+		
+		if(!empty($path)) {
+			$var[$varModule]    =   array_pop($path);
+		}else{
+			if(C('MULTI_MODULE')) {
+				if(MODULE_NAME != C('DEFAULT_MODULE') || !C('MODULE_ALLOW_LIST')){
+					$var[$varModule]=   MODULE_NAME;
+				}
+			}
+		}
+		if($maps = C('URL_MODULE_MAP')) {
+			if($_module = array_search(strtolower($var[$varModule]),$maps)){
+				$var[$varModule] = $_module;
+			}
+		}
+		if(isset($var[$varModule])){
+			$module =   $var[$varModule];
+			unset($var[$varModule]);
+		}
+		
+		if(C('URL_MODEL') == 0) { // 普通模式URL转换
+			$url        =   __APP__.'?'.http_build_query(array_reverse($var));
+			
+			if($urlCase){
+				$url    =   strtolower($url);
+			}
+			if(!empty($vars)) {
+				$vars   =   http_build_query($vars);
+				$url   .=   '&'.$vars;
+			}
+		}else{ // PATHINFO模式或者兼容URL模式
+			
+			if(empty($var[C('VAR_MODULE')])){
+				$var[C('VAR_MODULE')]=MODULE_NAME;
+			}
+				
+			$module_controller_action=strtolower(implode($depr,array_reverse($var)));
+			
+			$has_route=false;
+			
+			if(isset($routes[$module_controller_action])){
+				$urlrules=$routes[$module_controller_action];
+				
+				$empty_query_urlrule=array();
+				
+				foreach ($urlrules as $ur){
+					$intersect=array_intersect($ur['query'], $vars);
+					if($intersect){
+						$vars=array_diff_key($vars,$ur['query']);
+						$url= $ur['url'];
+						$has_route=true;
+						break;
+					}
+					if(empty($empty_query_urlrule) && empty($ur['query'])){
+						$empty_query_urlrule=$ur;
+					}
+				}
+				
+				if(!empty($empty_query_urlrule)){
+					$url=$empty_query_urlrule['url'];
+					foreach ($vars as $key =>$value){
+						if(strpos($url, ":$key")!==false){
+							$url=str_replace(":$key", $value, $url);
+							unset($vars[$key]);
+						}
+					}
+					$url=str_replace(array("\d","$"), "", $url);
+					$has_route=true;
+				}
+				
+				if($has_route){
+					if(!empty($vars)) { // 添加参数
+						foreach ($vars as $var => $val){
+							if('' !== trim($val))   $url .= $depr . $var . $depr . urlencode($val);
+						}
+					}
+					
+					$url =__APP__."/".$url ;
+					
+				}
+				
+			
+			}
+			
+			if(!$has_route){
+				$module =   defined('BIND_MODULE') ? '' : $module;
+				$url    =   __APP__.'/'.($module?$module.MODULE_PATHINFO_DEPR:'').implode($depr,array_reverse($var));
+					
+				if($urlCase){
+					$url    =   strtolower($url);
+				}
+					
+				if(!empty($vars)) { // 添加参数
+					foreach ($vars as $var => $val){
+						if('' !== trim($val))   $url .= $depr . $var . $depr . urlencode($val);
+					}
+				}
+			}
+			
+			
+			if($suffix) {
+				$suffix   =  $suffix===true?C('URL_HTML_SUFFIX'):$suffix;
+				if($pos = strpos($suffix, '|')){
+					$suffix = substr($suffix, 0, $pos);
+				}
+				if($suffix && '/' != substr($url,-1)){
+					$url  .=  '.'.ltrim($suffix,'.');
+				}
+			}
+		}
+		
+		if(isset($anchor)){
+			$url  .= '#'.$anchor;
+		}
+		if($domain) {
+			$url   =  (is_ssl()?'https://':'http://').$domain.$url;
+		}
+		
+		return $url;
+	}
+}
+
+function UU($url='',$vars='',$suffix=true,$domain=false){
+	return leuu($url,$vars,$suffix,$domain);
+}
+
+function sp_get_routes($refresh=false){
+	$routes=F("routes");
+	
+	if(!empty($routes) && !$refresh){
+		
+		return $routes;
+	}
+	$routes=M("Route")->where("status=1")->order("listorder asc")->select();
+	$module_routes=array();
+	$cache_routes=array();
+	foreach ($routes as $er){
+		$full_url=$er['full_url'];
+			
+		// 解析URL
+		$info   =  parse_url($full_url);
+			
+		$path       =   explode("/",$info['path']);
+		if(count($path)!=3){//必须是完整 url
+			continue;
+		}
+			
+		$module=strtolower($path[0]);
+			
+		// 解析参数
+		$vars = array();
+		if(isset($info['query'])) { // 解析地址里面参数 合并到vars
+			parse_str($info['query'],$params);
+			$vars = array_merge($params,$vars);
+		}
+			
+		$vars_src=$vars;
+			
+		ksort($vars);
+			
+		$path=$info['path'];
+			
+		$full_url=$path.(empty($vars)?"":"?").http_build_query($vars);
+			
+		$url=$er['url'];
+			
+		$cache_routes[$path][]=array("query"=>$vars,"url"=>$url);
+			
+		$module_routes[$module][$url]=$full_url;
+			
+	}
+	F("routes",$cache_routes);
+	$route_dir=SITE_PATH."/data/conf/route/";
+	foreach ($module_routes as $module => $routes){
+		
+		if(!file_exists($route_dir)){
+			mkdir($route_dir);
+		}
+			
+		$route_file=$route_dir."$module.php";
+			
+		$route_ruels=array();
+			
+		file_put_contents($route_file, "<?php\treturn " . stripslashes(var_export($routes, true)) . ";");
+	}
+	
+	return $cache_routes;
+	
+	
 }

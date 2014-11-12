@@ -167,20 +167,20 @@ CREATE TABLE `sp_menu` (
   `id` smallint(6) unsigned NOT NULL AUTO_INCREMENT,
   `parentid` smallint(6) unsigned NOT NULL DEFAULT '0',
   `app` char(20) NOT NULL COMMENT '应用名称app',
-  `model` char(20) NOT NULL DEFAULT '',
-  `action` char(20) NOT NULL DEFAULT '',
-  `data` char(50) NOT NULL DEFAULT '',
-  `type` tinyint(1) NOT NULL DEFAULT '0',
-  `status` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `name` varchar(50) NOT NULL DEFAULT '',
-  `icon` varchar(50) DEFAULT NULL,
-  `remark` varchar(255) NOT NULL DEFAULT '',
+  `model` char(20) NOT NULL COMMENT '控制器',
+  `action` char(20) NOT NULL COMMENT '操作名称',
+  `data` char(50) NOT NULL COMMENT '额外参数',
+  `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '菜单类型  1：权限认证+菜单；0：只作为菜单',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '状态，1显示，0不显示',
+  `name` varchar(50) NOT NULL COMMENT '菜单名称',
+  `icon` varchar(50) DEFAULT NULL COMMENT '菜单图标',
+  `remark` varchar(255) NOT NULL COMMENT '备注',
   `listorder` smallint(6) unsigned NOT NULL DEFAULT '0' COMMENT '排序ID',
   PRIMARY KEY (`id`),
   KEY `status` (`status`),
   KEY `parentid` (`parentid`),
   KEY `model` (`model`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=564 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=575 ;
 
 
 
@@ -338,6 +338,19 @@ CREATE TABLE `sp_role_user` (
 -- 导出表中的数据 `sp_role_user`
 -- 
 
+
+--
+-- 表的结构 `sp_route`
+--
+
+CREATE TABLE IF NOT EXISTS `sp_route` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '路由id',
+  `full_url` varchar(255) DEFAULT NULL COMMENT '完整url， 如：portal/list/index?id=1',
+  `url` varchar(255) DEFAULT NULL COMMENT '实际显示的url',
+  `listorder` int(5) DEFAULT '0' COMMENT '排序，优先级，越小优先级越高',
+  `status` tinyint(1) DEFAULT '1' COMMENT '状态，1：启用 ;0：不启用',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -580,8 +593,6 @@ INSERT INTO `sp_menu` VALUES (421, 319, 'Admin', 'Backup', 'restore', '', 1, 1, 
 INSERT INTO `sp_menu` VALUES (420, 265, 'Admin', 'Ad', 'delete', '', 1, 0, '删除广告', '', '', 1000);
 INSERT INTO `sp_menu` VALUES (419, 265, 'Admin', 'Ad', 'edit', '', 1, 0, '编辑广告', '', '', 1000);
 INSERT INTO `sp_menu` VALUES (418, 265, 'Admin', 'Ad', 'add', '', 1, 0, '添加广告', '', '', 1000);
-INSERT INTO `sp_menu` VALUES (482, 288, 'Api', 'Oauthadmin', 'delete', '', 1, 0, '删除第三方用户', '', '', 1000);
-INSERT INTO `sp_menu` VALUES (483, 287, 'Member', 'Indexadmin', 'delete', '', 1, 0, '删除用户', '', '', 1000);
 INSERT INTO `sp_menu` VALUES (496, 319, 'Admin', 'Backup', 'index', '', 1, 1, '数据备份', '', '', 0);
 INSERT INTO `sp_menu` VALUES (497, 418, 'Admin', 'Ad', 'add_post', '', 1, 0, '提交添加', '', '', 0);
 INSERT INTO `sp_menu` VALUES (498, 419, 'Admin', 'Ad', 'edit_post', '', 1, 0, '提交编辑', '', '', 0);
@@ -634,6 +645,15 @@ INSERT INTO `sp_menu` VALUES (560, 557, 'Comment', 'Commentadmin', 'check', '', 
 INSERT INTO `sp_menu` VALUES (561, 287, 'User', 'Indexadmin', 'ban', '', 1, 0, '拉黑会员', '', '', 0);
 INSERT INTO `sp_menu` VALUES (562, 287, 'User', 'Indexadmin', 'cancelban', '', 1, 0, '启用会员', '', '', 0);
 INSERT INTO `sp_menu` VALUES (563, 288, 'User', 'Oauthadmin', 'delete', '', 1, 0, '第三方用户解绑', '', '', 0);
+INSERT INTO `sp_menu` VALUES (564, 284, 'Admin', 'Route', 'index', '', 1, 0, '路由列表', '', '', 0);
+INSERT INTO `sp_menu` VALUES (565, 284, 'Admin', 'Route', 'add', '', 1, 0, '路由添加', '', '', 0);
+INSERT INTO `sp_menu` VALUES (566, 565, 'Admin', 'Route', 'add_post', '', 1, 0, '路由添加提交', '', '', 0);
+INSERT INTO `sp_menu` VALUES (567, 284, 'Admin', 'Route', 'edit', '', 1, 0, '路由编辑', '', '', 0);
+INSERT INTO `sp_menu` VALUES (568, 567, 'Admin', 'Route', 'edit_post', '', 1, 0, '路由编辑提交', '', '', 0);
+INSERT INTO `sp_menu` VALUES (569, 284, 'Admin', 'Route', 'delete', '', 1, 0, '路由删除', '', '', 0);
+INSERT INTO `sp_menu` VALUES (572, 284, 'Admin', 'Route', 'ban', '', 1, 0, '路由禁止', '', '', 0);
+INSERT INTO `sp_menu` VALUES (573, 284, 'Admin', 'Route', 'open', '', 1, 0, '路由启用', '', '', 0);
+INSERT INTO `sp_menu` VALUES (574, 284, 'Admin', 'Route', 'listorders', '', 1, 0, '路由排序', '', '', 0);
 
 -- --------------------------------------------------------
 

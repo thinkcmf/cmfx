@@ -37,16 +37,20 @@
 	            <th width="50">排序</th>
 	            <th>ID</th>
 	            <th>标题</th>
-	            <th>点击量</th>
+	            <th width="45">点击量</th>
                 <th width="50">摘要</th>
                 <th width="50">缩略图</th>
 	            <th width="80">发布人</th>
 	            <th width="120"><span>发布时间</span></th>
-	            <th width="50">状态</th>
+	            <th width="45">状态</th>
 	            <th width="120">操作</th>
 	          </tr>
         </thead>
-        	<php>$status=array("1"=>"已审核","0"=>"未审核");</php>
+        	<php>
+        		$status=array("1"=>"已审核","0"=>"未审核");
+        		$top_status=array("1"=>"已置顶","0"=>"未置顶");
+        		$recommend_status=array("1"=>"已推荐","0"=>"未推荐");
+        	</php>
         	<foreach name="posts" item="vo">
 	        	<tr>
 		            <td><input type="checkbox" class="J_check" data-yid="J_check_y" data-xid="J_check_x" name="ids[]" value="{$vo.tid}" ></td>
@@ -68,7 +72,7 @@
     	            </td>
 		            <td>{$users[$vo['post_author']]['user_login']}</td>
 		            <td>{$vo.post_date}</td>
-		            <td>{$status[$vo['post_status']]}</td>
+		            <td>{$status[$vo['post_status']]}<br>{$top_status[$vo['istop']]}<br>{$recommend_status[$vo['recommended']]}</td>
 		            <td>
 		            	<a href="javascript:open_iframe_dialog('{:u('comment/commentadmin/index',array('post_id'=>$vo['id']))}','评论列表')">查看评论</a> |
 		            	<a href="{:U('AdminPost/edit',array('term'=>empty($term['term_id'])?'':$term['term_id'],'id'=>$vo['id']))}" target="_blank" >修改</a>|
@@ -85,6 +89,10 @@
         <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/listorders')}">排序</button>
         <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/check',array('check'=>1))}" data-subcheck="true" >审核</button>
         <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/check',array('uncheck'=>1))}" data-subcheck="true" >取消审核</button>
+        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/top',array('top'=>1))}" data-subcheck="true" >置顶</button>
+        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/top',array('untop'=>1))}" data-subcheck="true" >取消置顶</button>
+        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/recommend',array('recommend'=>1))}" data-subcheck="true" >推荐</button>
+        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/recommend',array('unrecommend'=>1))}" data-subcheck="true" >取消推荐</button>
         <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/delete')}" data-subcheck="true" data-msg="你确定删除吗？">删除</button>
         <button class="btn btn-primary" type="button" id="J_Content_remove">批量移动</button>
       </div>

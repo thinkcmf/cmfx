@@ -1,6 +1,6 @@
 <admintpl file="header"/>
 <body class="J_scroll_fixed">
-<div class="wrap jj">
+<div class="wrap J_check_wrap">
   <ul class="nav nav-tabs">
      <li class="active"><a href="{:U('ad/index')}">所有广告</a></li>
      <li><a href="{:U('ad/add')}">添加广告</a></li>
@@ -8,22 +8,29 @@
   <div class="common-form">
     <form method="post" class="J_ajaxForm" action="#">
       <div class="table_list">
+      	<php>
+        		$status=array("1"=>"显示","0"=>"隐藏");
+        </php>
 	    <table width="100%" class="table table-hover">
 	        <thead>
 	          <tr>
+	          	<th width="16"><label><input type="checkbox" class="J_check_all" data-direction="x" data-checklist="J_check_x"></label></th>
 	            <th width="50">ID</th>
 	            <th>广告名称</th>
 	            <th>调用代码</th>
+	            <th width="45">状态</th>
 	            <th width="120">操作</th>
 	          </tr>
 	        </thead>
 	        <tbody>
 	        	<foreach name="ads" item="vo">
 	        	<tr>
+	        		<td><input type="checkbox" class="J_check" data-yid="J_check_y" data-xid="J_check_x" name="ids[]" value="{$vo.ad_id}"></td>
 		            <td>{$vo.ad_id}</td>
 		            <td>{$vo.ad_name}</td>
 		            <php>$usercode="{".":sp_getad('".$vo['ad_name']."')}";</php>
 		            <td>{$usercode}</td>
+		            <td>{$status[$vo['status']]}</td>
 		            <td>
 		            	<a href="{:U('ad/edit',array('id'=>$vo['ad_id']))}" >修改</a>|
 			            <a href="{:U('ad/delete',array('id'=>$vo['ad_id']))}" class="J_ajax_del" >删除</a>
@@ -33,6 +40,11 @@
 			</tbody>
 	      </table>
   		</div>
+  		<div class="form-actions">
+            <label class="checkbox inline" for="check_all"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y" id="check_all">全选</label>  
+	        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('ad/toggle',array('display'=>1))}" data-subcheck="true" >显示</button>
+        	<button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('ad/toggle',array('hide'=>1))}" data-subcheck="true" >隐藏</button>
+      </div>
     </form>
   </div>
 </div>

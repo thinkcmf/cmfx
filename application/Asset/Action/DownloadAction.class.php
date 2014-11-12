@@ -7,7 +7,7 @@ class DownloadAction extends Action {
     	header("Content-type:text/html;charset=utf-8");
     	$unique_id = trim($_GET['key']); //获取唯一码
     	$asset = M('Asset');
-    	$line = $asset->where("_unique='$unique_id'")->find();
+    	$line = $asset->where(array('unique'=>$unique_id))->find();
     	//print_r($line); die;
     	$rel_name = $line['filename'];
     	

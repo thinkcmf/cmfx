@@ -6,8 +6,10 @@
 	        <li class="active"><a href="#A" data-toggle="tab">网站信息</a></li>
 	        <li><a href="#B" data-toggle="tab">SEO设置</a></li>
 	        <li><a href="#C" data-toggle="tab">URL设置</a></li>
+	        <li><a href="{:U('route/index')}" >URL美化</a></li>
 	        <li><a href="#D" data-toggle="tab">用户同步</a></li>
 	        <li><a href="#E" data-toggle="tab">评论设置</a></li>
+	        <li><a href="#F" data-toggle="tab">用户名过滤</a></li>
 	    </ul>
 		
 		<form class="J_ajaxForms" name="myform" id="myform" action="{:u('setting/site_post')}" method="post">
@@ -142,6 +144,18 @@
 									<td>
 										<php>$comment_need_checked=empty($comment_need_check)?"":"checked";</php>
 										<input type="checkbox" class="J_check" name="options[comment_need_check]" value="1" {$comment_need_checked}>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+          </div>
+          <div class="tab-pane" id="F">
+            <table cellpadding="0" cellspacing="0" class="table_form" width="100%">
+							<tbody>
+								<tr>
+									<td width="200">特殊用户名:</td>
+									<td>
+										<textarea name="cmf_settings[banned_usernames]" rows="5" cols="57">{$cmf_settings.banned_usernames}</textarea>
 									</td>
 								</tr>
 							</tbody>

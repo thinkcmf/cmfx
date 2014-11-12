@@ -102,7 +102,7 @@ $home_slides=empty($home_slides)?$default_home_slides:$home_slides;
 			<div class="tc-gridbox">
 				<div class="header">
 					<div class="item-image">
-						<a href="{:U('article/index',array('id'=>$vo['tid']))}">
+						<a href="{:leuu('article/index',array('id'=>$vo['tid']))}">
 							<if condition="empty($smeta['thumb'])"> 
 								<img src="__TMPL__Public/images/default_tupian1.png" class="img-responsive" alt="{$vo.post_title}"/>
 							<else /> 
@@ -110,11 +110,11 @@ $home_slides=empty($home_slides)?$default_home_slides:$home_slides;
 							</if>
 						</a>
 					</div>
-					<h3><a href="{:U('article/index',array('id'=>$vo['tid']))}">{$vo.post_title}</a></h3>
+					<h3><a href="{:leuu('article/index',array('id'=>$vo['tid']))}">{$vo.post_title}</a></h3>
 					<hr>
 				</div>
 				<div class="body">
-					<p><a href="{:U('article/index',array('id'=>$vo['tid']))}">{:msubstr($vo['post_excerpt'],0,32)}</a></p>
+					<p><a href="{:leuu('article/index',array('id'=>$vo['tid']))}">{:msubstr($vo['post_excerpt'],0,32)}</a></p>
 				</div>
 			</div>
 		</div>

@@ -13,6 +13,7 @@ class SettingAction extends AdminbaseAction{
 	
 	function site(){
 		$option=$this->options_obj->where("option_name='site_options'")->find();
+		$cmf_settings=$this->options_obj->where("option_name='cmf_settings'")->getField("option_value");
 		$tpls=scandir(C("SP_TMPL_PATH"));
 		$noneed=array(".","..",".svn");
 		$tpls=array_diff($tpls, $noneed);
@@ -25,6 +26,10 @@ class SettingAction extends AdminbaseAction{
 			$this->assign((array)json_decode($option['option_value']));
 			$this->assign("option_id",$option['option_id']);
 		}
+		
+		$this->assign("cmf_settings",json_decode($cmf_settings,true));
+		
+		
 		$this->display();
 	}
 	
@@ -47,10 +52,24 @@ class SettingAction extends AdminbaseAction{
 			$data['option_name']="site_options";
 			$data['option_value']=json_encode($_POST['options']);
 			if($this->options_obj->where("option_name='site_options'")->find()){
-				$this->options_obj->where("option_name='site_options'")->save($data);
+				$r=$this->options_obj->where("option_name='site_options'")->save($data);
 			}else{
 				$r=$this->options_obj->add($data);
 			}
+			
+			$cmf_settings['option_name']="cmf_settings";
+			$banned_usernames=preg_replace("/[^0-9A-Za-z_\x{4e00}-\x{9fa5}-]/u", ",", $_POST['cmf_settings']['banned_usernames']);
+			$_POST['cmf_settings']['banned_usernames']=$banned_usernames;
+			$cmf_settings['option_value']=json_encode($_POST['cmf_settings']);
+
+			F("cmf_settings",null);
+			if($this->options_obj->where("option_name='cmf_settings'")->find()){
+				$this->options_obj->where("option_name='cmf_settings'")->save($cmf_settings);
+			}else{
+				$r=$this->options_obj->add($cmf_settings);
+			}
+			
+			
 			
 			
 			if ($r!==false) {
@@ -109,7 +128,9 @@ class SettingAction extends AdminbaseAction{
 			
 		sp_clear_cache();
 		$this->display();
-	}	
+	}
+	
+	
 	
 	
 }

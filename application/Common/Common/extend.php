@@ -273,9 +273,9 @@ function hh($text, $tags = null) {
 		$text=preg_replace("/(\s)(lang|on|action|background|codebase|dynsrc|lowsrc)[^=]*=[^\s>]*/", "", $text);
 	}
 
-	/* while(preg_match('/(<[^><]+)(window\.|javascript:|js:|about:|file:|document\.|vbs:|cookie)([^><]*)/i',$text,$mat)){
+	while(preg_match('/(<[^><]+)(window\.|javascript:|js:|about:|file:|document\.|vbs:|cookie)([^><]*)/i',$text,$mat)){
 		$text=str_replace($mat[0],$mat[1].$mat[3],$text);
-	} */
+	}
 	/* if(empty($tags)) {
 		$tags = 'table|td|th|tr|i|b|u|strong|img|p|br|div|strong|em|ul|ol|li|dl|dd|dt|a';
 	}

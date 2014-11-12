@@ -36,7 +36,13 @@ class TermsModel extends CommonModel {
 			$parent=$this->where("term_id=$parent_id")->find();
 			$d['path']=$parent['path'].'-'.$term_id;
 		}
-		$this->where("term_id=$term_id")->save($d);
+		$result=$this->where("term_id=$term_id")->save($d);
+		if($result!==false){
+			$children=$this->where("path like '%-$term_id-%'")->select();
+			foreach ($children as $child){
+				$this->where(array("term_id"=>$child['term_id']))->save(array("parent"=>$term_id));
+			}
+		}
 	}
 	
 	protected function _before_write(&$data) {

@@ -233,7 +233,7 @@ helllo;
             $ip = get_client_ip();
             $ip =empty($ip)?"0.0.0.0":$ip;
             $password = sp_password($password, $dbPrefix);
-			$query ="INSERT INTO `{$dbPrefix}users` (ID,user_login,user_pass,user_nicename,user_email,user_url,create_time,user_activation_key,user_status,display_name,role_id,last_login_ip,last_login_time) VALUES ('1', '{$username}', '{$password}', '', '{$email}', '', '{$create_date}', '', '1', 'admin', '1','$ip','$create_date');";
+			$query ="INSERT INTO `{$dbPrefix}users` (id,user_login,user_pass,user_nicename,user_email,user_url,create_time,user_activation_key,user_status,role_id,last_login_ip,last_login_time) VALUES ('1', '{$username}', '{$password}', 'admin', '{$email}', '', '{$create_date}', '', '1', '1','$ip','$create_date');";
             mysql_query($query); 
 
             $message = '成功添加管理员<br />成功写入配置文件<br>安装完成．';

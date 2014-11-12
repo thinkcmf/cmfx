@@ -36,7 +36,9 @@ class CommentAction extends MemberbaseAction{
 		
 		if (IS_POST){
 			
-			$_POST['post_table']=sp_authcode($_POST['post_table']);
+			$post_table=sp_authcode($_POST['post_table']);
+			
+			$_POST['post_table']=$post_table;
 			
 			$url=parse_url(urldecode($_POST['url']));
 			$query=empty($url['query'])?"":"?{$url['query']}";
@@ -66,6 +68,14 @@ class CommentAction extends MemberbaseAction{
 				$this->check_last_action(60);
 				$result=$this->comments_model->add();
 				if ($result!==false){
+					
+					//评论计数
+					$post_table=ucwords(str_replace("_", " ", $post_table));
+					$post_table=str_replace(" ","",$post_table);
+					$post_table_model=M($post_table);
+					$pk=$post_table_model->getPk();
+					$post_table_model->where(array($pk=>intval($_POST['post_id'])))->save(array("comment_count"=>array("exp","comment_count+1")));
+					
 					$this->ajaxReturn(array("id"=>$result),"评论成功！",1);
 				} else {
 					$this->error("评论失败！");

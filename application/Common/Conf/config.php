@@ -1,5 +1,9 @@
 <?php
-$db = include 'data/conf/db.php';
+if(file_exists("data/conf/db.php")){
+	$db=include "data/conf/db.php";
+}else{
+	$db=array();
+}
 if(file_exists("data/conf/config.php")){
 		$runtime_config=include "data/conf/config.php";
 }else{

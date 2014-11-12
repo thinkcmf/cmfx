@@ -28,7 +28,7 @@
 				</php>
 				
 				<div class="list-boxes">
-					<h2><a href="{:U('article/index',array('id'=>$vo['tid']))}">{$vo.post_title}</a></h2>
+					<h2><a href="{:leuu('article/index',array('id'=>$vo['tid']))}">{$vo.post_title}</a></h2>
 					<p>{$vo.post_excerpt}</p>
 					<div>
 						<div class="pull-left">
@@ -40,7 +40,7 @@
 							</a>
 							</div>
 						</div>
-						<a class="btn btn-warning pull-right" href="{:U('article/index',array('id'=>$vo['tid']))}">查看更多</a>
+						<a class="btn btn-warning pull-right" href="{:leuu('article/index',array('id'=>$vo['tid']))}">查看更多</a>
 					</div>
 				</div>
 				</volist>
@@ -72,7 +72,7 @@
 		        	<ul class="unstyled">
 		        		<foreach name="hot_articles" item="vo">
 		        			<php>$top=$key<3?"top3":"";</php>
-							<li class="{$top}"><i>{$key+1}</i><a title="{$vo.post_title}" href="{:U('article/index',array('id'=>$vo['tid']))}">{$vo.post_title}</a></li>
+							<li class="{$top}"><i>{$key+1}</i><a title="{$vo.post_title}" href="{:leuu('article/index',array('id'=>$vo['tid']))}">{$vo.post_title}</a></li>
 						</foreach>
 					</ul>
 				</div>
@@ -133,7 +133,7 @@
 									</if>
 					            </a>
 				            </dt>
-				            <dd><a href="{:U('article/index',array('id'=>$vo['tid']))}">{:msubstr($vo['post_excerpt'],0,32)}</a></dd>
+				            <dd><a href="{:leuu('article/index',array('id'=>$vo['tid']))}">{:msubstr($vo['post_excerpt'],0,32)}</a></dd>
 				        </dl>
 			        </foreach>
 		        </div>

@@ -13,7 +13,7 @@ class LinkAction extends AdminbaseAction{
 	}
 	
 	function index(){
-		$links=$this->link_obj->order(array("listorder"=>"asc"))->where("link_status!=0")->select();
+		$links=$this->link_obj->order(array("listorder"=>"asc"))->select();
 		$this->assign("links",$links);
 		$this->display();
 	}
@@ -84,6 +84,30 @@ class LinkAction extends AdminbaseAction{
 			}
 		}
 	
+	}
+	
+	/**
+	 * 显示/隐藏
+	 */
+	function toggle(){
+		if(isset($_POST['ids']) && $_GET["display"]){
+			$ids = implode(",", $_POST['ids']);
+			$data['link_status']=1;
+			if ($this->link_obj->where("link_id in ($ids)")->save($data)!==false) {
+				$this->success("显示成功！");
+			} else {
+				$this->error("显示失败！");
+			}
+		}
+		if(isset($_POST['ids']) && $_GET["hide"]){
+			$ids = implode(",", $_POST['ids']);
+			$data['link_status']=0;
+			if ($this->link_obj->where("link_id in ($ids)")->save($data)!==false) {
+				$this->success("隐藏成功！");
+			} else {
+				$this->error("隐藏失败！");
+			}
+		}
 	}
 	
 	

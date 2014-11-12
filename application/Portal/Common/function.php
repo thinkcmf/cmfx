@@ -10,8 +10,11 @@
  * limit:数据条数,默认值为10,可以指定从第几条开始,如3,8(表示共调用8条,从第3条开始)
  * order:推荐方式(post_date) (desc/asc/rand())
  */
-function sp_sql_posts($tag){
-	$where=array();
+function sp_sql_posts($tag,$where=array()){
+	if(!is_array($where)){
+		$where=array();
+	}
+	
 	$tag=sp_param_lable($tag);
 	$field = !empty($tag['field']) ? $tag['field'] : '*';
 	$limit = !empty($tag['limit']) ? $tag['limit'] : '';
@@ -29,6 +32,7 @@ function sp_sql_posts($tag){
 	if (isset($tag['ids'])) {
 		$where['object_id'] = array('in',$tag['ids']);
 	}
+	
 
 
 	$join = "".C('DB_PREFIX').'posts as b on a.object_id =b.id';
@@ -37,6 +41,36 @@ function sp_sql_posts($tag){
 
 	$posts=$rs->alias("a")->join($join)->join($join2)->field($field)->where($where)->order($order)->limit($limit)->select();
 	return $posts;
+}
+
+/**
+ * 功能：根据分类文章分类ID 获取该分类下所有文章（包含子分类中文章），调用方式同sp_sql_posts
+ * create by labulaka 2014-11-09 14:30:49
+ * param int $tid 文章分类ID.
+ * param string $tag 以字符串方式传入,例："order:post_date desc,listorder desc;"
+ * 		field:调用post指定字段,如(id,post_title...) 默认全部
+ * 		limit:数据条数,默认值为10,可以指定从第几条开始,如3,8(表示共调用8条,从第3条开始)
+ * 		order:推荐方式(post_date) (desc/asc/rand())
+ * param int $pagesize 分页数字.
+ * param string $pagetpl 以字符串方式传入,例："{first}{prev}{liststart}{list}{listend}{next}{last}"
+ */
+
+function sp_sql_posts_bycatid($cid,$tag,$where=array()){
+	$catIDS=array();
+	$terms=M("Terms")->field("term_id")->where("status=1 and term_id=$cid and path like '%-$cid-%'")->order('term_id asc')->select();
+
+	foreach($terms as $item){
+		$catIDS[]=$item['term_id'];
+	}
+	if(!empty($catIDS)){
+		$catIDS=implode(",", $catIDS);
+		$catIDS="cid:$catIDS;";
+	}else{
+		$catIDS="";
+	}
+	$content= sp_sql_posts($catIDS.$tag,$where);
+	return $content;
+
 }
 
 /**
@@ -91,6 +125,35 @@ function sp_sql_posts_paged($tag,$pagesize=20,$pagetpl='{first}{prev}{liststart}
 	return $content;
 }
 
+/**
+ * 功能：根据分类文章分类ID 获取该分类下所有文章（包含子分类中文章），已经分页，调用方式同sp_sql_posts_paged
+ * create by labulaka 2014-11-09 14:30:49
+ * param int $tid 文章分类ID.
+ * param string $tag 以字符串方式传入,例："order:post_date desc,listorder desc;"
+ * 		field:调用post指定字段,如(id,post_title...) 默认全部
+ * 		limit:数据条数,默认值为10,可以指定从第几条开始,如3,8(表示共调用8条,从第3条开始)
+ * 		order:推荐方式(post_date) (desc/asc/rand())
+ * param int $pagesize 分页数字.
+ * param string $pagetpl 以字符串方式传入,例："{first}{prev}{liststart}{list}{listend}{next}{last}"
+ */
+
+function sp_sql_posts_paged_bycatid($cid,$tag,$pagesize=20,$pagetpl='{first}{prev}{liststart}{list}{listend}{next}{last}'){
+	$catIDS=array();
+	$terms=M("Terms")->field("term_id")->where("status=1 and term_id=$cid and path like '%-$cid-%'")->order('term_id asc')->select();
+	
+	foreach($terms as $item){
+		$catIDS[]=$item['term_id'];
+	}
+	if(!empty($catIDS)){
+		$catIDS=implode(",", $catIDS);
+		$catIDS="cid:$catIDS;";
+	}else{
+		$catIDS="";
+	}
+	$content= sp_sql_posts_paged($catIDS.$tag,$pagesize,$pagetpl);
+	return $content;
+
+}
 
 
 /**

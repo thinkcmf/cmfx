@@ -63,7 +63,7 @@
     //所有的ajax form提交,由于大多业务逻辑都是一样的，故统一处理
     var ajaxForm_list = $('form.J_ajaxForm');
     if (ajaxForm_list.length) {
-        Wind.use('ajaxForm', 'artDialog', function () {
+        Wind.use('ajaxForm', 'noty', function () {
             if ($.browser.msie) {
                 //ie8及以下，表单中只有一个可见的input:text时，会整个页面会跳转提交
                 ajaxForm_list.on('submit', function (e) {
@@ -85,27 +85,41 @@
                     if (form.find('input.J_check:checked').length) {
                         var msg = btn.data('msg');
                         if (msg) {
-                            art.dialog({
-                                id: 'warning',
-                                icon: 'warning',
-                                content: btn.data('msg'),
-                                cancelVal: '关闭',
-                                cancel: function () {
-                                    //btn.data('subcheck', false);
-                                    //btn.click();
-                                },
-                                ok: function () {
-                                	 btn.data('subcheck', false);
-                                	 btn.click();
-                                }
-                            });
+                        	 noty({
+                				 	text: msg,
+                					type:'confirm',
+                					layout:"center",
+                					timeout: false,
+                					modal: true,
+                				   	buttons: [
+                				   	{
+                				   		addClass: 'btn btn-primary',
+                				   		text: '确定',
+                				   		onClick: function($noty){
+                				   			$noty.close();
+                				   			btn.data('subcheck', false);
+                				   			btn.click();
+                				   		}
+                				   	},
+                				   	{
+                				   		addClass: 'btn btn-danger',
+                				   		text: '取消',
+                				   		onClick: function($noty) {
+                				   			$noty.close();
+                				   		}
+                				   	}
+                					]
+                             });
                         } else {
                             btn.data('subcheck', false);
                             btn.click();
                         }
 
                     } else {
-                        $('<span class="tips_error">请至少选择一项</span>').appendTo(btn.parent()).fadeIn('fast');
+                    	noty({text:"请至少选择一项",
+                    		type:'error',
+                    		layout:'center'
+                    	});
                     }
                     return false;
                 }
@@ -135,10 +149,18 @@
                         //按钮文案、状态修改
                         btn.removeClass('disabled').text(text.replace('中...', '')).parent().find('span').remove();
                         if (data.state === 'success') {
-                            $('<span class="tips_success">' + data.info + '</span>').appendTo(btn.parent()).fadeIn('slow').delay(1000).fadeOut(function () {
-                            });
+                        	noty({text: data.info,
+                        		type:'success',
+                        		layout:'center'
+                        	});
+                            /*$('<span class="tips_success">' + data.info + '</span>').appendTo(btn.parent()).fadeIn('slow').delay(1000).fadeOut(function () {
+                            });*/
                         } else if (data.state === 'fail') {
-                            $('<span class="tips_error">' + data.info + '</span>').appendTo(btn.parent()).fadeIn('fast');
+                        	noty({text: data.info,
+                        		type:'error',
+                        		layout:'center'
+                        	});
+                            /*$('<span class="tips_error">' + data.info + '</span>').appendTo(btn.parent()).fadeIn('fast');*/
                             btn.removeProp('disabled').removeClass('disabled');
                         }
                         
@@ -203,33 +225,43 @@
                     $this = $($_this),
                     href = $this.prop('href'),
                     msg = $this.data('msg');
-                art.dialog({
-                    title: false,
-                    icon: 'question',
-                    content: '确定要删除吗？',
-                    follow: $_this,
-                    close: function () {
-                        $_this.focus();; //关闭时让触发弹窗的元素获取焦点
-                        return true;
-                    },
-                    ok: function () {
-                    	
-                        $.getJSON(href).done(function (data) {
-                            if (data.state === 'success') {
-                                if (data.referer) {
-                                    location.href = data.referer;
-                                } else {
-                                    reloadPage(window);
-                                }
-                            } else if (data.state === 'fail') {
-                                //art.dialog.alert(data.info);
-                            	alert(data.info);//暂时处理方案
-                            }
-                        });
-                    },
-                    cancelVal: '关闭',
-                    cancel: true
+                
+                noty({
+   				 	text: msg,
+   					type:'confirm',
+   					layout:"center",
+   					timeout: false,
+   					modal: true,
+   				   	buttons: [
+   				   	{
+   				   		addClass: 'btn btn-primary',
+   				   		text: '确定',
+   				   		onClick: function($noty){
+   				   			$noty.close();
+	   				   		$.getJSON(href).done(function (data) {
+	                            if (data.state === 'success') {
+	                                if (data.referer) {
+	                                    location.href = data.referer;
+	                                } else {
+	                                    reloadPage(window);
+	                                }
+	                            } else if (data.state === 'fail') {
+	                                //art.dialog.alert(data.info);
+	                            	alert(data.info);//暂时处理方案
+	                            }
+	                        });
+   				   		}
+   				   	},
+   				   	{
+   				   		addClass: 'btn btn-danger',
+   				   		text: '取消',
+   				   		onClick: function($noty) {
+   				   			$noty.close();
+   				   		}
+   				   	}
+   					]
                 });
+                
             });
 
         });
@@ -330,6 +362,7 @@
         });
     }
 
+    //赞，拍等，有数量操作的按钮
     var $J_count_btn=$('a.J_count_btn');
     if ($J_count_btn.length) {
         Wind.use('noty', function () {

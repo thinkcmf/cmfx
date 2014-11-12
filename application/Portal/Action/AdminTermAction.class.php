@@ -81,7 +81,7 @@ class AdminTermAction extends AdminbaseAction {
 		$tree = new \PathTree();
 		$tree->icon = array('&nbsp;&nbsp;&nbsp;│ ', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ ');
 		$tree->nbsp = '---';
-		$result = $this->terms_obj->where(array("term_id" => array("NEQ",$id)))->order(array("path"=>"asc"))->select();
+		$result = $this->terms_obj->where(array("term_id" => array("NEQ",$id), "path"=>array("notlike","%-$id-%")))->order(array("path"=>"asc"))->select();
 		$tree->init($result);
 		$tree=$tree->get_tree();
 		

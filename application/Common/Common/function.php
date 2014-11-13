@@ -967,7 +967,6 @@ function leuu($url='',$vars='',$suffix=true,$domain=false){
 		}
 		if(isset($var[$varModule])){
 			$module =   $var[$varModule];
-			unset($var[$varModule]);
 		}
 		
 		if(C('URL_MODEL') == 0) { // 普通模式URL转换

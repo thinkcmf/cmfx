@@ -226,19 +226,20 @@ switch ($step) {
             if ($i == 999999)
                 exit;
             //更新配置信息
-            $site_options=array(
-            		"site_name"=>$site_name,
-            		"site_host"=>$site_url,
-            		"site_root"=>"/",
-            		"site_icp"=>"",
-            		"site_admin_email"=>$email,
-            		"site_tongji"=>"",
-            		"site_copyright"=>"",
-            		"site_seo_title"=>$site_name,
-            		"site_seo_keywords"=>$seo_keywords,
-            		"site_seo_description"=>$seo_description
-            );
-            $site_options=json_encode($site_options);
+            $site_options=<<<helllo
+            {
+            		"site_name":"$site_name",
+            		"site_host":"$site_url",
+            		"site_root":"",
+            		"site_icp":"",
+            		"site_admin_email":"$email",
+            		"site_tongji":"",
+            		"site_copyright":"",
+            		"site_seo_title":"$site_name",
+            		"site_seo_keywords":"$seo_keywords",
+            		"site_seo_description":"$seo_description"
+        }
+helllo;
             /* $site_options=array(
             		"site_name"=>"$site_name",
             		"site_host"=>"$site_url",

@@ -167,6 +167,9 @@
                         if (data.referer) {
                             //返回带跳转地址
                         	var wait=btn.data("wait");
+                        	if(!wait){
+                        		wait=1500;
+                        	}
                             if(window.parent.art){
                                 //iframe弹出页
                             	if(wait){

@@ -289,6 +289,8 @@ CREATE TABLE `sp_posts` (
   `smeta` text COMMENT 'post的扩展字段，保存相关扩展属性，如缩略图；格式为json',
   `post_hits` int(11) DEFAULT '0' COMMENT 'post点击数，查看数',
   `post_like` int(11) DEFAULT '0' COMMENT 'post赞数',
+  `istop` tinyint(1) NOT NULL DEFAULT '0' COMMENT '置顶 1置顶； 0不置顶',
+  `recommended` tinyint(1) NOT NULL DEFAULT '0' COMMENT '推荐 1推荐 0不推荐',
   PRIMARY KEY (`id`),
   KEY `type_status_date` (`post_type`,`post_status`,`post_date`,`id`),
   KEY `post_parent` (`post_parent`),

@@ -25,7 +25,7 @@ $configs= array(
 		'DEFAULT_CONTROLLER'    =>  'Index', // 默认控制器名称
 		'DEFAULT_ACTION'        =>  'index', // 默认操作名称
 		'DEFAULT_M_LAYER'       =>  'Model', // 默认的模型层名称
-		'DEFAULT_C_LAYER'       =>  'Action', // 默认的控制器层名称
+		'DEFAULT_C_LAYER'       =>  'Controller', // 默认的控制器层名称
 		
 		'DEFAULT_FILTER'        =>  'htmlspecialchars', // 默认参数过滤方法 用于I函数...htmlspecialchars
 		

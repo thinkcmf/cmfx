@@ -718,3 +718,32 @@ function open_iframe_dialog(url,title,options){
 	            art.dialog.open(url, params);
 	        });
 }
+
+function open_map_dialog(url,title,options,callback){
+	
+	var params={
+            title: title,
+            lock:true,
+            opacity:0,
+            width:"95%",
+            height:400,
+            ok:function(){
+            	 if (callback) {
+            		 var d=this.iframe.contentWindow;
+            		 var lng=$("#lng_input",d.document).val();
+            		 var lat=$("#lat_input",d.document).val();
+            		 var address={};
+            		 address.address=$("#address_input",d.document).val();
+            		 address.province=$("#province_input",d.document).val();
+            		 address.city=$("#city_input",d.document).val();
+            		 address.district=$("#district_input",d.document).val();
+            		 callback.apply(this, [lng, lat,address]);
+                 }
+            }
+        };
+	params=options?$.extend(params,options):params;
+	 Wind.use('artDialog','iframeTools', function () {
+	            art.dialog.open(url, params);
+	        });
+	
+}

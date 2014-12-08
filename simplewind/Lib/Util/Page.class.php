@@ -78,14 +78,15 @@ class Page {
     private $PageLink;
     private $Static;
     // 起始行数
-    public $firstRow;
-    public $listRows;
+    public  $firstRow;
+    public  $listRows;
     private $linkwraper="";
     private $linkwraper_pre="";
     private $linkwraper_after="";
+    private $searching=false;
 
     //Page([总记录数=1]，   [分页大小=20]，     [当前页=1]，         [显示页数=6]，     [分页参数='page'],      [分页链接=当前页面],[是否静态=FALSE])
-    function __construct($Total_Size = 1, $Page_Size = 20, $Current_Page = 1, $List_Page = 6, $PageParam = 'page', $PageLink = '', $Static = FALSE) {
+    function __construct($Total_Size = 1, $Page_Size = 20, $Current_Page = 1, $List_Page = 6, $PageParam = 'p', $PageLink = '', $Static = FALSE) {
         $this->Page_size = intval($Page_Size);
         $this->Total_Size = intval($Total_Size);
         if (!$Current_Page) {
@@ -133,6 +134,9 @@ class Page {
     }
 
     private function UrlParameters($url = array()) {
+    	unset($url[C('VAR_MODULE')]);
+    	unset($url[C('VAR_CONTROLLER')]);
+    	unset($url[C('VAR_ACTION')]);
         foreach ($url as $key => $val) {
             if ($key != $this->PageParam && $key != "_URL_")
                 $arg [$key] = $val;
@@ -147,12 +151,19 @@ class Page {
              * )
              */
             if (is_array($this->PageLink)) {
-                return str_replace('{$page}', '*', $this->PageLink['list']);
+                return str_replace('{page}', '*', $this->PageLink['list']);
             } else {
                 return str_replace('{page}', '*', $this->PageLink);
             }
         } else {
-            return str_replace("%2A", "*", U("" . MODULE_NAME  . "/" . CONTROLLER_NAME . "/" . ACTION_NAME, $arg));
+        	
+        	if($this->searching){
+        		$url=leuu(MODULE_NAME  . "/" . CONTROLLER_NAME . "/" . ACTION_NAME)."?".http_build_query ($arg);
+        	}else{
+        		$url=leuu(MODULE_NAME  . "/" . CONTROLLER_NAME . "/" . ACTION_NAME,$arg);
+        	}
+        	return str_replace("%2A", "*", $url);
+        	
         }
     }
 

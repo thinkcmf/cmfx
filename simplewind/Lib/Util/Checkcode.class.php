@@ -129,7 +129,7 @@ class Checkcode {
      * 输出图片
      */
     private function output() {
-        //ob_clean();//防止出现'图像因其本身有错无法显示'的问题
+        ob_clean();//防止出现'图像因其本身有错无法显示'的问题
         header("content-type:image/png\r\n");
         imagepng($this->img);
         imagedestroy($this->img);

@@ -37,8 +37,8 @@ body fieldset legend {
 <body class="J_scroll_fixed">
 <div class="wrap J_check_wrap">
   <ul class="nav nav-tabs">
-     <li><a href="{:U('post/index')}">所有文章</a></li>
-     <li><a href="{:U('post/add',array('term'=>empty($term['term_id'])?'':$term['term_id']))}"  target="_self">添加文章</a></li>
+     <li><a href="{:U('AdminPost/index')}">所有文章</a></li>
+     <li><a href="{:U('AdminPost/add',array('term'=>empty($term['term_id'])?'':$term['term_id']))}"  target="_self">添加文章</a></li>
      <li class="active"><a href="#">{$term.name|default='页面编辑'}</a></li>
   </ul>
   <form name="myform" id="myform" action="{:u('AdminPost/edit_post')}" method="post" class="form-horizontal J_ajaxForms" enctype="multipart/form-data">
@@ -134,25 +134,6 @@ body fieldset legend {
                 </script>
                 <script type="text/javascript"  src="__ROOT__/statics/js/ueditor/ueditor.config.js"></script>
                 <script type="text/javascript"  src="__ROOT__/statics/js/ueditor/ueditor.all.min.js"></script>
-				<script type="text/javascript">
-    			var editorcontent;
-                        UE.commands['attachments'] = {
-                            execCommand : function(cmd){
-                                flashupload('flashupload', '附件上传','content',ueAttachment,'10,,1,,,0','Contents','12','d909680d11bb7090136c35b9b9d4e66d');
-                            },
-                            queryCommandState : function(){
-                                return this.highlight ? -1 :0;
-                            }
-                        };
-		        </script> 
-				<style type="text/css">
-				.content_attr {
-					border: 1px solid #CCC;
-					padding: 5px 8px;
-					background: #FFC;
-					margin-top: 6px
-				}
-				</style>
 				</td>
             </tr>
             <tr>
@@ -180,7 +161,7 @@ body fieldset legend {
   </div>
   <div class="form-actions">
         <button class="btn btn_submit J_ajax_submit_btn"type="submit">提交</button>
-        <button class="btn J_ajax_close_btn"type="submit">关闭</button>
+        <a class="btn" href="{:U('AdminPost/index')}">返回</a>
   </div>
  </form>
 </div>

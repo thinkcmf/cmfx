@@ -42,7 +42,7 @@
           </tr>
           <tr>
             <td class="tar">数据库密码：</td>
-            <td><input type="text" name="dbpw" id="dbpw" value="" class="input" autoComplete="off" onblur="TestDbPwd()"></td>
+            <td><input type="password" name="dbpw" id="dbpw" value="" class="input" autoComplete="off" onblur="TestDbPwd()"></td>
             <td><div id="J_install_tip_dbpw"></div></td>
           </tr>
           <tr>

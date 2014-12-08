@@ -1035,7 +1035,7 @@ function leuu($url='',$vars='',$suffix=true,$domain=false){
 			
 			if(!$has_route){
 				$module =   defined('BIND_MODULE') ? '' : $module;
-				$url    =   __APP__.'/'.($module?$module.MODULE_PATHINFO_DEPR:'').implode($depr,array_reverse($var));
+				$url    =   __APP__.'/'.implode($depr,array_reverse($var));
 					
 				if($urlCase){
 					$url    =   strtolower($url);
@@ -1078,8 +1078,7 @@ function UU($url='',$vars='',$suffix=true,$domain=false){
 function sp_get_routes($refresh=false){
 	$routes=F("routes");
 	
-	if(!empty($routes) && !$refresh){
-		
+	if( (!empty($routes)||is_array($routes)) && !$refresh){
 		return $routes;
 	}
 	$routes=M("Route")->where("status=1")->order("listorder asc")->select();

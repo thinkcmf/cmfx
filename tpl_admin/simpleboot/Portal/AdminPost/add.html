@@ -116,25 +116,6 @@ body fieldset legend {
                 </script>
                 <script type="text/javascript"  src="__ROOT__/statics/js/ueditor/ueditor.config.js"></script>
                 <script type="text/javascript"  src="__ROOT__/statics/js/ueditor/ueditor.all.min.js"></script>
-				<script type="text/javascript">
-    			var editorcontent;
-                        UE.commands['attachments'] = {
-                            execCommand : function(cmd){
-                                flashupload('flashupload', '附件上传','content',ueAttachment,'10,,1,,,0','Contents','12','d909680d11bb7090136c35b9b9d4e66d');
-                            },
-                            queryCommandState : function(){
-                                return this.highlight ? -1 :0;
-                            }
-                        };
-		        </script> 
-				<style type="text/css">
-				.content_attr {
-					border: 1px solid #CCC;
-					padding: 5px 8px;
-					background: #FFC;
-					margin-top: 6px
-				}
-				</style>
 				</td>
             </tr>
             

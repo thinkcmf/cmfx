@@ -28,21 +28,24 @@ class TermsModel extends CommonModel {
 	
 	protected function _after_update($data,$options){
 		parent::_after_update($data,$options);
-		$term_id=$data['term_id'];
-		$parent_id=$data['parent'];
-		if($parent_id==0){
-			$d['path']="0-$term_id";
-		}else{
-			$parent=$this->where("term_id=$parent_id")->find();
-			$d['path']=$parent['path'].'-'.$term_id;
-		}
-		$result=$this->where("term_id=$term_id")->save($d);
-		if($result!==false){
-			$children=$this->where("path like '%-$term_id-%'")->select();
-			foreach ($children as $child){
-				$this->where(array("term_id"=>$child['term_id']))->save(array("parent"=>$term_id));
+		if(isset($data['parent'])){
+			$term_id=$data['term_id'];
+			$parent_id=$data['parent'];
+			if($parent_id==0){
+				$d['path']="0-$term_id";
+			}else{
+				$parent=$this->where("term_id=$parent_id")->find();
+				$d['path']=$parent['path'].'-'.$term_id;
+			}
+			$result=$this->where("term_id=$term_id")->save($d);
+			if($result!==false){
+				$children=$this->where("path like '%-$term_id-%'")->select();
+				foreach ($children as $child){
+					$this->where(array("term_id"=>$child['term_id']))->save(array("parent"=>$term_id));
+				}
 			}
 		}
+		
 	}
 	
 	protected function _before_write(&$data) {

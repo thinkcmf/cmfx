@@ -1,7 +1,6 @@
 <?php
 
 /**
- * 4
  * @处理标签函数
  * @以字符串方式传入,通过sp_param_lable函数解析为以下变量
  * ids:调用指定id的一个或多个数据,如 1,2,3
@@ -56,8 +55,9 @@ function sp_sql_posts($tag,$where=array()){
  */
 
 function sp_sql_posts_bycatid($cid,$tag,$where=array()){
+	$cid=intval($cid);
 	$catIDS=array();
-	$terms=M("Terms")->field("term_id")->where("status=1 and term_id=$cid and path like '%-$cid-%'")->order('term_id asc')->select();
+	$terms=M("Terms")->field("term_id")->where("status=1 and ( term_id=$cid OR path like '%-$cid-%' )")->order('term_id asc')->select();
 
 	foreach($terms as $item){
 		$catIDS[]=$item['term_id'];
@@ -74,7 +74,6 @@ function sp_sql_posts_bycatid($cid,$tag,$where=array()){
 }
 
 /**
- * 4
  * @ 处理标签函数
  * @ $tag以字符串方式传入,通过sp_param_lable函数解析为以下变量。例："cid:1,2;order:post_date desc,listorder desc;"
  * ids:调用指定id的一个或多个数据,如 1,2,3
@@ -126,6 +125,58 @@ function sp_sql_posts_paged($tag,$pagesize=20,$pagetpl='{first}{prev}{liststart}
 }
 
 /**
+ * 功能：根据关键字 搜索文章（包含子分类中文章），已经分页，调用方式同sp_sql_posts_paged
+ * create by WelkinVan 2014-12-04
+ * param string $keyword 关键字.
+ * param string $tag 以字符串方式传入,例："order:post_date desc,listorder desc;"
+ * 		field:调用post指定字段,如(id,post_title...) 默认全部
+ * 		limit:数据条数,默认值为10,可以指定从第几条开始,如3,8(表示共调用8条,从第3条开始)
+ * 		order:推荐方式(post_date) (desc/asc/rand())
+ * param int $pagesize 分页数字.
+ * param string $pagetpl 以字符串方式传入,例："{first}{prev}{liststart}{list}{listend}{next}{last}"
+ */
+function sp_sql_posts_paged_bykeyword($keyword,$tag,$pagesize=20,$pagetpl='{first}{prev}{liststart}{list}{listend}{next}{last}'){
+	$where=array();
+	$tag=sp_param_lable($tag);
+	$field = !empty($tag['field']) ? $tag['field'] : '*';
+	$limit = !empty($tag['limit']) ? $tag['limit'] : '';
+	$order = !empty($tag['order']) ? $tag['order'] : 'post_date';
+
+
+	//根据参数生成查询条件
+	$where['status'] = array('eq',1);
+	$where['post_status'] = array('eq',1);
+	$where['post_title'] = array('like','%' . $keyword . '%');
+	
+	if (isset($tag['cid'])) {
+		$where['term_id'] = array('in',$tag['cid']);
+	}
+
+	if (isset($tag['ids'])) {
+		$where['object_id'] = array('in',$tag['ids']);
+	}
+
+	$join = "".C('DB_PREFIX').'posts as b on a.object_id =b.id';
+	$join2= "".C('DB_PREFIX').'users as c on b.post_author = c.id';
+	$rs= M("TermRelationships");
+	$totalsize=$rs->alias("a")->join($join)->join($join2)->field($field)->where($where)->count();
+	import('Page');
+	if ($pagesize == 0) {
+		$pagesize = 20;
+	}
+	$PageParam = C("VAR_PAGE");
+	$page = new Page($totalsize,$pagesize);
+	$page->setLinkWraper("li");
+	$page->__set("PageParam", $PageParam);
+	$page->SetPager('default', $pagetpl, array("listlong" => "6", "first" => "首页", "last" => "尾页", "prev" => "上一页", "next" => "下一页", "list" => "*", "disabledclass" => ""));
+	$posts=$rs->alias("a")->join($join)->join($join2)->field($field)->where($where)->order($order)->limit($page->firstRow . ',' . $page->listRows)->select();
+	$content['count']=$totalsize;
+	$content['posts']=$posts;
+	$content['page']=$page->show('default');
+	return $content;
+}
+
+/**
  * 功能：根据分类文章分类ID 获取该分类下所有文章（包含子分类中文章），已经分页，调用方式同sp_sql_posts_paged
  * create by labulaka 2014-11-09 14:30:49
  * param int $tid 文章分类ID.
@@ -138,8 +189,9 @@ function sp_sql_posts_paged($tag,$pagesize=20,$pagetpl='{first}{prev}{liststart}
  */
 
 function sp_sql_posts_paged_bycatid($cid,$tag,$pagesize=20,$pagetpl='{first}{prev}{liststart}{list}{listend}{next}{last}'){
+	$cid=intval($cid);
 	$catIDS=array();
-	$terms=M("Terms")->field("term_id")->where("status=1 and term_id=$cid and path like '%-$cid-%'")->order('term_id asc')->select();
+	$terms=M("Terms")->field("term_id")->where("status=1 and ( term_id=$cid OR path like '%-$cid-%' )")->order('term_id asc')->select();
 	
 	foreach($terms as $item){
 		$catIDS[]=$item['term_id'];
@@ -157,7 +209,6 @@ function sp_sql_posts_paged_bycatid($cid,$tag,$pagesize=20,$pagetpl='{first}{pre
 
 
 /**
- * 5
  * @param int $tid 分类表下的tid.
  * @param string $tag 
  * @处理标签函数
@@ -186,7 +237,6 @@ function sp_sql_post($tid,$tag){
 }
 
 /**
- * 6
  * @处理标签函数
  * @以字符串方式传入,通过sp_param_lable函数解析为以下变量
  * 返回符合条件的所有页面
@@ -215,7 +265,6 @@ function sp_sql_pages($tag){
 }
 
 /**
- * 7
  * @处理标签函数
  * @以字符串方式传入,通过sp_param_lable函数解析为以下变量
  * 返回指定id=$id的页面
@@ -231,7 +280,6 @@ function sp_sql_page($id){
 
 
 /**
- * 8
  * 返回指定分类
  */
 function sp_get_term($term_id){
@@ -254,7 +302,6 @@ function sp_get_term($term_id){
 	}
 }
 /**
- * 8
  * 返回指定分类下的子分类
  */
 function sp_get_child_terms($term_id){

@@ -87,6 +87,25 @@ function change_images(uploadid, returnid) {
     $('#' + returnid).html(str);
 }
 
+//多图上传，SWF回调函数
+function upload_zip(uploadid, returnid) {
+    var d = uploadid.iframe.contentWindow;
+    var in_content = d.$("#att-status").html().substring(1);
+    var in_filename = d.$("#att-name").html().substring(1);
+    var str = $('#' + returnid).html();
+    var contents = in_content.split('|');
+    var filenames = in_filename.split('|');
+    $('#' + returnid + '_tips').css('display', 'none');
+    if (contents == '') return true;
+    $.each(contents, function(i, n) {
+        var ids = parseInt(Math.random() * 10000 + 10 * i);
+        var filename = filenames[i].substr(0, filenames[i].indexOf('.'));
+        str += "<li id='image" + ids + "'><input title='双击查看' type='text' name='" + returnid + "_url' value='" + n + "' style='width:310px;' ondblclick='image_priview(this.value);' class='input'> <input type='text' name='" + returnid + "_alt[]' value='" + filename + "' style='width:160px;' class='input' onfocus=\"if(this.value == this.defaultValue) this.value = ''\" onblur=\"if(this.value.replace(' ','') == '') this.value = this.defaultValue;\"> <a href=\"javascript:remove_div('image" + ids + "')\">移除</a> </li>";
+    });
+
+    $('#' + returnid).html(str);
+}
+
 //编辑器ue附件上传
 function ueAttachment(uploadid, returnid){
     var d = uploadid.iframe.contentWindow;
@@ -274,7 +293,7 @@ function ruselinkurl() {
 function IsImg(url) {
     var sTemp;
     var b = false;
-    var opt = "jpg|gif|png|bmp|jpeg";
+    var opt = "jpg|gif|png|bmp|jpeg|zip";
     var s = opt.toUpperCase().split("|");
     for (var i = 0; i < s.length; i++) {
         sTemp = url.substr(url.length - s[i].length - 1);

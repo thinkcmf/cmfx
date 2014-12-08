@@ -1,6 +1,6 @@
 <br>
 <h3>评论</h3>
-<div class="comment-area">
+<div class="comment-area" id="comments">
 
 	<hr>
 	<form class="form-horizontal comment-form" action="{:u('comment/comment/post')}" method="post">
@@ -14,7 +14,7 @@
 	   		<button type="submit" class="btn pull-right btn-primary J_ajax_submit_btn"><i class="fa fa-comment-o"></i> 发表评论</button>
 	  </div>
 	  
-	  <input type="hidden" name="post_table" value="{:sp_authencode('posts')}"/>
+	  <input type="hidden" name="post_table" value="{$post_table}"/>
 	  <input type="hidden" name="post_id" value="{$post_id}"/>
 	  <input type="hidden" name="to_uid" value="0"/>
 	  <input type="hidden" name="parentid" value="0"/>

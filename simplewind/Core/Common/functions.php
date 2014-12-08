@@ -198,7 +198,7 @@ function compile($filename) {
  * @param string $layer 视图层（目录）名称
  * @return string
  */
-/* function T($template='',$layer=''){
+function T($template='',$layer=''){
 
     // 解析模版资源地址
     if(false === strpos($template,'://')){
@@ -234,9 +234,9 @@ function compile($filename) {
         $file   =   substr_count($file,'/')>1 ? substr_replace($file,$depr,strrpos($file,'/'),1) : str_replace('/', $depr, $file);
     }
     return $baseUrl.($theme?$theme.'/':'').$file.C('TMPL_TEMPLATE_SUFFIX');
-} */
+}
 
-function T($template='',$layer=''){/*thinkcmf 修改*/
+/* function T($template='',$layer=''){//thinkcmf 修改
 	$tpl_root=false;
 	if(strpos($template,":")===0){
 		$template=substr($template, 1);
@@ -280,7 +280,7 @@ function T($template='',$layer=''){/*thinkcmf 修改*/
 		}
 	}
 	return $baseUrl.$file.C('TMPL_TEMPLATE_SUFFIX');
-}
+} */
 
 /**
  * 获取输入参数 支持过滤和默认值

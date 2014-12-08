@@ -866,10 +866,10 @@ function sp_get_users($tag="field:*;limit:0,8;order:create_time desc;",$where=ar
 		$where=$mwhere;
 	}
 	
-	$comments_model=M("Users");
+	$users_model=M("Users");
 	
-	$comments=$comments_model->field($field)->where($where)->order($order)->limit($limit)->select();
-	return $comments;
+	$users=$users_model->field($field)->where($where)->order($order)->limit($limit)->select();
+	return $users;
 }
 
 /**

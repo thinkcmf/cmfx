@@ -723,7 +723,7 @@ function sp_asset_relative_url($asset_url){
 	return str_replace(C("TMPL_PARSE_STRING.__UPLOAD__"), "", $asset_url);
 }
 
-function sp_content_page($content,$pagetpl='{first}{prev}&nbsp;{liststart}{list}{listend}&nbsp;{next}{last}'){
+function sp_content_page($content,$pagetpl='{first}{prev}{liststart}{list}{listend}{next}{last}'){
 	$contents=explode('_ueditor_page_break_tag_',$content);
 	$totalsize=count($contents);
 	import('Page');

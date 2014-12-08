@@ -19,9 +19,10 @@ $sae = array(
     'DB_PREFIX' => 'sp_',
     //cookies
     "COOKIE_PREFIX" => 'U49dZ1_',
+	'FILE_UPLOAD_TYPE'      =>  'Sae',    // 文件上传方式
 	
 	'TMPL_PARSE_STRING'=>array(
-        '__UPLOAD__'=>$_msaestorage->getUrl('data','upload'),
+        '__UPLOAD__'=>$_msaestorage->getUrl('data','upload')."/",
 	)
 );
 //print_r($runtime_config); die;

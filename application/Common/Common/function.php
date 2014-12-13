@@ -371,7 +371,7 @@ function _sp_get_menu_datas($id){
 		$main=$navcat_obj->where("active=1")->find();
 		$id=$main['navcid'];
 	}
-	$navs= $nav_obj->where("cid=$id")->order(array("listorder" => "ASC"))->select();
+	$navs= $nav_obj->where("cid=$id and status=1")->order(array("listorder" => "ASC"))->select();
 	foreach ($navs as $key=>$nav){
 		$href=htmlspecialchars_decode($nav['href']);
 		$hrefold=$href;

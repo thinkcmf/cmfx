@@ -52,6 +52,34 @@ function C($name=null, $value=null,$default=null) {
 }
 
 /**
+ * 加载配置文件 支持格式转换 仅支持一级配置
+ * @param string $file 配置文件名
+ * @param string $parse 配置解析方法 有些格式需要用户自己解析
+ * @return void
+ */
+function load_config($file,$parse=CONF_PARSE){
+    $ext  = pathinfo($file,PATHINFO_EXTENSION);
+    switch($ext){
+        case 'php':
+            return include $file;
+        case 'ini':
+            return parse_ini_file($file);
+        case 'yaml':
+            return yaml_parse_file($file);
+        case 'xml': 
+            return (array)simplexml_load_file($file);
+        case 'json':
+            return json_decode(file_get_contents($file), true);
+        default:
+            if(function_exists($parse)){
+                return $parse($file);
+            }else{
+                E(L('_NOT_SUPPERT_').':'.$ext);
+            }
+    }
+}
+
+/**
  * 抛出异常处理
  * @param string $msg 异常消息
  * @param integer $code 异常代码 默认为0
@@ -201,7 +229,6 @@ function I($name,$default='',$filter=null) {
     }
     if(empty($name)) { // 获取全部变量
         $data       =   $input;
-        array_walk_recursive($data,'filter_exp');
         $filters    =   isset($filter)?$filter:C('DEFAULT_FILTER');
         if($filters) {
             $filters    =   explode(',',$filters);
@@ -211,7 +238,6 @@ function I($name,$default='',$filter=null) {
         }
     }elseif(isset($input[$name])) { // 取值操作
         $data       =   $input[$name];
-        is_array($data) && array_walk_recursive($data,'filter_exp');
         $filters    =   isset($filter)?$filter:C('DEFAULT_FILTER');
         if($filters) {
             $filters    =   explode(',',$filters);
@@ -1021,13 +1047,6 @@ function send_http_status($code) {
         header('HTTP/1.1 '.$code.' '.$_status[$code]);
         // 确保FastCGI模式下正常
         header('Status:'.$code.' '.$_status[$code]);
-    }
-}
-
-// 过滤表单中的表达式
-function filter_exp(&$value){
-    if (in_array(strtolower($value),array('exp','or'))){
-        $value .= ' ';
     }
 }
 

@@ -80,6 +80,18 @@ function load_config($file,$parse=CONF_PARSE){
 }
 
 /**
+ * 解析yaml文件返回一个数组
+ * @param string $file 配置文件名
+ * @return array
+ */
+if (!function_exists('yaml_parse_file')) {
+    function yaml_parse_file($file) {
+        vendor('spyc.Spyc');
+        return Spyc::YAMLLoad($file);
+    }
+}
+
+/**
  * 抛出异常处理
  * @param string $msg 异常消息
  * @param integer $code 异常代码 默认为0
@@ -214,8 +226,12 @@ function T($template='',$layer=''){
     $auto   =   C('AUTOLOAD_NAMESPACE');
     if($auto && isset($auto[$extend])){ // 扩展资源
         $baseUrl    =   $auto[$extend].$module.$layer.'/';
-    }elseif(C('VIEW_PATH')){ // 指定视图目录
+    }elseif(C('VIEW_PATH')){ 
+        // 改变模块视图目录
         $baseUrl    =   C('VIEW_PATH');
+    }elseif(defined('TMPL_PATH')){ 
+        // 指定全局视图目录
+        $baseUrl    =   TMPL_PATH.$module;
     }else{
         $baseUrl    =   APP_PATH.$module.$layer.'/';
     }
@@ -235,52 +251,6 @@ function T($template='',$layer=''){
     }
     return $baseUrl.($theme?$theme.'/':'').$file.C('TMPL_TEMPLATE_SUFFIX');
 }
-
-/* function T($template='',$layer=''){//thinkcmf 修改
-	$tpl_root=false;
-	if(strpos($template,":")===0){
-		$template=substr($template, 1);
-		$tpl_root=true;
-	}
-	if(strpos($template, "Public:")===0){
-		$tpl_root=true;
-	}
-	// 解析模版资源地址
-	if(false === strpos($template,'://')){
-		$template   =   'http://'.str_replace(':', '/',$template);
-	}
-	$info   =   parse_url($template);
-	$file   =   $info['host'].(isset($info['path'])?$info['path']:'');
-	$module =   isset($info['user'])?$info['user'].'/':MODULE_NAME.'/';
-	//$extend =   $info['scheme'];
-	//$layer  =   $layer?$layer:C('DEFAULT_V_LAYER');
-
-	// 获取主题
-	$theme  =   C('DEFAULT_THEME');
-	$theme  =   $theme?$theme.'/':'';
-	if($tpl_root){
-		$module="";
-	}
-	$module=$module?$module."/":"";
-	$baseUrl    =   C('SP_VIEW_PATH').$theme.$module;
-	// 分析模板文件规则
-	$depr   =   C('TMPL_FILE_DEPR');
-	if(!$tpl_root){
-		if('' == $file) {
-			// 如果模板文件名为空 按照默认规则定位
-			$file = CONTROLLER_NAME . $depr . ACTION_NAME;
-		}elseif(false === strpos($file, '/')){
-			$file = CONTROLLER_NAME . $depr . $file;
-		}elseif('/' != $depr){
-			if(substr_count($file,'/')>1){
-				$file   =   substr_replace($file,$depr,strrpos($file,'/'),1);
-			}else{
-				$file   =   str_replace('/', $depr, $file);
-			}
-		}
-	}
-	return $baseUrl.$file.C('TMPL_TEMPLATE_SUFFIX');
-} */
 
 /**
  * 获取输入参数 支持过滤和默认值
@@ -334,22 +304,27 @@ function I($name,$default='',$filter=null,$datas=null) {
         default:
             return NULL;
     }
-    if(empty($name)) { // 获取全部变量
+    if(''==$name) { // 获取全部变量
         $data       =   $input;
-        array_walk_recursive($data,'filter_exp');
         $filters    =   isset($filter)?$filter:C('DEFAULT_FILTER');
         if($filters) {
-            $filters    =   explode(',',$filters);
+            if(is_string($filters)){
+                $filters    =   explode(',',$filters);
+            }
             foreach($filters as $filter){
                 $data   =   array_map_recursive($filter,$data); // 参数过滤
             }
         }
     }elseif(isset($input[$name])) { // 取值操作
         $data       =   $input[$name];
-        is_array($data) && array_walk_recursive($data,'filter_exp');
         $filters    =   isset($filter)?$filter:C('DEFAULT_FILTER');
         if($filters) {
-            $filters    =   explode(',',$filters);
+            if(is_string($filters)){
+                $filters    =   explode(',',$filters);
+            }elseif(is_int($filters)){
+                $filters    =   array($filters);
+            }
+            
             foreach($filters as $filter){
                 if(function_exists($filter)) {
                     $data   =   is_array($data)?array_map_recursive($filter,$data):$filter($data); // 参数过滤
@@ -364,6 +339,7 @@ function I($name,$default='',$filter=null,$datas=null) {
     }else{ // 变量默认值
         $data       =    isset($default)?$default:NULL;
     }
+    is_array($data) && array_walk_recursive($data,'think_filter');
     return $data;
 }
 
@@ -622,8 +598,8 @@ function parse_res_name($name,$layer,$level=1){
 function controller($name,$path=''){
     $layer  =   C('DEFAULT_C_LAYER');
     if(!C('APP_USE_NAMESPACE')){
-        $class  =   parse_name($name, 1);
-        import(MODULE_NAME.'/'.$layer.'/'.$class.$layer);
+        $class  =   parse_name($name, 1).$layer;
+        import(MODULE_NAME.'/'.$layer.'/'.$class);
     }else{
         $class  =   MODULE_NAME.'\\'.($path?$path.'\\':'').$layer;
         $array  =   explode('/',$name);
@@ -919,7 +895,7 @@ function U($url='',$vars='',$suffix=true,$domain=false) {
             $module =   '';
             
             if(!empty($path)) {
-                $var[$varModule]    =   array_pop($path);
+                $var[$varModule]    =   implode($depr,$path);
             }else{
                 if(C('MULTI_MODULE')) {
                     if(MODULE_NAME != C('DEFAULT_MODULE') || !C('MODULE_ALLOW_LIST')){
@@ -953,7 +929,7 @@ function U($url='',$vars='',$suffix=true,$domain=false) {
         if(isset($route)) {
             $url    =   __APP__.'/'.rtrim($url,$depr);
         }else{
-            $module =   defined('BIND_MODULE') ? '' : $module;
+            $module =   (defined('BIND_MODULE') && BIND_MODULE==$module )? '' : $module;
             $url    =   __APP__.'/'.($module?$module.MODULE_PATHINFO_DEPR:'').implode($depr,array_reverse($var));
         }
         if($urlCase){
@@ -1412,18 +1388,53 @@ function get_client_ip($type = 0,$adv=false) {
  */
 function send_http_status($code) {
     static $_status = array(
-        // Success 2xx
-        200 => 'OK',
-        // Redirection 3xx
-        301 => 'Moved Permanently',
-        302 => 'Moved Temporarily ',  // 1.1
-        // Client Error 4xx
-        400 => 'Bad Request',
-        403 => 'Forbidden',
-        404 => 'Not Found',
-        // Server Error 5xx
-        500 => 'Internal Server Error',
-        503 => 'Service Unavailable',
+            // Informational 1xx
+            100 => 'Continue',
+            101 => 'Switching Protocols',
+            // Success 2xx
+            200 => 'OK',
+            201 => 'Created',
+            202 => 'Accepted',
+            203 => 'Non-Authoritative Information',
+            204 => 'No Content',
+            205 => 'Reset Content',
+            206 => 'Partial Content',
+            // Redirection 3xx
+            300 => 'Multiple Choices',
+            301 => 'Moved Permanently',
+            302 => 'Moved Temporarily ',  // 1.1
+            303 => 'See Other',
+            304 => 'Not Modified',
+            305 => 'Use Proxy',
+            // 306 is deprecated but reserved
+            307 => 'Temporary Redirect',
+            // Client Error 4xx
+            400 => 'Bad Request',
+            401 => 'Unauthorized',
+            402 => 'Payment Required',
+            403 => 'Forbidden',
+            404 => 'Not Found',
+            405 => 'Method Not Allowed',
+            406 => 'Not Acceptable',
+            407 => 'Proxy Authentication Required',
+            408 => 'Request Timeout',
+            409 => 'Conflict',
+            410 => 'Gone',
+            411 => 'Length Required',
+            412 => 'Precondition Failed',
+            413 => 'Request Entity Too Large',
+            414 => 'Request-URI Too Long',
+            415 => 'Unsupported Media Type',
+            416 => 'Requested Range Not Satisfiable',
+            417 => 'Expectation Failed',
+            // Server Error 5xx
+            500 => 'Internal Server Error',
+            501 => 'Not Implemented',
+            502 => 'Bad Gateway',
+            503 => 'Service Unavailable',
+            504 => 'Gateway Timeout',
+            505 => 'HTTP Version Not Supported',
+            509 => 'Bandwidth Limit Exceeded'
     );
     if(isset($_status[$code])) {
         header('HTTP/1.1 '.$code.' '.$_status[$code]);
@@ -1432,14 +1443,16 @@ function send_http_status($code) {
     }
 }
 
-// 过滤表单中的表达式
-function filter_exp(&$value){
-    if (in_array(strtolower($value),array('exp','or'))){
-        $value .= ' ';
-    }
-}
-
 // 不区分大小写的in_array实现
 function in_array_case($value,$array){
     return in_array(strtolower($value),array_map('strtolower',$array));
+}
+
+function think_filter(&$value){
+    // TODO 其他安全过滤
+
+    // 过滤查询特殊字符
+    if(preg_match('/^(EXP|NEQ|GT|EGT|LT|ELT|OR|LIKE|NOTLIKE|NOTBETWEEN|NOT BETWEEN|BETWEEN|NOTIN|NOT IN|IN)$/i',$value)){
+        $value .= ' ';
+    }
 }

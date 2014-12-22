@@ -41,10 +41,6 @@ class Sqlsrv extends Db{
             $connectInfo  =  array('Database'=>$config['database'],'UID'=>$config['username'],'PWD'=>$config['password'],'CharacterSet' => C('DEFAULT_CHARSET'));
             $this->linkID[$linkNum] = sqlsrv_connect( $host, $connectInfo);
             if ( !$this->linkID[$linkNum] )  $this->error(false);
-            // 标记连接成功
-            $this->connected =  true;
-            //注销数据库安全信息
-            if(1 != C('DB_DEPLOY_TYPE')) unset($this->config);
         }
         return $this->linkID[$linkNum];
     }
@@ -261,7 +257,7 @@ class Sqlsrv extends Db{
      */
     protected function parseKey(&$key) {
         $key   =  trim($key);
-        if(!preg_match('/[,\'\"\*\(\)\[.\s]/',$key)) {
+        if(!is_numeric($key) && !preg_match('/[,\'\"\*\(\)\[.\s]/',$key)) {
            $key = '['.$key.']';
         }
         return $key;   

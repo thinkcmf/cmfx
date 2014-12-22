@@ -57,7 +57,7 @@ class Model {
     // 是否批处理验证
     protected $patchValidate    =   false;
     // 链操作方法列表
-    protected $methods          =   array('order','alias','having','group','lock','distinct','auto','filter','validate','result','token');
+    protected $methods          =   array('order','alias','having','group','lock','distinct','auto','filter','validate','result','token','index');
 
     /**
      * 架构函数
@@ -107,7 +107,7 @@ class Model {
             // 如果数据表字段没有定义则自动获取
             if(C('DB_FIELDS_CACHE')) {
                 $db   =  $this->dbName?:C('DB_NAME');
-                $fields = F('_fields/'.strtolower($db.'.'.$this->name));
+                $fields = F('_fields/'.strtolower($db.'.'.$this->tablePrefix.$this->name));
                 if($fields) {
                     $this->fields   =   $fields;
                     $this->pk       =   $fields['_pk'];
@@ -148,7 +148,7 @@ class Model {
         if(C('DB_FIELDS_CACHE')){
             // 永久缓存数据表信息
             $db   =  $this->dbName?:C('DB_NAME');
-            F('_fields/'.strtolower($db.'.'.$this->name),$this->fields);
+            F('_fields/'.strtolower($db.'.'.$this->tablePrefix.$this->name),$this->fields);
         }
     }
 
@@ -522,6 +522,18 @@ class Model {
         }
         $resultSet  =   array_map(array($this,'_read_data'),$resultSet);
         $this->_after_select($resultSet,$options);
+        if(isset($options['index'])){ // 对数据集进行索引
+            $index  =   explode(',',$options['index']);
+            foreach ($resultSet as $result){
+                $_key   =  $result[$index[0]];
+                if(isset($index[1]) && isset($result[$index[1]])){
+                    $cols[$_key] =  $result[$index[1]];
+                }else{
+                    $cols[$_key] =  $result;
+                }
+            }
+            $resultSet  =   $cols;         
+        }
         if(isset($cache)){
             S($key,$resultSet,$cache);
         }           
@@ -576,9 +588,7 @@ class Model {
                 if(in_array($key,$fields,true)){
                     if(is_scalar($val)) {
                         $this->_parseType($options['where'],$key);
-                    }elseif(is_array($val) && isset($_REQUEST[$key]) && is_array($_REQUEST[$key])){
-						$options['where'][$key]	=	(string)$val;
-					}
+                    }
                 }elseif(!is_numeric($key) && '_' != substr($key,0,1) && false === strpos($key,'.') && false === strpos($key,'(') && false === strpos($key,'|') && false === strpos($key,'&')){
                     if(APP_DEBUG){
                         E(L('_ERROR_QUERY_EXPRESS_').':['.$key.'=>'.$val.']');
@@ -604,7 +614,7 @@ class Model {
      * @return void
      */
     protected function _parseType(&$data,$key) {
-        if(empty($this->options['bind'][':'.$key]) && isset($this->fields['_type'][$key])){
+        if(!isset($this->options['bind'][':'.$key]) && isset($this->fields['_type'][$key])){
             $fieldType = strtolower($this->fields['_type'][$key]);
             if(false !== strpos($fieldType,'enum')){
                 // 支持ENUM类型优先检测
@@ -786,7 +796,7 @@ class Model {
             }
         }        
         $field                  =   trim($field);
-        if(strpos($field,',')) { // 多字段
+        if(strpos($field,',') && false !== $sepa) { // 多字段
             if(!isset($options['limit'])){
                 $options['limit']   =   is_numeric($sepa)?$sepa:'';
             }
@@ -1298,7 +1308,7 @@ class Model {
      */
     public function getModelName() {
         if(empty($this->name)){
-            $name = substr(get_class($this),0,-5);
+            $name = substr(get_class($this),0,-strlen(C('DEFAULT_M_LAYER')));
             if ( $pos = strrpos($name,'\\') ) {//有命名空间
                 $this->name = substr($name,$pos+1);
             }else{
@@ -1630,7 +1640,10 @@ class Model {
      * @return Model
      */
     public function limit($offset,$length=null){
-        $this->options['limit'] =   is_null($length)?$offset:$offset.','.$length;
+        if(is_null($length) && strpos($offset,',')){
+            list($offset,$length)   =   explode(',',$offset);
+        }
+        $this->options['limit']     =   intval($offset).( $length? ','.intval($length) : '' );
         return $this;
     }
 
@@ -1642,7 +1655,10 @@ class Model {
      * @return Model
      */
     public function page($page,$listRows=null){
-        $this->options['page'] =   is_null($listRows)?$page:$page.','.$listRows;
+        if(is_null($listRows) && strpos($page,',')){
+            list($page,$listRows)   =   explode(',',$page);
+        }
+        $this->options['page']      =   array(intval($page),intval($listRows));
         return $this;
     }
 

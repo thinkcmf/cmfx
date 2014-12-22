@@ -40,12 +40,10 @@ class Db {
     protected $_linkID    = null;
     // 当前查询ID
     protected $queryID    = null;
-    // 是否已经连接数据库
-    protected $connected  = false;
     // 数据库连接参数配置
     protected $config     = '';
     // 数据库表达式
-    protected $comparison = array('eq'=>'=','neq'=>'<>','gt'=>'>','egt'=>'>=','lt'=>'<','elt'=>'<=','notlike'=>'NOT LIKE','like'=>'LIKE','in'=>'IN','notin'=>'NOT IN');
+    protected $exp = array('eq'=>'=','neq'=>'<>','gt'=>'>','egt'=>'>=','lt'=>'<','elt'=>'<=','notlike'=>'NOT LIKE','like'=>'LIKE','in'=>'IN','notin'=>'NOT IN','not in'=>'NOT IN','between'=>'BETWEEN','notbetween'=>'NOT BETWEEN','not between'=>'NOT BETWEEN');
     // 查询表达式
     protected $selectSql  = 'SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT% %UNION%%COMMENT%';
     // 参数绑定
@@ -126,8 +124,8 @@ class Db {
                   'hostname'  =>  $db_config['db_host'],
                   'hostport'  =>  $db_config['db_port'],
                   'database'  =>  $db_config['db_name'],
-                  'dsn'       =>  $db_config['db_dsn'],
-                  'params'    =>  $db_config['db_params'],
+                  'dsn'       =>  isset($db_config['db_dsn'])?$db_config['db_dsn']:'',
+                  'params'    =>  isset($db_config['db_params'])?$db_config['db_params']:array(),
                   'charset'   =>  isset($db_config['db_charset'])?$db_config['db_charset']:'utf8',
              );
         }elseif(empty($db_config)) {
@@ -163,7 +161,7 @@ class Db {
             $this->_linkID = $this->multiConnect($master);
         else
             // 默认单数据库
-            if ( !$this->connected ) $this->_linkID = $this->connect();
+            if ( !$this->_linkID ) $this->_linkID = $this->connect();
     }
 
     /**
@@ -423,7 +421,6 @@ class Db {
                 $operate    =   ' AND ';
             }
             foreach ($where as $key=>$val){
-                $whereStr .= '( ';
                 if(is_numeric($key)){
                     $key  = '_complex';
                 }                    
@@ -443,9 +440,9 @@ class Db {
                         $str   =  array();
                         foreach ($array as $m=>$k){
                             $v =  $multi?$val[$m]:$val;
-                            $str[]   = '('.$this->parseWhereItem($this->parseKey($k),$v).')';
+                            $str[]   = $this->parseWhereItem($this->parseKey($k),$v);
                         }
-                        $whereStr .= implode(' OR ',$str);
+                        $whereStr .= '( '.implode(' OR ',$str).' )';
                     }elseif(strpos($key,'&')){
                         $array =  explode('&',$key);
                         $str   =  array();
@@ -453,12 +450,12 @@ class Db {
                             $v =  $multi?$val[$m]:$val;
                             $str[]   = '('.$this->parseWhereItem($this->parseKey($k),$v).')';
                         }
-                        $whereStr .= implode(' AND ',$str);
+                        $whereStr .= '( '.implode(' AND ',$str).' )';
                     }else{
                         $whereStr .= $this->parseWhereItem($this->parseKey($key),$val);
                     }
                 }
-                $whereStr .= ' )'.$operate;
+                $whereStr .= $operate;
             }
             $whereStr = substr($whereStr,0,-strlen($operate));
         }
@@ -470,37 +467,37 @@ class Db {
         $whereStr = '';
         if(is_array($val)) {
             if(is_string($val[0])) {
+				$exp	=	strtolower($val[0]);
                 if(preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT)$/i',$val[0])) { // 比较运算
-                    $whereStr .= $key.' '.$this->comparison[strtolower($val[0])].' '.$this->parseValue($val[1]);
+                    $whereStr .= $key.' '.$this->exp[$exp].' '.$this->parseValue($val[1]);
                 }elseif(preg_match('/^(NOTLIKE|LIKE)$/i',$val[0])){// 模糊查找
                     if(is_array($val[1])) {
                         $likeLogic  =   isset($val[2])?strtoupper($val[2]):'OR';
                         if(in_array($likeLogic,array('AND','OR','XOR'))){
-                            $likeStr    =   $this->comparison[strtolower($val[0])];
                             $like       =   array();
                             foreach ($val[1] as $item){
-                                $like[] = $key.' '.$likeStr.' '.$this->parseValue($item);
+                                $like[] = $key.' '.$this->exp[$exp].' '.$this->parseValue($item);
                             }
                             $whereStr .= '('.implode(' '.$likeLogic.' ',$like).')';                          
                         }
                     }else{
-                        $whereStr .= $key.' '.$this->comparison[strtolower($val[0])].' '.$this->parseValue($val[1]);
+                        $whereStr .= $key.' '.$this->exp[$exp].' '.$this->parseValue($val[1]);
                     }
-                }elseif('exp'==strtolower($val[0])){ // 使用表达式
-                    $whereStr .= ' ('.$key.' '.$val[1].') ';
-                }elseif(preg_match('/IN/i',$val[0])){ // IN 运算
+                }elseif('exp'==$exp){ // 使用表达式
+                    $whereStr .= $key.' '.$val[1];
+                }elseif(preg_match('/^(NOTIN|NOT IN|IN)$/i',$val[0])){ // IN 运算
                     if(isset($val[2]) && 'exp'==$val[2]) {
-                        $whereStr .= $key.' '.strtoupper($val[0]).' '.$val[1];
+                        $whereStr .= $key.' '.$this->exp[$exp].' '.$val[1];
                     }else{
                         if(is_string($val[1])) {
                              $val[1] =  explode(',',$val[1]);
                         }
                         $zone      =   implode(',',$this->parseValue($val[1]));
-                        $whereStr .= $key.' '.strtoupper($val[0]).' ('.$zone.')';
+                        $whereStr .= $key.' '.$this->exp[$exp].' ('.$zone.')';
                     }
-                }elseif(preg_match('/BETWEEN/i',$val[0])){ // BETWEEN运算
+                }elseif(preg_match('/^(NOTBETWEEN|NOT BETWEEN|BETWEEN)$/i',$val[0])){ // BETWEEN运算
                     $data = is_string($val[1])? explode(',',$val[1]):$val[1];
-                    $whereStr .=  ' ('.$key.' '.strtoupper($val[0]).' '.$this->parseValue($data[0]).' AND '.$this->parseValue($data[1]).' )';
+                    $whereStr .=  $key.' '.$this->exp[$exp].' '.$this->parseValue($data[0]).' AND '.$this->parseValue($data[1]);
                 }else{
                     E(L('_EXPRESS_ERROR_').':'.$val[0]);
                 }
@@ -515,16 +512,16 @@ class Db {
                 for($i=0;$i<$count;$i++) {
                     $data = is_array($val[$i])?$val[$i][1]:$val[$i];
                     if('exp'==strtolower($val[$i][0])) {
-                        $whereStr .= '('.$key.' '.$data.') '.$rule.' ';
+                        $whereStr .= $key.' '.$data.' '.$rule.' ';
                     }else{
-                        $whereStr .= '('.$this->parseWhereItem($key,$val[$i]).') '.$rule.' ';
+                        $whereStr .= $this->parseWhereItem($key,$val[$i]).' '.$rule.' ';
                     }
                 }
-                $whereStr = substr($whereStr,0,-4);
+                $whereStr = '( '.substr($whereStr,0,-4).' )';
             }
         }else {
             //对字符串类型字段采用模糊匹配
-            if(C('DB_LIKE_FIELDS') && preg_match('/('.C('DB_LIKE_FIELDS').')/i',$key)) {
+            if(C('DB_LIKE_FIELDS') && preg_match('/^('.C('DB_LIKE_FIELDS').')$/i',$key)) {
                 $val  =  '%'.$val.'%';
                 $whereStr .= $key.' LIKE '.$this->parseValue($val);
             }else {
@@ -567,7 +564,7 @@ class Db {
                 $whereStr   = implode($op,$array);
                 break;
         }
-        return $whereStr;
+        return '( '.$whereStr.' )';
     }
 
     /**
@@ -784,14 +781,10 @@ class Db {
     public function buildSelectSql($options=array()) {
         if(isset($options['page'])) {
             // 根据页数计算limit
-            if(strpos($options['page'],',')) {
-                list($page,$listRows) =  explode(',',$options['page']);
-            }else{
-                $page = $options['page'];
-            }
-            $page    =  $page?:1;
-            $listRows=  isset($listRows)?$listRows:(is_numeric($options['limit'])?$options['limit']:20);
-            $offset  =  $listRows*((int)$page-1);
+            list($page,$listRows)   =   $options['page'];
+            $page    =  $page>0 ? $page : 1;
+            $listRows=  $listRows>0 ? $listRows : (is_numeric($options['limit'])?$options['limit']:20);
+            $offset  =  $listRows*($page-1);
             $options['limit'] =  $offset.','.$listRows;
         }
         if(C('DB_SQL_BUILD_CACHE')) { // SQL创建缓存

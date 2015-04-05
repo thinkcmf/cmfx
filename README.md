@@ -149,10 +149,12 @@ X1.0.0 alpha
 
 ## INSTALL
 安装请执行http://yourdomain/install/index.php
+
 安装完成后请删除或改名install/index.php
 
 ## ThinkCMF 免责声明
   1、利用 ThinkCMF 构建的网站的任何信息内容以及导致的任何版权纠纷和法律争议及后果，ThinkCMF 官方不承担任何责任。
+  
   2、您一旦安装使用ThinkCMF，即被视为完全理解并接受本协议的各项条款，在享有上述条款授予的权力的同时，受到相关的约束和限制。
  
 ## ThinkCMF 使用建议
@@ -160,8 +162,9 @@ X1.0.0 alpha
 请在您的网站首页加上ThinkCMF相关链接，O(∩_∩)O~ ！
   
 ## 捐赠ThinkCMF
-  http://www.thinkcmf.com/donate/index.html
-  您的每一份帮助都将支持ThinkCMF做的更好，走的更远！
+http://www.thinkcmf.com/donate/index.html
+  
+您的每一份帮助都将支持ThinkCMF做的更好，走的更远！
   
   
 ThinkCMF 正在为你开放更多....

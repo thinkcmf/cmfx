@@ -1,5 +1,5 @@
 ## UPDATE
-===
+
 X1.6.0
 * 增加静态缓存
 * 增加form提交状态判断，防止连续提交
@@ -20,7 +20,7 @@ X1.6.0
 * 修复后台管理登录可能会被暴力破解
 * 修复后台菜单列表层级问题
 * 修复启用后被删除的插件执行报错
-===
+
 X1.5.0
 * 增加插件机制
 * 增加编辑器附件上传功能
@@ -56,7 +56,7 @@ X1.5.0
 注：后台模板分割符已经统一为/，原来的类似Admin/Main.index.html文件已经改为Admin/Main/index.html请后台开发时注意
 ThinkCMF全体贡献者祝大家2015年大吉大利，开心幸福！《给你一个吻》
 
-===
+
 X1.3.0
 * 统一Action为Controller
 * 增加文章搜索功能
@@ -76,7 +76,7 @@ X1.3.0
 * 修复sp_sql_posts_bycatid和sp_sql_posts_paged_bycatid两个方法where语句问题
 * 修复bluesky主题分页样式问题
 * 修复文章推荐，置顶bug
-===
+
 X1.2.0
 * url美化
 * 特殊用户名过滤
@@ -85,7 +85,7 @@ X1.2.0
 * 广告隐藏显示功能
 * 友情链接隐藏显示功能
 * 评论计数
-===
+
 X1.1.0
 全新的ThinkPHP 3.2.2架构，使用php命名空间，让开发快起来吧！
 
@@ -101,7 +101,7 @@ X1.1.0
 * 优化后台菜单使用方式
 * 优化数据库中一些不规范字段
 * 增加前台标签库TagLibHome，统一include标签为tc_include
-===
+
 X1.0.0
 全新的ThinkPHP 3.2.2架构，使用php命名空间，让开发快起来吧！
 
@@ -118,7 +118,7 @@ X1.0.0
 * 修复SAE，linux下类库加载失败
 * 修复ueditor chrome模板功能bug
 * 修复文件上传bug
-===
+
 X1.0.0 alpha2
 修复SAE，linux下类库加载失败
 修复ueditor chrome模板功能bug
@@ -139,12 +139,10 @@ X1.0.0 alpha
 
 
 ## INSTALL
-===
 安装请执行http://yourdomain/install/index.php
 安装完成后请删除或改名install/index.php
 
 ## README
-===
 ThinkCMF是一款基于PHP+MYSQL开发的中文内容管理框架。ThinkCMF提出灵活的应用机制，框架自身提供基础的管理功能，而开发者可以根据自身的需求以应用的形式进行扩展。每个应用都能独立的完成自己的任务，也可通过系统调用其他应用进行协同工作。在这种运行机制下，开发商场应用的用户无需关心开发SNS应用时如何工作的，但他们之间又可通过系统本身进行协调，大大的降低了开发成本和沟通成本。
 官网:http://www.thinkcmf.com
 文档:http://www.thinkcmf.com/index.php?m=document

@@ -17,6 +17,12 @@ var GV = {
 	$(function(){
 		$('body').on('touchstart.dropdown', '.dropdown-menu', function (e) { e.stopPropagation(); });
 		
+		$("#main-menu li.dropdown").hover(function(){
+			$(this).addClass("open");
+		},function(){
+			$(this).removeClass("open");
+		});
+		
 		;(function($){
 			$.fn.totop=function(opt){
 				var scrolling=false;

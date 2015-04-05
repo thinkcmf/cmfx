@@ -79,6 +79,9 @@
                 var btn = $(this),
                     form = btn.parents('form.J_ajaxForm');
 
+                if(btn.data("loading")){
+            		return;
+            	}
                 //批量操作 判断选项
                 if (btn.data('subcheck')) {
                     btn.parent().find('span').remove();
@@ -138,6 +141,8 @@
                     url: btn.data('action') ? btn.data('action') : form.attr('action'), //按钮上是否自定义提交地址(多按钮情况)
                     dataType: 'json',
                     beforeSubmit: function (arr, $form, options) {
+                    	btn.data("loading",true);
+                    	
                         var text = btn.text();
 
                         //按钮文案、状态修改
@@ -156,6 +161,11 @@
                             /*$('<span class="tips_success">' + data.info + '</span>').appendTo(btn.parent()).fadeIn('slow').delay(1000).fadeOut(function () {
                             });*/
                         } else if (data.state === 'fail') {
+                        	var $verify_img=form.find(".verify_img");
+                        	if($verify_img.length){
+                        		$verify_img.attr("src",$verify_img.attr("src")+"&refresh="+Math.random()); 
+                        	}
+                        	
                         	noty({text: data.info,
                         		type:'error',
                         		layout:'center'
@@ -200,6 +210,9 @@
                         	}
                         }
                         
+                    },
+                    complete: function(){
+                    	btn.data("loading",false);
                     }
                 });
             });
@@ -221,7 +234,7 @@
 
     //所有的删除操作，删除数据后刷新页面
     if ($('a.J_ajax_del').length) {
-        Wind.use('artDialog', function () {
+        Wind.use('noty', function () {
             $('.J_ajax_del').on('click', function (e) {
                 e.preventDefault();
                 var $_this = this,

@@ -8,6 +8,7 @@
 		<style>
 			#article_content img{height:auto !important}
 			#article_content {word-wrap: break-word;}
+    		.btn {margin-top: 33px;}
 		</style>
 	</head>
 <body class="">
@@ -19,7 +20,7 @@
 			<div class="tc-box first-box article-box">
 		    	<h2>{$post_title}</h2>
 		    	<div class="article-infobox">
-		    		<span>{$post_date} by {$user_nicename}</span>
+		    		<span>{$post_date} by {$user_nicename|default=$user_login}</span>
 		    		<span>
 		    			<a href="javascript:;"><i class="fa fa-eye"></i><span>{$post_hits}</span></a>
 						<a href="{:U('article/do_like',array('id'=>$object_id))}" class="J_count_btn"><i class="fa fa-thumbs-up"></i><span class="count">{$post_like}</span></a>
@@ -32,6 +33,32 @@
 		    	<div id="article_content">
 		    	{$post_content}
 		    	</div>
+                <if condition="!empty($post_source)">
+                    <div>
+                        <b>注：本文转载自{$post_source}，转载目的在于传递更多信息，并不代表本网赞同其观点和对其真实性负责。如有侵权行为，请联系我们，我们会及时删除。</b>
+                    </div>
+    			</if>
+		    	<div>
+					<if condition="!empty($prev)">
+					<a href="{:U('article/index',array('id'=>$prev['tid']))}" class="btn btn-primary pull-left">上一篇</a>
+					</if>
+					<if condition="!empty($next)">
+					<a href="{:U('article/index',array('id'=>$next['tid']))}" class="btn btn-warning pull-right">下一篇</a>
+					</if>
+    	            <script type="text/javascript" src="__TMPL__Public/js/qrcode.min.js"></script>
+                    <div id="qrcode" style="width: 100px;margin:0 auto"></div>
+    					<script type="text/javascript">
+                        var qrcode = new QRCode(document.getElementById("qrcode"), {
+                        width : 100,
+                        height : 100
+                        });
+                        function makeCode () {		
+                        qrcode.makeCode("http://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}");
+                        }
+                        makeCode();
+                        </script>
+					<div class="clearfix"></div>
+				</div>
 		    	
 		    	{:Comments("posts",$object_id)}
 		    </div>

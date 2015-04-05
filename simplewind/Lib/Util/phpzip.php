@@ -536,4 +536,3 @@
             return $centd[comment];
         }
     }
-?>

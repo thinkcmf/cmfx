@@ -12,7 +12,7 @@ class RegisterController extends HomeBaseController {
 	
 	function doregister(){
     	
-		if($_SESSION['_verify_']['verify']!=strtolower($_POST['verify'])){
+		if(!sp_check_verify_code()){
     		$this->error("验证码错误！");
     	}
     	

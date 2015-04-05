@@ -30,4 +30,3 @@ class ListController extends HomeBaseController {
 	}
 	
 }
-?>

@@ -8,16 +8,17 @@ class AdController extends AdminbaseController{
 		parent::_initialize();
 		$this->ad_obj = D("Common/Ad");
 	}
+	
 	function index(){
 		$ads=$this->ad_obj->select();
 		$this->assign("ads",$ads);
 		$this->display();
 	}
 	
-	
 	function add(){
 		$this->display();
 	}
+	
 	function add_post(){
 		if(IS_POST){
 			if ($this->ad_obj->create()){
@@ -32,7 +33,6 @@ class AdController extends AdminbaseController{
 		
 		}
 	}
-	
 	
 	function edit(){
 		$id=I("get.id");

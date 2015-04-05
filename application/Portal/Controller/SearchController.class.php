@@ -20,4 +20,3 @@ class SearchController extends HomeBaseController {
     
     
 }
-?>

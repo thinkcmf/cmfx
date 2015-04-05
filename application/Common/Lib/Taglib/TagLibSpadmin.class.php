@@ -57,4 +57,3 @@ class TagLibSpadmin extends TagLib {
 
 }
 
-?>

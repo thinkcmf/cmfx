@@ -129,12 +129,24 @@ class HomeBaseController extends AppframeController {
 			cookie('think_template',$theme,864000);
 		}
 		
+		if(C('MOBILE_TPL_ENABLED')){//开启手机模板支持
+			if(sp_is_mobile()){
+				if(file_exists($tmpl_path."/".$theme."_mobile")){
+					$theme  =   $theme."_mobile";
+				}
+			}
+		}
+		
+		
+		
+		
 		C('SP_DEFAULT_THEME',$theme);
 		
+		$current_tmpl_path=$tmpl_path.$theme."/";
 		// 获取当前主题的模版路径
-		define('THEME_PATH',   $tmpl_path.$theme."/");
+		define('THEME_PATH', $current_tmpl_path);
 		
-		C("TMPL_PARSE_STRING.__TMPL__",__ROOT__."/".THEME_PATH);
+		C("TMPL_PARSE_STRING.__TMPL__",__ROOT__."/".$current_tmpl_path);
 		
 		C('SP_VIEW_PATH',$tmpl_path);
 		C('DEFAULT_THEME',$theme);
@@ -160,7 +172,7 @@ class HomeBaseController extends AppframeController {
 			$template = "/".CONTROLLER_NAME . $depr . $template;
 		}
 		
-		$file=THEME_PATH.$module.$template.C('TMPL_TEMPLATE_SUFFIX');
+		$file=$current_tmpl_path.$module.$template.C('TMPL_TEMPLATE_SUFFIX');
 		if(!is_file($file)) E(L('_TEMPLATE_NOT_EXIST_').':'.$file);
 		return $file;
 	}

@@ -123,7 +123,37 @@ class SlideController extends AdminbaseController{
 			}
 		}
 	}
-	
+	    //隐藏
+	function ban(){
+		
+    	$id=intval($_GET['id']);
+			$data['slide_status']=0;
+    	if ($id) {
+    		$rst = $this->slide_obj->where("slide_id in ($id)")->save($data);
+    		if ($rst) {
+    			$this->success("幻灯片隐藏成功！");
+    		} else {
+    			$this->error('幻灯片隐藏失败！');
+    		}
+    	} else {
+    		$this->error('数据传入失败！');
+    	}
+    }
+    //显示
+    function cancelban(){
+    	$id=intval($_GET['id']);
+			$data['slide_status']=1;
+    	if ($id) {
+    		$rst = $this->slide_obj->where("slide_id in ($id)")->save($data);
+    		if ($rst) {
+    			$this->success("幻灯片启用成功！");
+    		} else {
+    			$this->error('幻灯片启用失败！');
+    		}
+    	} else {
+    		$this->error('数据传入失败！');
+    	}
+    }
 	//排序
 	public function listorders() {
 		$status = parent::_listorders($this->slide_obj);

@@ -14,10 +14,9 @@ class PublicController extends AdminbaseController {
     		$this->success(L('LOGIN_SUCCESS'),U("Index/index"));
     	}else{
     		if(empty($_SESSION['adminlogin'])){
-    			header("Content-Type:text/html; charset=utf-8");
-    			$this->error("请从后台管理入口登录!",__ROOT__."/");
+    			redirect(__ROOT__."/");
     		}else{
-    			$this->display();
+    			$this->display(":login");
     		}
     		
     	}
@@ -42,8 +41,7 @@ class PublicController extends AdminbaseController {
     		$this->error(L('CAPTCHA_REQUIRED'));
     	}
     	//验证码
-    	if($_SESSION['_verify_']['verify']!=strtolower($verrify))
-    	{
+    	if(!sp_check_verify_code()){
     		$this->error(L('CAPTCHA_NOT_RIGHT'));
     	}else{
     		$user = D("Common/Users");
@@ -54,12 +52,21 @@ class PublicController extends AdminbaseController {
     		}
     		
     		$result = $user->where($where)->find();
-    		if($result != null && $result['user_type']==1){
+    		if(!empty($result) && $result['user_type']==1){
     			if($result['user_pass'] == sp_password($pass)){
+    				
+    				$role_user_model=M("RoleUser");
+    				
+    				$role_user_join = C('DB_PREFIX').'role as b on a.role_id =b.id';
+    				
+    				$groups=$role_user_model->alias("a")->join($role_user_join)->where(array("user_id"=>$result["id"],"status"=>1))->getField("role_id",true);
+    				
+    				if( $result["id"]!=1 && ( empty($groups) || empty($result['user_status']) ) ){
+    					$this->error(L('USE_DISABLED'));
+    				}
     				//登入成功页面跳转
     				$_SESSION["ADMIN_ID"]=$result["id"];
     				$_SESSION['name']=$result["user_login"];
-    				session("roleid",$result['role_id']);
     				$result['last_login_ip']=get_client_ip();
     				$result['last_login_time']=date("Y-m-d H:i:s");
     				$user->save($result);
@@ -75,5 +82,3 @@ class PublicController extends AdminbaseController {
     }
 
 }
-
-?>

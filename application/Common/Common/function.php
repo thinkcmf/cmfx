@@ -5,6 +5,10 @@ function get_current_admin_id(){
 	return $_SESSION['ADMIN_ID'];
 }
 
+function sp_get_current_admin_id(){
+	return get_current_admin_id();
+}
+
 function sp_is_user_login(){
 	return  !empty($_SESSION['user']);
 }
@@ -76,7 +80,7 @@ function sp_get_user_avatar_url($avatar){
 		if(strpos($avatar, "http")===0){
 			return $avatar;
 		}else {
-			return __ROOT__."/".C("UPLOADPATH")."avatar/".$avatar;
+			return sp_get_asset_upload_path("avatar/".$avatar);
 		}
 		
 	}else{
@@ -119,7 +123,7 @@ function sp_clear_cache(){
 		import ( "ORG.Util.Dir" );
 		$dirs = array ();
 		// runtime/
-		$rootdirs = scandir ( RUNTIME_PATH );
+		$rootdirs = sp_scan_dir( RUNTIME_PATH."*" );
 		//$noneed_clear=array(".","..","Data");
 		$noneed_clear=array(".","..");
 		$rootdirs=array_diff($rootdirs, $noneed_clear);
@@ -128,13 +132,15 @@ function sp_clear_cache(){
 			if ($dir != "." && $dir != "..") {
 				$dir = RUNTIME_PATH . $dir;
 				if (is_dir ( $dir )) {
-					array_push ( $dirs, $dir );
-					$tmprootdirs = scandir ( $dir );
+					//array_push ( $dirs, $dir );
+					$tmprootdirs = sp_scan_dir ( $dir."/*" );
 					foreach ( $tmprootdirs as $tdir ) {
 						if ($tdir != "." && $tdir != "..") {
 							$tdir = $dir . '/' . $tdir;
 							if (is_dir ( $tdir )) {
 								array_push ( $dirs, $tdir );
+							}else{
+								@unlink($tdir);
 							}
 						}
 					}
@@ -145,10 +151,10 @@ function sp_clear_cache(){
 		}
 		$dirtool=new \Dir("");
 		foreach ( $dirs as $dir ) {
-			$dirtool->del ( $dir );
+			$dirtool->delDir ( $dir );
 		}
 		
-		if(defined('IS_SAE') && IS_SAE){
+		if(sp_is_sae()){
 			$global_mc=@memcache_init();
 			if($global_mc){
 				$global_mc->flush();
@@ -186,7 +192,7 @@ function sp_save_var($path,$value){
 }
 
 function sp_set_dynamic_config($data){
-	if(defined('IS_SAE') && IS_SAE){
+	if(sp_is_sae()){
 		$kv = new SaeKV();
 		$ret = $kv->init();
 		$configs=$kv->get("THINKCMF_DYNAMIC_CONFIG");
@@ -275,33 +281,57 @@ function sp_get_cmf_settings($key=""){
 }
 
 
+function sp_set_cmf_setting($data){
+	if(empty($data)){
+		return false;
+	}
+	$cmf_settings['option_name']="cmf_settings";
+	$options_model=M("Options");
+	$find_setting=$options_model->where("option_name='cmf_settings'")->find();
+	F("cmf_settings",null);
+	if($find_setting){
+		$setting=json_decode($find_setting,true);
+		if($setting){
+			$setting=array_merge($setting,$data);
+		}else {
+			$setting=$data;
+		}
+		
+		$cmf_settings['option_value']=json_encode($setting);
+		return $options_model->where("option_name='cmf_settings'")->save($cmf_settings);
+	}else{
+		$cmf_settings['option_value']=json_encode($data);
+		return $options_model->add($cmf_settings);
+	}
+}
+
 
 
 
 /**
  * 全局获取验证码图片
  * 生成的是个HTML的img标签
- * @param string $imgparam 
- * 生成图片样式，可以设置
- * code_len=4&font_size=20&width=238&height=50&font_color=#ffffff&background=#000000
- * code_len:字符长度
- * font_size:字体大小
- * width:生成图片宽度
- * heigh:生成图片高度
- * font_color:字体颜色
- * background:图片背景
- * @param string $imgattrs
- * img标签原生属性，除src,onclick之外都可以设置
- * 默认值：style="cursor: pointer;" title="点击获取"
- * @return string
- * 原生html的img标签
- * 注，此函数仅生成img标签，应该配合在表单加入name=verify的input标签
- * 如：<input type="text" name="verify"/>
+ * @param string $imgparam <br>
+ * 生成图片样式，可以设置<br>
+ * length=4&font_size=20&width=238&height=50&use_curve=1&use_noise=1<br>
+ * length:字符长度<br>
+ * font_size:字体大小<br>
+ * width:生成图片宽度<br>
+ * heigh:生成图片高度<br>
+ * use_curve:是否画混淆曲线  1:画，0:不画<br>
+ * use_noise:是否添加杂点 1:添加，0:不添加<br>
+ * @param string $imgattrs<br>
+ * img标签原生属性，除src,onclick之外都可以设置<br>
+ * 默认值：style="cursor: pointer;" title="点击获取"<br>
+ * @return string<br>
+ * 原生html的img标签<br>
+ * 注，此函数仅生成img标签，应该配合在表单加入name=verify的input标签<br>
+ * 如：&lt;input type="text" name="verify"/&gt;<br>
  */
-function sp_verifycode_img($imgparam='code_len=4&font_size=20&width=238&height=50&font_color=&background=',$imgattrs='style="cursor: pointer;" title="点击获取"'){
+function sp_verifycode_img($imgparam='length=4&font_size=20&width=238&height=50&use_curve=1&use_noise=1',$imgattrs='style="cursor: pointer;" title="点击获取"'){
 	$src=U('Api/Checkcode/index',$imgparam);
 	$img=<<<hello
-<img  src="$src" onclick="this.src='$src&time='+Math.random();" $imgattrs/>
+<img class="verify_img" src="$src" onclick="this.src='$src&time='+Math.random();" $imgattrs/>
 hello;
 	return $img;
 }
@@ -434,27 +464,6 @@ function sp_getcontent_imgs($content){
 	return $imgs_data;
 }
 
-/*
- * 作用：写入新消息
- * 参数：$from	发送者id
- * 		$to		消息接受者id
- * 		$content  消息内容
- * 		$targetid 相应数据表中的id的值
- * 		$mestype可选值：topic_comment(话题评论)、topic_answer(话题回复)、topic_collect(话题收藏)、topic_love(喜欢)
- */
-function insertMes($from, $to, $content, $targetid, $mestype){
-	$data = array(
-			'mes_from'	=> $from,
-			'mes_to'	=> $to,
-			'mes_content' => $content,
-			'post_time'	=> time(),
-			'target_id'	=> $targetid,
-			'mes_type'	=> $mestype,
-			'mes_status'=> '2', //未读
-	);
-	return M('Message')->add($data);
-}
-
 
 /**
  * 
@@ -510,15 +519,6 @@ function sp_get_apphome_tpl($tplname,$default_tplname,$default_theme=""){
 	return $tplname;
 }
 
-//面包屑导航
-function sp_bread_nav($nav_id){
-	$navTable = M('Nav');
-	$path = $navTable->where("id=$nav_id")->getField('path');
-	if(!$path) return array();
-	$path = str_replace('-',',',$path);
-	$bread_path = $navTable->where("id in ($path)")->order('id')->select();
-	return $bread_path;
-}
 
 /*
  * 作用：去除字符串中的指定字符
@@ -527,36 +527,6 @@ function sp_bread_nav($nav_id){
  */
 function sp_strip_chars($str, $chars='?<*.>\'\"'){
 	return preg_replace('/['.$chars.']/is', '', $str);
-}
-
-//发送邮件
-function SendMail($address,$title,$message){
-	import("PHPMailer");
-	$mail=new \PHPMailer();
-	// 设置PHPMailer使用SMTP服务器发送Email
-	$mail->IsSMTP();
-	$mail->IsHTML(true);
-	// 设置邮件的字符编码，若不指定，则为'UTF-8'
-	$mail->CharSet='UTF-8';
-	// 添加收件人地址，可以多次使用来添加多个收件人
-	$mail->AddAddress($address);
-	// 设置邮件正文
-	$mail->Body=$message;
-	// 设置邮件头的From字段。
-	$mail->From=C('SP_MAIL_ADDRESS');
-	// 设置发件人名字
-	$mail->FromName='ThinkCMF';
-	// 设置邮件标题
-	$mail->Subject=$title;
-	// 设置SMTP服务器。
-	$mail->Host=C('SP_MAIL_SMTP');
-	// 设置为"需要验证"
-	$mail->SMTPAuth=true;
-	// 设置用户名和密码。
-	$mail->Username=C('SP_MAIL_LOGINNAME');
-	$mail->Password=C('SP_MAIL_PASSWORD');
-	// 发送邮件。
-	return($mail->Send());
 }
 
 
@@ -575,7 +545,7 @@ function sp_send_email($address,$subject,$message){
 	// 设置邮件头的From字段。
 	$mail->From=C('SP_MAIL_ADDRESS');
 	// 设置发件人名字
-	$mail->FromName='ThinkCMF';
+	$mail->FromName=C('SP_MAIL_SENDER');;
 	// 设置邮件标题
 	$mail->Subject=$subject;
 	// 设置SMTP服务器。
@@ -701,7 +671,7 @@ function sp_get_comments($tag="field:*;limit:0,5;order:createtime desc;",$where=
 
 function sp_file_write($file,$content){
 	
-	if(defined('IS_SAE') && IS_SAE){
+	if(sp_is_sae()){
 		$s=new SaeStorage();
 		$arr=explode('/',ltrim($file,'./'));
 		$domain=array_shift($arr);
@@ -719,6 +689,18 @@ function sp_file_write($file,$content){
 	}
 }
 
+function sp_file_read($file){
+	if(sp_is_sae()){
+		$s=new SaeStorage();
+		$arr=explode('/',ltrim($file,'./'));
+		$domain=array_shift($arr);
+		$save_path=implode('/',$arr);
+		return $s->read($domain,$save_path);
+	}else{
+		file_get_contents($file);
+	}
+}
+
 function sp_asset_relative_url($asset_url){
 	return str_replace(C("TMPL_PARSE_STRING.__UPLOAD__"), "", $asset_url);
 }
@@ -731,7 +713,7 @@ function sp_content_page($content,$pagetpl='{first}{prev}{liststart}{list}{liste
 	$PageParam = C("VAR_PAGE");
 	$page = new \Page($totalsize,$pagesize);
 	$page->setLinkWraper("li");
-	$page->SetPager('default', $pagetpl, array("listlong" => "6", "first" => "首页", "last" => "尾页", "prev" => "上一页", "next" => "下一页", "list" => "*", "disabledclass" => ""));
+	$page->SetPager('default', $pagetpl, array("listlong" => "9", "first" => "首页", "last" => "尾页", "prev" => "上一页", "next" => "下一页", "list" => "*", "disabledclass" => ""));
 	$content=$contents[$page->firstRow];
 	$data['content']=$content;
 	$data['page']=$page->show('default');
@@ -1137,4 +1119,266 @@ function sp_get_routes($refresh=false){
 	return $cache_routes;
 	
 	
+}
+
+
+function sp_is_mobile() {
+	static $sp_is_mobile;
+
+	if ( isset($sp_is_mobile) )
+		return $sp_is_mobile;
+
+	if ( empty($_SERVER['HTTP_USER_AGENT']) ) {
+		$sp_is_mobile = false;
+	} elseif ( strpos($_SERVER['HTTP_USER_AGENT'], 'Mobile') !== false // many mobile devices (all iPhone, iPad, etc.)
+			|| strpos($_SERVER['HTTP_USER_AGENT'], 'Android') !== false
+			|| strpos($_SERVER['HTTP_USER_AGENT'], 'Silk/') !== false
+			|| strpos($_SERVER['HTTP_USER_AGENT'], 'Kindle') !== false
+			|| strpos($_SERVER['HTTP_USER_AGENT'], 'BlackBerry') !== false
+			|| strpos($_SERVER['HTTP_USER_AGENT'], 'Opera Mini') !== false
+			|| strpos($_SERVER['HTTP_USER_AGENT'], 'Opera Mobi') !== false ) {
+		$sp_is_mobile = true;
+	} else {
+		$sp_is_mobile = false;
+	}
+
+	return $sp_is_mobile;
+}
+
+/**
+ * 处理插件钩子
+ * @param string $hook   钩子名称
+ * @param mixed $params 传入参数
+ * @return void
+ */
+function hook($hook,$params=array()){
+	tag($hook,$params);
+}
+
+/**
+ * 获取插件类的类名
+ * @param strng $name 插件名
+ */
+function sp_get_plugin_class($name){
+	$class = "plugins\\{$name}\\{$name}Plugin";
+	return $class;
+}
+
+/**
+ * 获取插件类的配置
+ * @param string $name 插件名
+ * @return array
+ */
+function sp_get_plugin_config($name){
+	$class = sp_get_plugin_class($name);
+	if(class_exists($class)) {
+		$plugin = new $class();
+		return $plugin->getConfig();
+	}else {
+		return array();
+	}
+}
+
+/**
+ * 替代scan_dir的方法
+ * @param string $pattern 检索模式 搜索模式 *.txt,*.doc; (同glog方法)
+ * @param int $flags
+ */
+function sp_scan_dir($pattern,$flags=null){
+	$files = array_map('basename',glob($pattern, $flags));
+	return $files;
+}
+
+/**
+ * 获取所有钩子，包括系统，应用，模板
+ */
+function sp_get_hooks($refresh=false){
+	if(!$refresh){
+		$return_hooks = F('all_hooks');
+		if(!empty($return_hooks)){
+			return $return_hooks;
+		}
+	}
+	
+	$return_hooks=array();
+	$system_hooks=array(
+		"url_dispatch","app_init","app_begin","app_end",
+		"action_begin","action_end","module_check","path_info",
+		"template_filter","view_begin","view_end","view_parse",
+		"view_filter","body_start","footer","footer_end","sider","comment",'admin_home'
+	);
+	
+	$app_hooks=array();
+	
+	$apps=sp_scan_dir(SPAPP."*",GLOB_ONLYDIR);
+	foreach ($apps as $app){
+		$hooks_file=SPAPP.$app."/hooks.php";
+		if(is_file($hooks_file)){
+			$hooks=include $hooks_file;
+			$app_hooks=is_array($hooks)?array_merge($app_hooks,$hooks):$app_hooks;
+		}
+	}
+	
+	$tpl_hooks=array();
+	
+	$tpls=sp_scan_dir("tpl/*",GLOB_ONLYDIR);
+	
+	foreach ($tpls as $tpl){
+		$hooks_file="tpl/$tpl/hooks".C("TMPL_TEMPLATE_SUFFIX");
+		if(is_file($hooks_file)){
+			$hooks=file_get_contents($hooks_file);
+			$hooks=preg_replace("/[^0-9A-Za-z_-]/u", ",", $hooks);
+			$hooks=explode(",", $hooks);
+			$hooks=array_filter($hooks);
+			$tpl_hooks=is_array($hooks)?array_merge($tpl_hooks,$hooks):$tpl_hooks;
+		}
+	}
+	
+	$return_hooks=array_merge($system_hooks,$app_hooks,$tpl_hooks);
+	
+	$return_hooks=array_unique($return_hooks);
+	
+	F('all_hooks',$return_hooks);
+	return $return_hooks;
+	
+}
+
+
+/**
+ * 生成访问插件的url
+ * @param string $url url 格式：插件名://控制器名/方法
+ * @param array $param 参数
+ */
+function sp_plugin_url($url, $param = array(),$domain=false){
+	$url        = parse_url($url);
+	$case       = C('URL_CASE_INSENSITIVE');
+	$plugin     = $case ? parse_name($url['scheme']) : $url['scheme'];
+	$controller = $case ? parse_name($url['host']) : $url['host'];
+	$action     = trim($case ? strtolower($url['path']) : $url['path'], '/');
+
+	/* 解析URL带的参数 */
+	if(isset($url['query'])){
+		parse_str($url['query'], $query);
+		$param = array_merge($query, $param);
+	}
+
+	/* 基础参数 */
+	$params = array(
+			'_plugin'     => $plugin,
+			'_controller' => $controller,
+			'_action'     => $action,
+	);
+	$params = array_merge($params, $param); //添加额外参数
+
+	return U('api/plugin/execute', $params,true,$domain);
+}
+
+/**
+ * 检查权限
+ * @param name string|array  需要验证的规则列表,支持逗号分隔的权限规则或索引数组
+ * @param uid  int           认证用户的id
+ * @param relation string    如果为 'or' 表示满足任一条规则即通过验证;如果为 'and'则表示需满足所有规则才能通过验证
+ * @return boolean           通过验证返回true;失败返回false
+ */
+function sp_auth_check($uid,$name=null,$relation='or'){
+	$iauth_obj=new \Common\Lib\iAuth();
+	if(empty($name)){
+		$name=strtolower(MODULE_NAME."/".CONTROLLER_NAME."/".ACTION_NAME);
+	}
+	return $iauth_obj->check($uid, $name, $relation);
+}
+
+/**
+ * 兼容之前版本的ajax的转化方法，如果你之前用参数只有两个可以不用这个转化，如有两个以上的参数请升级一下
+ * @param array $data
+ * @param string $info
+ * @param int $status
+ */
+function sp_ajax_return($data,$info,$status){
+	$return = array();
+	$return['data'] = $data;
+	$return['info'] = $info;
+	$return['status'] = $status;
+	$data = $return;
+	
+	return $data;
+}
+
+/**
+ * 判断是否为SAE
+ */
+function sp_is_sae(){
+	if(defined('APP_MODE') && APP_MODE=='sae'){
+		return true;
+	}else{
+		return false;
+	}
+}
+
+
+function sp_alpha_id($in, $to_num = false, $pad_up = 4, $passKey = null){
+	$index = "aBcDeFgHiJkLmNoPqRsTuVwXyZAbCdEfGhIjKlMnOpQrStUvWxYz0123456789";
+	if ($passKey !== null) {
+		// Although this function's purpose is to just make the
+		// ID short - and not so much secure,
+		// with this patch by Simon Franz (http://blog.snaky.org/)
+		// you can optionally supply a password to make it harder
+		// to calculate the corresponding numeric ID
+
+		for ($n = 0; $n<strlen($index); $n++) $i[] = substr( $index,$n ,1);
+
+		$passhash = hash('sha256',$passKey);
+		$passhash = (strlen($passhash) < strlen($index)) ? hash('sha512',$passKey) : $passhash;
+
+		for ($n=0; $n < strlen($index); $n++) $p[] =  substr($passhash, $n ,1);
+
+		array_multisort($p,  SORT_DESC, $i);
+		$index = implode($i);
+	}
+
+	$base  = strlen($index);
+
+	if ($to_num) {
+		// Digital number  <<--  alphabet letter code
+		$in  = strrev($in);
+		$out = 0;
+		$len = strlen($in) - 1;
+		for ($t = 0; $t <= $len; $t++) {
+			$bcpow = pow($base, $len - $t);
+			$out   = $out + strpos($index, substr($in, $t, 1)) * $bcpow;
+		}
+
+		if (is_numeric($pad_up)) {
+			$pad_up--;
+			if ($pad_up > 0) $out -= pow($base, $pad_up);
+		}
+		$out = sprintf('%F', $out);
+		$out = substr($out, 0, strpos($out, '.'));
+	}else{
+		// Digital number  -->>  alphabet letter code
+		if (is_numeric($pad_up)) {
+			$pad_up--;
+			if ($pad_up > 0) $in += pow($base, $pad_up);
+		}
+
+		$out = "";
+		for ($t = floor(log($in, $base)); $t >= 0; $t--) {
+			$bcp = pow($base, $t);
+			$a   = floor($in / $bcp) % $base;
+			$out = $out . substr($index, $a, 1);
+			$in  = $in - ($a * $bcp);
+		}
+		$out = strrev($out); // reverse
+	}
+
+	return $out;
+}
+
+/**
+ * 验证码检查，验证完后销毁验证码增加安全性 ,<br>返回true验证码正确，false验证码错误
+ * @return boolean <br>true：验证码正确，false：验证码错误
+ */
+function sp_check_verify_code(){
+	$verify = new \Think\Verify();
+	return $verify->check($_REQUEST['verify'], "");
 }

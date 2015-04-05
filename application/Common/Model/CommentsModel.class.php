@@ -65,14 +65,19 @@ class CommentsModel extends CommonModel{
 	
 	protected function _after_update($data,$options){
 		parent::_after_update($data,$options);
-		$id=$data['id'];
-		$parent_id=$data['parentid'];
-		if($parent_id==0){
-			$d['path']="0-$id";
-		}else{
-			$parent=$this->where("id=$parent_id")->find();
-			$d['path']=$parent['path'].'-'.$id;
+		
+		if(isset($data['parentid'])){
+			$id=$data['id'];
+			$parent_id=$data['parentid'];
+			if($parent_id==0){
+				$d['path']="0-$id";
+			}else{
+				$parent=$this->where("id=$parent_id")->find();
+				$d['path']=$parent['path'].'-'.$id;
+			}
+			
+			$this->where("id=$id")->save($d);
 		}
-		$this->where("id=$id")->save($d);
+		
 	}
 }

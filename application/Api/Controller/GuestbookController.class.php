@@ -15,7 +15,7 @@ class GuestbookController extends AppframeController{
 	}
 	
 	function addmsg(){
-		if($_SESSION['_verify_']['verify']!=I("post.verify")){
+		if(!sp_check_verify_code()){
 			$this->error("验证码错误！");
 		}
 		
@@ -23,7 +23,6 @@ class GuestbookController extends AppframeController{
 			if ($this->guestbook_model->create()) {
 				$result=$this->guestbook_model->add();
 				if ($result!==false) {
-					$_SESSION['_verify_']['verify']="";
 					$this->success("留言成功！");
 				} else {
 					$this->error("留言失败！");

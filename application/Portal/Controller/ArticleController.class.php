@@ -22,7 +22,18 @@ class ArticleController extends HomeBaseController {
     		$posts_model->save(array("id"=>$article_id,"post_hits"=>array("exp","post_hits+1")));
     	}
     	
+    	$article_date=$article['post_modified'];
     	
+    	$join = "".C('DB_PREFIX').'posts as b on a.object_id =b.id';
+    	$join2= "".C('DB_PREFIX').'users as c on b.post_author = c.id';
+    	$rs= M("TermRelationships");
+    	
+    	$next=$rs->alias("a")->join($join)->join($join2)->where(array("post_modified"=>array("egt",$article_date), "tid"=>array('neq',$id), "status"=>1,'term_id'=>$termid))->order("post_modified asc")->find();
+    	$prev=$rs->alias("a")->join($join)->join($join2)->where(array("post_modified"=>array("elt",$article_date), "tid"=>array('neq',$id), "status"=>1,'term_id'=>$termid))->order("post_modified desc")->find();
+    	
+    	 
+    	$this->assign("next",$next);
+    	$this->assign("prev",$prev);
     	
     	$smeta=json_decode($article['smeta'],true);
     	$content_data=sp_content_page($article['post_content']);
@@ -56,4 +67,3 @@ class ArticleController extends HomeBaseController {
     	
     }
 }
-?>

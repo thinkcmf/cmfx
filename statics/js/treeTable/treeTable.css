@@ -12,6 +12,7 @@
   cursor: pointer;
   padding: 0;
   zoom: 1; /* IE7 Hack */
+  margin-left: -20px;
 }
 
 .treeTable tr.collapsed td .expander {

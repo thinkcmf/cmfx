@@ -77,6 +77,22 @@ body fieldset legend {
 		 	</span>
 		 </td>
         </tr>
+        <tr>
+          <td>
+              <span class="switch_list cc">
+			<label><input type="radio" name="post[istop]" value="1" ><span>置顶</span></label>
+			<label><input type="radio" name="post[istop]" value="0" checked><span>未置顶</span></label>
+		 	</span>
+		 </td>
+        </tr>
+        <tr>
+          <td>
+          	<span class="switch_list cc">
+			<label><input type="radio" name="post[recommended]" value="1" ><span>推荐</span></label>
+			<label><input type="radio" name="post[recommended]" value="0" checked><span>未推荐</span></label>
+		 	</span>
+		 </td>
+        </tr>
       </table>
     </div>
   </div>
@@ -86,9 +102,11 @@ body fieldset legend {
             <tr>
               <th width="80">栏目</th>
               <td>
-              	<select name="term[term_id]"  class="normal_select">
-						{$taxonomys}
-				</select>
+				<foreach name="terms" item="vo">
+					<label class="checkbox inline">
+					  <input type="checkbox" value="{$vo.term_id}" name="term[]"> {$vo.name}
+					</label>
+				</foreach>
               </td>
             </tr>
             <tr>
@@ -100,11 +118,15 @@ body fieldset legend {
             </tr>
             <tr>
               <th width="80">关键词</th>
-              <td><input type='text' name='post[post_keywords]' id='keywords' value='' style='width:400px'   class='input' placeholder='请输入关键字'> 多关键词之间用空格隔开</td>
+              <td><input type='text' name='post[post_keywords]' id='keywords' value='' style='width:400px'   class='input' placeholder='请输入关键字'> 多关键词之间用空格或者英文逗号隔开</td>
+            </tr>
+            <tr>
+              <th width="80">文章来源</th>
+              <td><input type='text' name='post[post_source]' id='source' value='' style='width:400px'   class='input' placeholder='请输入文章来源'></td>
             </tr>
             <tr>
               <th width="80">摘要 </th>
-              <td><textarea name='post[post_excerpt]' id='description'  required style='width:98%;height:50px;' placeholder='请填写摘要'></textarea> </td>
+              <td><textarea name='post[post_excerpt]' id='description'  required style='width:98%;height:50px;' placeholder='请填写摘要'></textarea><span class="must_red">*</span></td>
             </tr>
             <tr>
               <th width="80">内容</th>

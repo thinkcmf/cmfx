@@ -162,6 +162,18 @@ function thumb_images(uploadid, returnid) {
     $('#' + returnid).val(in_content);
 }
 
+function change_onefile(uploadid, returnid){
+	var d = uploadid.iframe.contentWindow;
+    var in_content = d.$("#att-status").html().substring(1);
+    var in_filename = d.$("#att-name").html().substring(1);
+    var str = '';
+    var contents = in_content.split('|');
+    var filenames = in_filename.split('|');
+    $('#' + returnid + '_tips').css('display', 'none');
+    if (contents == '') return true;
+    $('#' + returnid).val(contents[0]);
+}
+
 //提示框 alert
 function isalert(content,icon){
     if(content == ''){

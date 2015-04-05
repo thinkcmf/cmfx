@@ -248,7 +248,7 @@ class NavController extends AdminbaseController {
 	 */
 	
 	private function _select(){
-		$apps=scandir(SPAPP);
+		$apps=sp_scan_dir(SPAPP."*");
 		$host=(is_ssl() ? 'https' : 'http')."://".$_SERVER['HTTP_HOST'].":".$_SERVER['SERVER_PORT'];
 		$navs=array();
 		foreach ($apps as $a){

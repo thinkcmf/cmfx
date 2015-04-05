@@ -119,6 +119,7 @@ class BackupController extends AdminbaseController
     {
         $sql_file = SITE_PATH . $this->backup_path . $this->backup_name . '/' . $sql_file_name;
         $sql_str = file($sql_file);
+        $sql_str = preg_replace("/^--.+\n/",'', $sql_str);
         $sql_str = str_replace("\r", '', implode('', $sql_str));
         $ret = explode(";\n", $sql_str);
         $ret_count = count($ret);
@@ -127,7 +128,7 @@ class BackupController extends AdminbaseController
             $ret[$i] = trim($ret[$i], " \r\n;"); //剔除多余信息
             if (!empty($ret[$i]))
             {
-                $this->_database_mod->query($ret[$i]);
+               $this->_database_mod->execute($ret[$i]);
             }
         }
         return true;
@@ -301,7 +302,7 @@ class BackupController extends AdminbaseController
         $table_df = "DROP TABLE IF EXISTS `$table`;\n";
         $tmp_sql = $this->_database_mod->query("SHOW CREATE TABLE `$table` ");
         //var_dump($tmp_sql);exit();
-        $tmp_sql = $tmp_sql['0']['Create Table'];
+        $tmp_sql = $tmp_sql['0']['create table'];
         $tmp_sql = substr($tmp_sql, 0, strrpos($tmp_sql, ")") + 1); //去除行尾定义。
         $tmp_sql = str_replace("\n", "\r\n", $tmp_sql);
         $table_df .= $tmp_sql . " COLLATE='utf8_general_ci' ENGINE=MyISAM;\r\n";
@@ -314,8 +315,9 @@ class BackupController extends AdminbaseController
     private function _get_table_data($table, $pos, $sizelimit)
     {
         $post_pos = $pos;
-        $total = $this->_database_mod->query("SELECT COUNT(*) FROM $table"); //数据总数
-        $total = $total[0]['COUNT(*)'];
+        $total = $this->_database_mod->query("SELECT COUNT(*) as count FROM $table"); //数据总数
+        $total = $total[0]['count'];
+        
         if ($total == 0 || $pos >= $total)
         {
             return - 1;
@@ -359,7 +361,7 @@ class BackupController extends AdminbaseController
     private function _make_head($vol)
     {
         $date = date('Y-m-d H:i:s', time());
-        $head = "-- TuanPhp SQL Dump Program\r\n" . "-- \r\n" . "-- DATE : " . $date . "\r\n" .
+        $head = "-- ThinkCMF SQL Dump Program\r\n" . "-- \r\n" . "-- DATE : " . $date . "\r\n" .
             "-- Vol : " . $vol . "\r\n";
         return $head;
     }

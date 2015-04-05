@@ -65,7 +65,7 @@ class CommentController extends MemberbaseController{
 			}
 			
 			if ($this->comments_model->create()){
-				$this->check_last_action(60);
+				$this->check_last_action(intval(C("COMMENT_TIME_INTERVAL")));
 				$result=$this->comments_model->add();
 				if ($result!==false){
 					
@@ -81,7 +81,7 @@ class CommentController extends MemberbaseController{
 					$post_table_model->create(array("last_comment"=>time()));
 					$post_table_model->where(array($pk=>intval($_POST['post_id'])))->save();
 					
-					$this->ajaxReturn(array("id"=>$result),"评论成功！",1);
+					$this->ajaxReturn(sp_ajax_return(array("id"=>$result),"评论成功！",1));
 				} else {
 					$this->error("评论失败！");
 				}

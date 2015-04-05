@@ -124,6 +124,10 @@
 					form = $(this);*/
                 var btn = $(this),
                     form = btn.parents('form.J_ajaxForm');
+                
+                if(btn.data("loading")){
+            		return;
+            	}
 
                 //批量操作 判断选项
                 if (btn.data('subcheck')) {
@@ -165,11 +169,13 @@
                         }
                     });
                 }
-
+                
                 form.ajaxSubmit({
                     url: btn.data('action') ? btn.data('action') : form.attr('action'), //按钮上是否自定义提交地址(多按钮情况)
                     dataType: 'json',
                     beforeSubmit: function (arr, $form, options) {
+                    	
+                    	btn.data("loading",true);
                         var text = btn.text();
 
                         //按钮文案、状态修改
@@ -184,6 +190,10 @@
                             $('<span class="tips_success">' + data.info + '</span>').appendTo(btn.parent()).fadeIn('slow').delay(1000).fadeOut(function () {
                             });
                         } else if (data.state === 'fail') {
+                        	var $verify_img=form.find(".verify_img");
+                        	if($verify_img.length){
+                        		$verify_img.attr("src",$verify_img.attr("src")+"&refresh="+Math.random()); 
+                        	}
                             $('<span class="tips_error">' + data.info + '</span>').appendTo(btn.parent()).fadeIn('fast');
                             btn.removeProp('disabled').removeClass('disabled');
                         }
@@ -207,6 +217,9 @@
                         	}
                         }
                         
+                    },
+                    complete: function(){
+                    	btn.data("loading",false);
                     }
                 });
             });

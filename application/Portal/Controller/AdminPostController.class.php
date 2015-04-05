@@ -19,17 +19,20 @@ class AdminPostController extends AdminbaseController {
 	}
 	
 	function add(){
-		$this->_getTree();
+		$terms = $this->terms_obj->order(array("listorder"=>"asc"))->select();
 		$term_id = intval(I("get.term"));
 		$term=$this->terms_obj->where("term_id=$term_id")->find();
 		$this->assign("author","1");
 		$this->assign("term",$term);
+		$this->assign("terms",$terms);
 		$this->display();
 	}
 	
 	function add_post(){
-		$this->_getTree();
 		if (IS_POST) {
+			if(empty($_POST['term'])){
+				$this->error("请至少选择一个分类栏目！");
+			}
 			if(!empty($_POST['photos_alt']) && !empty($_POST['photos_url'])){
 				foreach ($_POST['photos_url'] as $key=>$url){
 					$photourl=sp_asset_relative_url($url);
@@ -44,13 +47,11 @@ class AdminPostController extends AdminbaseController {
 			$result=$this->posts_obj->add($_POST['post']);
 			if ($result) {
 				//
-				$_POST['term']['object_id']=$result;
-				$result=$this->terms_relationship->add($_POST['term']);
-				if ($result) {
-					$this->success("添加成功！");
-				}else{
-					$this->error("归类失败！");
+				foreach ($_POST['term'] as $mterm_id){
+					$this->terms_relationship->add(array("term_id"=>intval($mterm_id),"object_id"=>$result));
 				}
+				
+				$this->success("添加成功！");
 			} else {
 				$this->error("添加失败！");
 			}
@@ -60,20 +61,33 @@ class AdminPostController extends AdminbaseController {
 	
 	public function edit(){
 		$id=  intval(I("get.id"));
-		$term_id = intval(I("get.term"));
-		if(empty($term_id)){
-			$term_id = M('TermRelationships')->where("object_id=$id")->getField('term_id'); 
-		}
-		$term=$this->terms_obj->where("term_id=$term_id")->find();
+		
+		$term_relationship = M('TermRelationships')->where("object_id=$id")->getField("term_id",true);
+		
+		$terms=$this->terms_obj->select();
 		$post=$this->posts_obj->where("id=$id")->find();
 		$this->assign("post",$post);
 		$this->assign("smeta",json_decode($post['smeta'],true));
-		$this->assign("term",$term);
+		$this->assign("terms",$terms);
+		$this->assign("term",$term_relationship);
 		$this->display();
 	}
 	
 	public function edit_post(){
 		if (IS_POST) {
+			if(empty($_POST['term'])){
+				$this->error("请至少选择一个分类栏目！");
+			}
+			$post_id=intval($_POST['post']['id']);
+			
+			$this->terms_relationship->where(array("object_id"=>$post_id,"term_id"=>array("not in",implode(",", $_POST['term']))))->delete();
+			foreach ($_POST['term'] as $mterm_id){
+				$find_term_relationship=$this->terms_relationship->where(array("object_id"=>$post_id,"term_id"=>$mterm_id))->count();
+				if(empty($find_term_relationship)){
+					$this->terms_relationship->add(array("term_id"=>intval($mterm_id),"object_id"=>$post_id));
+				}
+			}
+			
 			if(!empty($_POST['photos_alt']) && !empty($_POST['photos_url'])){
 				foreach ($_POST['photos_url'] as $key=>$url){
 					$photourl=sp_asset_relative_url($url);
@@ -166,7 +180,7 @@ class AdminPostController extends AdminbaseController {
 		->limit($page->firstRow . ',' . $page->listRows)
 		->order("a.listorder ASC,b.post_modified DESC")->select();
 		$users_obj = M("Users");
-		$users_data=$users_obj->field("id,user_login,role_id")->where("user_status=1")->select();
+		$users_data=$users_obj->field("id,user_login")->where("user_status=1")->select();
 		$users=array();
 		foreach ($users_data as $u){
 			$users[$u['id']]=$u;

@@ -24,7 +24,7 @@ class AdminbaseController extends AppframeController {
     		$users_obj= M("Users");
     		$id=$_SESSION['ADMIN_ID'];
     		$user=$users_obj->where("id=$id")->find();
-    		if(!$this->check_access($user['role_id'])){
+    		if(!$this->check_access($id)){
     			$this->error("您没有访问权限！");
     			exit();
     		}
@@ -109,10 +109,6 @@ class AdminbaseController extends AppframeController {
 		return $file;
     }
 
-    //扩展方法，当用户没有权限操作，用于记录日志的扩展方法
-    public function _ErrorLog() {
-        
-    }
 
     /**
      * 初始化后台菜单
@@ -150,78 +146,20 @@ class AdminbaseController extends AppframeController {
             $PageParam = C("VAR_PAGE");
         }
         $Page = new \Page($Total_Size, $Page_Size, $Current_Page, $listRows, $PageParam, $PageLink, $Static);
-        $Page->SetPager('Admin', '{first}{prev}&nbsp;{liststart}{list}{listend}&nbsp;{next}{last}', array("listlong" => "6", "first" => "首页", "last" => "尾页", "prev" => "上一页", "next" => "下一页", "list" => "*", "disabledclass" => ""));
+        $Page->SetPager('Admin', '{first}{prev}&nbsp;{liststart}{list}{listend}&nbsp;{next}{last}', array("listlong" => "9", "first" => "首页", "last" => "尾页", "prev" => "上一页", "next" => "下一页", "list" => "*", "disabledclass" => ""));
         return $Page;
     }
 
-    /**
-     * 获取菜单导航
-     * @param type $app
-     * @param type $model
-     * @param type $action
-     */
-    public static function getMenu() {
-
-        $menuid = (int) $_GET['menuid'];
-        $menuid = $menuid ? $menuid : cookie("menuid", "", array("prefix" => ""));
-        //cookie("menuid",$menuid);
-
-        $db = D("Common/Menu");
-        $info = $db->cache(true, 60)->where(array("id" => $menuid))->getField("id,action,app,model,parentid,data,type,name");
-        $find = $db->cache(true, 60)->where(array("parentid" => $menuid, "status" => 1))->getField("id,action,app,model,parentid,data,type,name");
-
-        if ($find) {
-            array_unshift($find, $info[$menuid]);
-        } else {
-            $find = $info;
-        }
-        foreach ($find as $k => $v) {
-            $find[$k]['data'] = $find[$k]['data']."&menuid=$menuid" ;
-        }
-
-        return $find;
-    }
-
-    /**
-     * 当前位置
-     * @param $id 菜单id
-     */
-    final public static function current_pos($id) {
-        $menudb = M("Menu");
-        $r = $menudb->where(array('id' => $id))->find();
-        $str = '';
-        if ($r['parentid']) {
-            $str = self::current_pos($r['parentid']);
-        }
-        return $str . $r['name'] . ' > ';
-    }
-    
-    private function check_access($roleid){
+    private function check_access($uid){
     	
-    		//如果用户角色是1，则无需判断
-    		if($roleid == 1){
-    			return true;
-    		}
-    		$role_obj= M("Role");
-    		$role=$role_obj->field("status")->where("id=$roleid")->find();
-    		if(!empty($role) && $role['status']==1){
-    			$group=MODULE_NAME;
-    			$model=CONTROLLER_NAME;
-    			$action=ACTION_NAME;
-    			if(MODULE_NAME.CONTROLLER_NAME.ACTION_NAME!="AdminIndexindex"){
-    				$access_obj = M("Access");
-    				$count = $access_obj->where ( "role_id=$roleid and g='$group' and m='$model' and a='$action'")->count();
-    				return $count;
-    			}else{
-    				return true;
-    			}
-    		}else{
-    			return false;
-    		}
-    		
-    		
-    		
+    	//如果用户角色是1，则无需判断
+    	if($uid == 1){
+    		return true;
+    	}
+    	if(MODULE_NAME.CONTROLLER_NAME.ACTION_NAME!="AdminIndexindex"){
+    		return sp_auth_check($uid);
+    	}else{
+    		return true;
+    	}
     }
 }
-
-?>

@@ -72,4 +72,3 @@ class UsermetaModel extends CommonModel
 	}
 	
 }
-?>

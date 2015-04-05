@@ -2529,4 +2529,3 @@ class phpmailerException extends Exception {
     return $errorMsg;
   }
 }
-?>

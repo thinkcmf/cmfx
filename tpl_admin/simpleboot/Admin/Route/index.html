@@ -1,0 +1,59 @@
+<admintpl file="header" />
+<body class="J_scroll_fixed">
+	<div class="wrap J_check_wrap">
+	 	
+		<ul class="nav nav-tabs">
+	        <li><a href="{:U('setting/site')}">网站信息</a></li>
+	        <li class="active"><a href="{:U('route/index')}" >URL美化</a></li>
+	        <li><a href="{:U('route/add')}" >添加URL规则</a></li>
+	    </ul>
+		
+		<form class="J_ajaxForm" name="myform" id="myform" action="{:U('route/listorders')}" method="post">
+		 <fieldset>
+		<div class="tabbable">
+        <div class="tab-content">
+          <div class="tab-pane active" id="A">
+          	<table width="100%" class="table table-hover">
+	        <thead>
+	          <tr>
+	          	<th width="50">排序</th>
+	            <th width="50">ID</th>
+	            <th>原始网址</th>
+	            <th>显示网址</th>
+	            <th>状态</th>
+	            <th width="120">操作</th>
+	          </tr>
+	        </thead>
+	        <tbody>
+	        	<php>$statuses=array('0'=>"已禁用","1"=>"已启用");</php>
+	        	<foreach name="routes" item="vo">
+	        	<tr>
+	        		<td><input name='listorders[{$vo.id}]' class="input input-order mr5"  type='text' size='3' value='{$vo.listorder}'></td>
+		            <td>{$vo.id}</td>
+		            <td>{$vo.full_url}</td>
+		            <td>{$vo.url}</td>
+		            <td>{$statuses[$vo['status']]}</td>
+		            <td>
+		            	<a href="{:U('route/edit',array('id'=>$vo['id']))}">修改</a>|
+		            	<a href="{:U('route/open',array('id'=>$vo['id']))}" class="J_ajax_dialog_btn" data-msg="确定启用吗？">启用</a>|
+			            <a href="{:U('route/ban',array('id'=>$vo['id']))}" class="J_ajax_dialog_btn" data-msg="确定禁用吗？">禁用</a>|
+			            <a href="{:U('route/delete',array('id'=>$vo['id']))}" class="J_ajax_del">删除</a>
+			        </td>
+	          	</tr>
+	          	</foreach>
+			</tbody>
+	      </table>
+          </div>
+        </div>
+      </div>
+      
+      	<div class="form-actions">
+            <button type="submit" class="btn btn-primary btn_submit  J_ajax_submit_btn">排序</button>
+          </div>
+           </fieldset>
+		</form>
+		
+	</div>
+	<script type="text/javascript" src="__ROOT__/statics/js/common.js"></script>
+</body>
+</html>

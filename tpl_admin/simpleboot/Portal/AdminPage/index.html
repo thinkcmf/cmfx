@@ -20,7 +20,7 @@
          -->
                            关键字：
         <input type="text" class="input length_2" name="keyword" style="width:200px;" value="{$formget.keyword}" placeholder="请输入关键字...">
-        <button class="btn">搜索</button>
+        <button class="btn btn-primary">搜索</button>
         </span>
       </div>
     </div>
@@ -50,7 +50,7 @@
 		            <td>{$users[$vo['post_author']]['user_login']}</td>
 		            <td>{$vo.post_date}</td>
 		            <td>
-		            	<a href="{:U('AdminPage/edit',array('id'=>$vo['id']))}" target="_blank" >修改</a>|
+		            	<a href="{:U('AdminPage/edit',array('id'=>$vo['id']))}">修改</a>|
 		            	<a href="{:U('AdminPage/delete',array('id'=>$vo['id']))}" class="J_ajax_del" >删除</a>
 					</td>
 	          	</tr>

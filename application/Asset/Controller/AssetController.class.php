@@ -9,9 +9,11 @@ class AssetController extends AdminbaseController {
 
 
     function _initialize() {
-        //默认图片类型
-        $this->imgext = array('jpg', 'gif', 'png', 'bmp', 'jpeg','zip');
-        //当前登陆用户名 0 表示游客
+    	$adminid=sp_get_current_admin_id();
+    	$userid=sp_get_current_userid();
+    	if(empty($adminid) && empty($userid)){
+    		exit("非法上传！");
+    	}
     }
 
     /**
@@ -23,7 +25,7 @@ class AssetController extends AdminbaseController {
             //上传处理类
             $config=array(
             		'rootPath' => './'.C("UPLOADPATH"),
-            		'savePath' => './',
+            		'savePath' => '',
             		'maxSize' => 11048576,
             		'saveName'   =>    array('uniqid',''),
             		'exts'       =>    array('jpg', 'gif', 'png', 'jpeg',"txt",'zip'),
@@ -36,17 +38,21 @@ class AssetController extends AdminbaseController {
                 //上传成功
                 //写入附件数据库信息
                 $first=array_shift($info);
-				echo "1," . C("TMPL_PARSE_STRING.__UPLOAD__").$first['savename'].",".'1,'.$first['name'];
+                if(!empty($first['url'])){
+                	$url=$first['url'];
+                }else{
+                	$url=C("TMPL_PARSE_STRING.__UPLOAD__").$first['savename'];
+                }
+                
+				echo "1," . $url.",".'1,'.$first['name'];
 				exit;
             } else {
                 //上传失败，返回错误
                 exit("0," . $upload->getError());
             }
         } else {
-            $this->display();
+            $this->display(':swfupload');
         }
     }
 
 }
-
-?>

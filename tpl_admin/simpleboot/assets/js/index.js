@@ -11,7 +11,8 @@ $(function () {
 	$content.height($(window).height()-headerheight);
 	
 	
-	$nav_wraper.height($(window).height()-headerheight);
+	$nav_wraper.height($(window).height()-45);
+	$nav_wraper.css("overflow","auto");
 	//$nav_wraper.niceScroll();
 	$(window).resize(function(){
 		$content.height($(window).height()-headerheight);

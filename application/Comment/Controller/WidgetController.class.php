@@ -46,8 +46,6 @@ class WidgetController extends Controller{
 	 * @return string
 	 */
 	public function parseTemplate($template='') {
-		$tmpl_path=C("SP_TMPL_PATH");
-	
 		// 获取当前主题名称
 		$theme      =    C('SP_DEFAULT_THEME');
 		if(C('TMPL_DETECT_THEME')) {// 自动侦测模板主题

@@ -12,13 +12,14 @@ if(file_exists("data/conf/config.php")){
 $configs= array(
 		"LOAD_EXT_FILE"=>"extend",
 		'UPLOADPATH' => 'data/upload/',
+		//'SHOW_ERROR_MSG'        =>  true,    // 显示错误信息
 		'SHOW_PAGE_TRACE'		=> false,
 		'TMPL_STRIP_SPACE'		=> true,// 是否去除模板文件里面的html空格与换行
 		'THIRD_UDER_ACCESS'		=> false, //第三方用户是否有全部权限，没有则需绑定本地账号
 		/* 标签库 */
-		'TAGLIB_BUILD_IN' => 'cx,Common\Lib\Taglib\TagLibSpadmin,Common\Lib\Taglib\TagLibHome',
+		'TAGLIB_BUILD_IN' => THINKCMF_CORE_TAGLIBS,
 		//'APP_GROUP_LIST'        => 'Admin,Portal,Asset,Api,Member,Wx,Toptic,Strap',      // 项目分组设定,多个组之间用逗号分隔,例如'Home,Admin'
-		'MODULE_ALLOW_LIST'  => array('Admin','Portal','Asset','Api','User','Comment'),
+		'MODULE_ALLOW_LIST'  => array('Admin','Portal','Asset','Api','User','Wx','Comment','Qiushi','Tpl','Topic','Install','Bug','Better','Pay'),
  		'TMPL_DETECT_THEME'     => false,       // 自动侦测模板主题
  		'TMPL_TEMPLATE_SUFFIX'  => '.html',     // 默认模板文件后缀
 		'DEFAULT_MODULE'        =>  'Portal',  // 默认模块
@@ -49,9 +50,15 @@ $configs= array(
 		'SP_ADMIN_TMPL_ACTION_SUCCESS' 	=> 'Admin/success.html', // 默认成功跳转对应的模板文件,注：相对于后台模板路径
 		'TMPL_EXCEPTION_FILE'   => SPSTATIC.'exception.html',
 		
-	
+		'AUTOLOAD_NAMESPACE' => array('plugins' => './plugins/'), //扩展模块列表
+		
+		'ERROR_PAGE'            =>'',//不要设置，否则会让404变302
+		
+		'VAR_SESSION_ID'        => 'session_id',
+		
 		"UCENTER_ENABLED"		=>0, //UCenter 开启1, 关闭0
 		"COMMENT_NEED_CHECK"	=>0, //评论是否需审核 审核1，不审核0
+		"COMMENT_TIME_INTERVAL"	=>60, //评论时间间隔 单位s
 		
 		/* URL设置 */
  		'URL_CASE_INSENSITIVE'  => true,   // 默认false 表示URL区分大小写 true则表示不区分大小写
@@ -68,9 +75,14 @@ $configs= array(
 		
 		'OUTPUT_ENCODE'			=>true,// 页面压缩输出
 		
+		'HTML_CACHE_ON'     =>    true, // 开启静态缓存
+		'HTML_CACHE_TIME'   =>    60,   // 全局静态缓存有效期（秒）
+		'HTML_FILE_SUFFIX'  =>    '.html', // 设置静态缓存文件后缀
+		
 		'TMPL_PARSE_STRING'=>array(
 			'/Public/upload'=>'/data/upload',
 			'__UPLOAD__' => __ROOT__.'/data/upload/',
+			'__STATICS__' => __ROOT__.'/statics/',
 		)
 );
 

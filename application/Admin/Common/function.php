@@ -1,7 +1,7 @@
 <?php
 
 function sp_get_url_route(){
-	$apps=Dir::getList(SPAPP);
+	$apps=sp_scan_dir(SPAPP."*",GLOB_ONLYDIR);
 	$host=(is_ssl() ? 'https' : 'http')."://".$_SERVER['HTTP_HOST'];
 	$routes=array();
 	foreach ($apps as $a){

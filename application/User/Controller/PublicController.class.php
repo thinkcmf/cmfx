@@ -58,4 +58,3 @@ class PublicController extends HomeBaseController {
 
     
 }
-?>

@@ -24,7 +24,7 @@ define('API_RETURN_SUCCEED', '1');
 define('API_RETURN_FAILED', '-1');
 define('API_RETURN_FORBIDDEN', '-2');
 
-define('DISCUZ_ROOT', '../');
+define('DISCUZ_ROOT', './');
 define('THINKCMF_AUTH', 'thinkcmf_auth');
 
 //note 普通的 http 通知方式
@@ -167,7 +167,7 @@ class uc_note {
 		if(!API_UPDATEBADWORDS) {
 			return API_RETURN_FORBIDDEN;
 		}
-		$cachefile = DISCUZ_ROOT.'data/uc_cache/badwords.php';
+		$cachefile = DISCUZ_ROOT.'../data/uc_cache/badwords.php';
 		$fp = fopen($cachefile, 'w');
 		$data = array();
 		if(is_array($post)) {
@@ -187,7 +187,7 @@ class uc_note {
 		if(!API_UPDATEHOSTS) {
 			return API_RETURN_FORBIDDEN;
 		}
-		$cachefile = DISCUZ_ROOT.'data/uc_cache/hosts.php';
+		$cachefile = DISCUZ_ROOT.'../data/uc_cache/hosts.php';
 		$fp = fopen($cachefile, 'w');
 		$s = "<?php\r\n";
 		$s .= '$_CACHE[\'hosts\'] = '.var_export($post, TRUE).";\r\n";
@@ -203,7 +203,7 @@ class uc_note {
 		$UC_API = $post['UC_API'];
 		
 		//note 写 app 缓存文件
-		$cachefile = DISCUZ_ROOT.'data/uc_cache/apps.php';
+		$cachefile = DISCUZ_ROOT.'../data/uc_cache/apps.php';
 		$fp = fopen($cachefile, 'w');
 		$s = "<?php\r\n";
 		$s .= '$_CACHE[\'apps\'] = '.var_export($post, TRUE).";\r\n";
@@ -228,7 +228,7 @@ class uc_note {
 		if(!API_UPDATECLIENT) {
 			return API_RETURN_FORBIDDEN;
 		}
-		$cachefile = DISCUZ_ROOT.'data/uc_cache/settings.php';
+		$cachefile = DISCUZ_ROOT.'../data/uc_cache/settings.php';
 		$fp = fopen($cachefile, 'w');
 		$s = "<?php\r\n";
 		$s .= '$_CACHE[\'settings\'] = '.var_export($post, TRUE).";\r\n";

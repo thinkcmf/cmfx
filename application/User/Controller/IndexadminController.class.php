@@ -49,4 +49,3 @@ class IndexadminController extends AdminbaseController {
     	}
     }
 }
-?>

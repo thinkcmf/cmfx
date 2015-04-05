@@ -8,7 +8,6 @@ class MemberbaseController extends HomeBaseController{
 		
 		$this->check_login();
 		$this->check_user();
-		
 	}
 	
 }

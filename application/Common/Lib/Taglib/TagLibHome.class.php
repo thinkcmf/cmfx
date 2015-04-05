@@ -53,4 +53,3 @@ class TagLibHome extends TagLib {
 
 }
 
-?>

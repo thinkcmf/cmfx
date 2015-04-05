@@ -1,0 +1,58 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<div class="wrap jj">
+  <ul class="nav nav-tabs">
+     <li class="active"><a href="{:U('User/userinfo')}">修改信息</a></li>
+     <li><a href="{:U('setting/password')}">修改密码</a></li>
+  </ul>
+  <div class="common-form">
+    <form class="form-horizontal J_ajaxForm" method="post" action="{:U('User/userinfo_post')}">
+        <fieldset>
+          <div class="control-group">
+            <label class="control-label" for="input01">昵称:</label>
+            <div class="controls">
+              <input type="hidden" class="input" name="id" value="{$id}">
+              <input type="text" name="user_nicename" value="{$user_nicename}">
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="input01">性别:</label>
+            <div class="controls">
+              <select name="sex">
+              	<php>$sexs=array("0"=>"保密","1"=>"男","2"=>"女");</php>
+              	<foreach name="sexs" item="vo">
+					<php>$sexselected=$key==$sex?"selected":"";</php>
+					<option value="{$key}" {$sexselected}>{$vo}</option>
+				</foreach>
+              </select>
+            </div>
+          </div>
+          <div class="control-group">
+				<label class="control-label" for="input-birthday">生日</label>
+				<div class="controls">
+					<input class="J_date" type="text" id="input-birthday" placeholder="2013-01-04" name="birthday" value="{$birthday}">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="input-user_url">个人网址</label>
+				<div class="controls">
+					<input type="text" id="input-user_url" placeholder="http://thinkcmf.com" name="user_url" value="{$user_url}">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="input-signature">个性签名</label>
+				<div class="controls">
+					<textarea id="input-signature" placeholder="个性签名" name="signature">{$signature}</textarea>
+				</div>
+			</div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn_submit  J_ajax_submit_btn">更新</button>
+          </div>
+        </fieldset>
+      </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+<admintpl file="footer"/>
+</body>
+</html>

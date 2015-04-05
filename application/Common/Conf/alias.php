@@ -39,4 +39,3 @@ return array(
 		"phpzip"=>SPAPP_PATH.'Lib/Util/phpzip.php',
 		"Checkcode"=>SPAPP_PATH.'Lib/Util/Checkcode.class.php',
 );
-?>

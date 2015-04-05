@@ -39,7 +39,7 @@ body fieldset legend {
   <ul class="nav nav-tabs">
      <li><a href="{:U('AdminPost/index')}">所有文章</a></li>
      <li><a href="{:U('AdminPost/add',array('term'=>empty($term['term_id'])?'':$term['term_id']))}"  target="_self">添加文章</a></li>
-     <li class="active"><a href="#">{$term.name|default='页面编辑'}</a></li>
+     <li class="active"><a href="#">文章编辑</a></li>
   </ul>
   <form name="myform" id="myform" action="{:u('AdminPost/edit_post')}" method="post" class="form-horizontal J_ajaxForms" enctype="multipart/form-data">
   <div class="col-right">
@@ -85,12 +85,32 @@ body fieldset legend {
         <tr>
           <td>
           	<span class="switch_list cc">
-          	<php>
+              <php>
           		$status_yes=$post['post_status']==1?"checked":"";
           		$status_no=$post['post_status']==0?"checked":"";
+          		$istop_yes=$post['istop']==1?"checked":"";
+          		$istop_no=$post['istop']==0?"checked":"";
+          		$recommended_yes=$post['recommended']==1?"checked":"";
+          		$recommended_no=$post['recommended']==0?"checked":"";
           	</php>
 			<label><input type="radio" name="post[post_status]" value="1" {$status_yes}><span>审核通过</span></label>
-			<label><input type="radio" name="post[post_status]" value="0" {$status_no}><span>待审核</span></label>
+			<label><input type="radio" name="post[post_status]" value="0" {$status_no}><span>未审核</span></label>
+		 	</span>
+		 </td>
+        </tr>
+        <tr>
+          <td>
+          	<span class="switch_list cc">
+			<label><input type="radio" name="post[istop]" value="1" {$istop_yes}><span>置顶</span></label>
+			<label><input type="radio" name="post[istop]" value="0" {$istop_no}><span>未置顶</span></label>
+		 	</span>
+		 </td>
+        </tr>
+        <tr>
+          <td>
+          	<span class="switch_list cc">
+			<label><input type="radio" name="post[recommended]" value="1" {$recommended_yes}><span>推荐</span></label>
+			<label><input type="radio" name="post[recommended]" value="0" {$recommended_no}><span>未推荐</span></label>
 		 	</span>
 		 </td>
         </tr>
@@ -100,14 +120,17 @@ body fieldset legend {
   <div class="col-auto">
     <div class="table_full">
       <table width="100%"  cellpadding="2" cellspacing="2">
-      		<if condition="$term['name'] neq ''">
             <tr>
               <th width="80">栏目</th>
               <td>
-              	<input type="hidden" name="term[term_id]" value="{$term.term_id}">{$term.name}
+              	<foreach name="terms" item="vo">
+					<label class="checkbox inline">
+					  <php>$term_checked=in_array($vo['term_id'],$term)?"checked":"";</php>
+					  <input type="checkbox" value="{$vo.term_id}" name="term[]" {$term_checked}> {$vo.name}
+					</label>
+				</foreach>
               </td>
             </tr>
-            </if>
             <tr>
               <th width="80">标题 </th>
               <td>
@@ -118,11 +141,16 @@ body fieldset legend {
             </tr>
             <tr>
               <th width="80">关键词</th>
-              <td><input type='text' name='post[post_keywords]' id='keywords' style='width:400px' value="{$post['post_keywords']}"  class='input' placeholder='请输入关键字'> 多关键词之间用空格隔开</td>
+              <td><input type='text' name='post[post_keywords]' id='keywords' style='width:400px' value="{$post['post_keywords']}"  class='input' placeholder='请输入关键字'> 多关键词之间用空格或者英文逗号隔开</td>
+            </tr>
+            
+            <tr>
+              <th width="80">文章来源</th>
+              <td><input type='text' name='post[post_source]' id='source' value="{$post['post_source']}" style='width:400px'   class='input' placeholder='请输入文章来源'></td>
             </tr>
             <tr>
               <th width="80">摘要 </th>
-              <td><textarea name='post[post_excerpt]' id='description' required style='width:98%;height:50px;'  placeholder='请填写摘要'>{$post.post_excerpt}</textarea> </td>
+              <td><textarea name='post[post_excerpt]' id='description' required style='width:98%;height:50px;'  placeholder='请填写摘要'>{$post.post_excerpt}</textarea><span class="must_red">*</span></td>
             </tr>
             <tr>
               <th width="80">内容</th>
@@ -280,9 +308,9 @@ $(function () {
 												},
 												focus: true
 											},{
-												name: '关闭',
+    											name: '返回列表页',
 												callback:function(){
-													window.close();
+													location='{:U('AdminPost/index')}';
 													return true;
 												}
 											}

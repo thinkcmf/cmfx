@@ -80,8 +80,6 @@ class MenuModel extends CommonModel {
         } 
         
          $array = array();
-        //实例化权限表
-        $privdb = M("Access");
         foreach ($result as $v) {
         	
             //方法
@@ -97,9 +95,9 @@ class MenuModel extends CommonModel {
                 	$action = $_match[1];
                 }
                    
-                $r = $privdb->where(array('g' => $v['app'], 'm' => $v['model'], 'a' => $action, 'role_id' => session("roleid")))->find();
+                $rule_name=strtolower($v['app']."/".$v['model']."/".$action);
                 
-                if ($r){
+                if ( sp_auth_check(sp_get_current_admin_id(),$rule_name)){
                 	$array[] = $v;
                 }
                    
@@ -126,34 +124,7 @@ class MenuModel extends CommonModel {
      * 菜单树状结构集合
      */
     public function menu_json() {
-       // $Panel = M("AdminPanel")->where(array("userid" => AppframeAction::$Cache['uid']))->select();
-        $items['0changyong'] = array(
-            "id" => "",
-            "name" => "常用菜单",
-            "parent" => "changyong",
-            "url" => U("Menu/public_changyong"),
-        );
-        /* foreach ($Panel as $r) {
-            $items[$r['menuid'] . '0changyong'] = array(
-                "icon" => "",
-                "id" => $r['menuid'] . '0changyong',
-                "name" => $r['name'],
-                "parent" => "changyong",
-                "url" => $r['url'],
-            );
-        } */
-        $changyong = array(
-            "changyong" => array(
-                "icon" => "",
-                "id" => "changyong",
-                "name" => "常用",
-                "parent" => "",
-                "url" => "",
-                "items" => $items
-            )
-        );
         $data = $this->get_tree(0);
-        //return array_merge($changyong, $data);
         return $data;
     }
 
@@ -236,7 +207,28 @@ class MenuModel extends CommonModel {
     	}
     	return $result;
     }
+    /**
+     * 得到某父级菜单所有子菜单，包括自己
+     * @param number $parentid 
+     */
+    public function get_menu_tree($parentid=0){
+    	$menus=$this->where(array("parentid"=>$parentid))->order(array("listorder"=>"ASC"))->select();
+    	
+    	if($menus){
+    		foreach ($menus as $key=>$menu){
+    			$children=$this->get_menu_tree($menu['id']);
+    			if(!empty($children)){
+    				$menus[$key]['children']=$children;
+    			}
+    			unset($menus[$key]['id']);
+    			unset($menus[$key]['parentid']);
+    		}
+    		return $menus;
+    	}else{
+    		return $menus;
+    	}
+    	
+    }
 
 }
 
-?>

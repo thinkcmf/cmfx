@@ -50,7 +50,7 @@ class LinkController extends AdminbaseController{
 	function edit_post(){
 		if (IS_POST) {
 			if ($this->link_obj->create()) {
-				if ($this->link_obj->save()!=false) {
+				if ($this->link_obj->save()!==false) {
 					$this->success("保存成功！");
 				} else {
 					$this->error("保存失败！");

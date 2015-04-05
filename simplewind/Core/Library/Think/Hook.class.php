@@ -113,9 +113,15 @@ class Hook {
     static public function exec($name, $tag,&$params=NULL) {
         if('Behavior' == substr($name,-8) ){
             // 行为扩展必须用run入口方法
+        	$class = $name;
             $tag    =   'run';
+        }else{
+        	$class   =  "plugins\\{$name}\\{$name}Plugin";
         }
-        $addon   = new $name();
-        return $addon->$tag($params);
+        if(class_exists($class)){ //插件或者行为存在时才执行
+        	$addon   = new $class();
+        	return $addon->$tag($params);
+        }
+        
     }
 }

@@ -1,43 +1,39 @@
 <admintpl file="header" />
 <body class="J_scroll_fixed">
-<div class="wrap J_check_wrap">
-  <ul class="nav nav-tabs">
-     <li class="active"><a href="{:U('navcat/index')}">菜单分类</a></li>
-     <li><a href="{:U('navcat/add')}">添加分类</a></li>
-  </ul>
-  <form class="form-horizontal J_ajaxForm" action="" method="post">
-    <div class="table_list">
-      <table width="100%" class="table table-hover">
-        <thead>
-	          <tr>
-	            <th width="100">ID</th>
-	            <th>名称</th>
-	            <th>描述</th>
-	            <th width="120">主菜单</th>
-	            <th width="120">操作</th>
-	          </tr>
-        </thead>
-        	<foreach name="navcats" item="vo">
-	        	<tr>
-		            <td>{$vo.navcid}</td>
-		            <td>{$vo.name}</td>
-	            	<td>{$vo.remark}</td>
-	            	<td>
-					<php>$mainmenu=$vo['active']?"是":"否";</php>
-					{$mainmenu}
-					</td>
-		            <td>
-		            	<a href="{:U('navcat/edit',array('id'=>$vo['navcid']))}">修改</a>|
-		            	<a href="{:U('navcat/delete',array('id'=>$vo['navcid']))}" class="J_ajax_del" >删除</a>
-					</td>
-	          	</tr>
-          </foreach>
-          </table>
-      <div class="p10"><div class="pages">  </div> </div>
-     
-    </div>
-  	</form>
-</div>
-<script src="__ROOT__/statics/js/common.js?"></script>
+	<div class="wrap J_check_wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="{:U('navcat/index')}">菜单分类</a></li>
+			<li><a href="{:U('navcat/add')}">添加分类</a></li>
+		</ul>
+		<form class="form-horizontal J_ajaxForm" action="" method="post">
+			<div class="table_list">
+				<table width="100%" class="table table-hover table-bordered">
+					<thead>
+						<tr>
+							<th width="100">ID</th>
+							<th>名称</th>
+							<th>描述</th>
+							<th width="120">主菜单</th>
+							<th width="120">操作</th>
+						</tr>
+					</thead>
+					<foreach name="navcats" item="vo">
+					<tr>
+						<td>{$vo.navcid}</td>
+						<td>{$vo.name}</td>
+						<td>{$vo.remark}</td>
+						<td><php>$mainmenu=$vo['active']?"是":"否";</php> {$mainmenu}</td>
+						<td>
+							<a href="{:U('navcat/edit',array('id'=>$vo['navcid']))}">修改</a>|
+							<a href="{:U('navcat/delete',array('id'=>$vo['navcid']))}" class="J_ajax_del">删除</a>
+						</td>
+					</tr>
+					</foreach>
+				</table>
+
+			</div>
+		</form>
+	</div>
+	<script src="__ROOT__/statics/js/common.js?"></script>
 </body>
 </html>

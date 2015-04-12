@@ -134,21 +134,28 @@ right: initial !important;}
 				</small>
 				</a>
 				<div class="pull-left nav_shortcuts" >
-					<a class="btn btn-small btn-success" href="javascript:openapp('{:u('portal/AdminTerm/index')}','index_termlist','分类管理');" title="分类管理">
-						<i class="fa fa-th"></i>
-					</a>
 					
-					<a class="btn btn-small btn-info" href="javascript:openapp('{:u('portal/AdminPost/index')}','index_postlist','文章管理');" title="文章管理">
-						<i class="fa fa-pencil"></i>
-					</a>
-
 					<a class="btn btn-small btn-warning" href="__ROOT__/" title="前台首页" target="_blank">
 						<i class="fa fa-home"></i>
 					</a>
+					
+					<if condition="sp_auth_check(sp_get_current_admin_id(),'portal/AdminTerm/index')">
+					<a class="btn btn-small btn-success" href="javascript:openapp('{:u('portal/AdminTerm/index')}','index_termlist','分类管理');" title="分类管理">
+						<i class="fa fa-th"></i>
+					</a>
+					</if>
+					
+					<if condition="sp_auth_check(sp_get_current_admin_id(),'portal/AdminPost/index')">
+					<a class="btn btn-small btn-info" href="javascript:openapp('{:u('portal/AdminPost/index')}','index_postlist','文章管理');" title="文章管理">
+						<i class="fa fa-pencil"></i>
+					</a>
+					</if>
 
+					<if condition="sp_auth_check(sp_get_current_admin_id(),'admin/setting/clearcache')">
 					<a class="btn btn-small btn-danger" href="javascript:openapp('{:u('admin/setting/clearcache')}','index_clearcache','清除缓存');" title="清除缓存">
 						<i class="fa fa-trash-o"></i>
 					</a>
+					</if>
 				</div>
 				<ul class="nav simplewind-nav pull-right">
 					<li class="light-blue">
@@ -160,9 +167,12 @@ right: initial !important;}
 							<i class="fa fa-caret-down"></i>
 						</a>
 						<ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-closer">
-							<li><a href="javascript:openapp('{:u('setting/site')}','index_site','站点管理');"><i class="fa fa-cog"></i> 站点管理</a></li>
-							<li><a href="javascript:openapp('{:u('user/userinfo')}','index_userinfo','个人资料');"><i class="fa fa-user"></i> 个人资料</a></li>
-							<li class="divider"></li>
+							<if condition="sp_auth_check(sp_get_current_admin_id(),'admin/setting/site')">
+								<li><a href="javascript:openapp('{:U('setting/site')}','index_site','站点管理');"><i class="fa fa-cog"></i> 站点管理</a></li>
+							</if>
+							<if condition="sp_auth_check(sp_get_current_admin_id(),'admin/user/userinfo')">
+								<li><a href="javascript:openapp('{:U('user/userinfo')}','index_userinfo','个人资料');"><i class="fa fa-user"></i> 个人资料</a></li>
+							</if>
 							<li><a href="{:U('Public/logout')}"><i class="fa fa-sign-out"></i> 退出</a></li>
 						</ul>
 					</li>

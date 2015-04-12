@@ -80,7 +80,7 @@ class ReadHtmlCacheBehavior {
                 }else{
                     $cacheTime  =   $cacheTime;
                 }
-                
+                $rule = (C('MOBILE_TPL_ENABLED') && sp_is_mobile())?$rule."_mobile":$rule;//修复手机模板开启时，只生成一个缓存
                 // 当前缓存文件
                 define('HTML_FILE_NAME',HTML_PATH . $rule.C('HTML_FILE_SUFFIX',null,'.html'));
                 return $cacheTime;

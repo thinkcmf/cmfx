@@ -25,8 +25,22 @@
   </form>
   <form class="J_ajaxForm" action="" method="post">
     <div class="table_list">
-      <table width="100%" class="table table-hover">
+      <table width="100%" class="table table-hover table-bordered">
         <thead>
+        	<tr>
+          		<td colspan="14">
+          			<label class="checkbox inline" for="check_all"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y" id="check_all">全选</label>                
+			        <button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/listorders')}">排序</button>
+			        <button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/check',array('check'=>1))}" data-subcheck="true" >审核</button>
+			        <button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/check',array('uncheck'=>1))}" data-subcheck="true" >取消审核</button>
+			        <button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/top',array('top'=>1))}" data-subcheck="true" >置顶</button>
+			        <button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/top',array('untop'=>1))}" data-subcheck="true" >取消置顶</button>
+			        <button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/recommend',array('recommend'=>1))}" data-subcheck="true" >推荐</button>
+			        <button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/recommend',array('unrecommend'=>1))}" data-subcheck="true" >取消推荐</button>
+			        <button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/delete')}" data-subcheck="true" data-msg="你确定删除吗？">删除</button>
+			        <button class="btn btn-primary btn-small" type="button" id="J_Content_remove">批量移动</button>
+          		</td>
+          	</tr>
 	          <tr>
 	            <th width="15"><label><input type="checkbox" class="J_check_all" data-direction="x" data-checklist="J_check_x"></label></th>
                 <th width="50">排序</th>
@@ -80,22 +94,24 @@
 					</td>
 	          	</tr>
           </foreach>
+          	<tr>
+          		<td colspan="14">
+          			<label class="checkbox inline"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y">全选</label>                
+			        <button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/listorders')}">排序</button>
+			        <button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/check',array('check'=>1))}" data-subcheck="true" >审核</button>
+			        <button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/check',array('uncheck'=>1))}" data-subcheck="true" >取消审核</button>
+			        <button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/top',array('top'=>1))}" data-subcheck="true" >置顶</button>
+			        <button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/top',array('untop'=>1))}" data-subcheck="true" >取消置顶</button>
+			        <button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/recommend',array('recommend'=>1))}" data-subcheck="true" >推荐</button>
+			        <button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/recommend',array('unrecommend'=>1))}" data-subcheck="true" >取消推荐</button>
+			        <button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/delete')}" data-subcheck="true" data-msg="你确定删除吗？">删除</button>
+			        <button class="btn btn-primary btn-small" type="button" id="J_Content_remove">批量移动</button>
+          		</td>
+          	</tr>
           </table>
           <div class="pagination">{$Page}</div>
      
     </div>
-    <div class="form-actions">
-        <label class="checkbox inline" for="check_all"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y" id="check_all">全选</label>                
-        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/listorders')}">排序</button>
-        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/check',array('check'=>1))}" data-subcheck="true" >审核</button>
-        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/check',array('uncheck'=>1))}" data-subcheck="true" >取消审核</button>
-        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/top',array('top'=>1))}" data-subcheck="true" >置顶</button>
-        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/top',array('untop'=>1))}" data-subcheck="true" >取消置顶</button>
-        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/recommend',array('recommend'=>1))}" data-subcheck="true" >推荐</button>
-        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/recommend',array('unrecommend'=>1))}" data-subcheck="true" >取消推荐</button>
-        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/delete')}" data-subcheck="true" data-msg="你确定删除吗？">删除</button>
-        <button class="btn btn-primary" type="button" id="J_Content_remove">批量移动</button>
-      </div>
   </form>
 </div>
 <script src="__ROOT__/statics/js/common.js"></script>

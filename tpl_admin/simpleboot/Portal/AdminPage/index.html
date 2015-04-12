@@ -27,8 +27,14 @@
   </form>
   <form class="J_ajaxForm" action="" method="post">
     <div class="table_list">
-      <table width="100%" class="table table-hover">
+      <table width="100%" class="table table-hover table-bordered">
         <thead>
+        	<tr>
+          		<td colspan="6">
+          			<label class="checkbox inline"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y">全选</label>                
+        			<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:U('AdminPage/delete')}" data-subcheck="true">删除</button>
+          		</td>
+          	</tr>
 	          <tr>
 	            <th width="16"><label><input type="checkbox" class="J_check_all" data-direction="x" data-checklist="J_check_x"></label></th>
 	            <th width="100">ID</th>
@@ -54,15 +60,17 @@
 		            	<a href="{:U('AdminPage/delete',array('id'=>$vo['id']))}" class="J_ajax_del" >删除</a>
 					</td>
 	          	</tr>
-          </foreach>
+          	</foreach>
+          	<tr>
+          		<td colspan="6">
+          			<label class="checkbox inline"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y">全选</label>                
+        			<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:U('AdminPage/delete')}" data-subcheck="true">删除</button>
+          		</td>
+          	</tr>
           </table>
       		<div class="pagination">{$Page}</div>
      
     </div>
-    <div class="form-actions">
-        <label class="checkbox inline" for="check_all"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y" id="check_all">全选</label>                
-        <button class="btn J_ajax_submit_btn btn-primary" type="submit" data-action="{:U('AdminPage/delete')}" data-subcheck="true">删除</button>
-      </div>
   </form>
 </div>
 <script src="__ROOT__/statics/js/common.js"></script>

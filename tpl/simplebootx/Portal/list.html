@@ -29,7 +29,7 @@
 				
 				<div class="list-boxes">
 					<h2><a href="{:leuu('article/index',array('id'=>$vo['tid']))}">{$vo.post_title}</a></h2>
-					<p>{$vo.post_excerpt}</p>
+					<p>{$vo.post_excerpt|msubstr=0,256}</p>
 					<div>
 						<div class="pull-left">
 							<div class="list-actions">

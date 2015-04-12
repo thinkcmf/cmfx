@@ -21,6 +21,14 @@ class IndexController extends HomeBaseController {
 		$this->display(":index");
 
     }
+    
+    function is_login(){
+    	if(sp_is_user_login()){
+    		$this->ajaxReturn(array("status"=>1,"user"=>sp_get_current_user()));
+    	}else{
+    		$this->ajaxReturn(array("status"=>0,"info"=>"此用户未登录！"));
+    	}
+    }
 
     //退出
     public function logout(){

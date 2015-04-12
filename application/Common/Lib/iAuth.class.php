@@ -31,6 +31,9 @@ class iAuth{
       * @return boolean           通过验证返回true;失败返回false
      */
     public function check($uid,$name,$relation='or') {
+    	if(empty($uid)){
+    		return false;
+    	}
     	if($uid==1){
     		return true;
     	}

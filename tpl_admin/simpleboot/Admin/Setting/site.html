@@ -71,6 +71,13 @@
 									</div>
 								</div>
 								<div class="control-group">
+									<label class="control-label">开启静态缓存：</label>
+									<div class="controls">
+										<php>$html_cache_on_checked=empty($html_cache_on)?'':'checked';</php>
+										<label class="checkbox inline"><input type="checkbox" name="options[html_cache_on]" value="1" {$html_cache_on_checked}></label>
+									</div>
+								</div>
+								<div class="control-group">
 									<label class="control-label">备案信息：</label>
 									<div class="controls">
 										<input type="text" class="input" name="options[site_icp]" value="{$site_icp}">

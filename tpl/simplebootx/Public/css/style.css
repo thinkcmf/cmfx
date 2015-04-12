@@ -173,7 +173,10 @@ line-height: 24px;
   -moz-transition:all 0.3s ease-in-out;
   -o-transition:all 0.3s ease-in-out;
   transition:all 0.3s ease-in-out;
-	border-top: solid 2px #fff;
+  border-top: solid 2px #fff;
+  word-wrap: break-word;
+  word-break: break-all;
+	
 }
 
 .list-boxes:hover{

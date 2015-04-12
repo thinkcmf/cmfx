@@ -1281,6 +1281,10 @@ function sp_plugin_url($url, $param = array(),$domain=false){
  * @return boolean           通过验证返回true;失败返回false
  */
 function sp_auth_check($uid,$name=null,$relation='or'){
+	if(empty($uid)){
+		return false;
+	}
+	
 	$iauth_obj=new \Common\Lib\iAuth();
 	if(empty($name)){
 		$name=strtolower(MODULE_NAME."/".CONTROLLER_NAME."/".ACTION_NAME);

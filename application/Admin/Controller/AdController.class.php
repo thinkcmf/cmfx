@@ -60,8 +60,7 @@ class AdController extends AdminbaseController{
 	 */
 	function delete(){
 		$id = I("get.id",0,"intval");
-		$data['ad_id']=$id;
-		if ($this->ad_obj->delete()!==false) {
+		if ($this->ad_obj->delete($id)!==false) {
 			$this->success("删除成功！");
 		} else {
 			$this->error("删除失败！");

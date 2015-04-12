@@ -128,9 +128,11 @@ class AdminPageController extends AdminbaseController {
 		if (IS_POST) {
 			$_POST['smeta']['thumb'] = sp_asset_relative_url($_POST['smeta']['thumb']);
 			$_POST['post']['post_date']=date("Y-m-d H:i:s",time());
-			$_POST['post']['smeta']=json_encode($_POST['smeta']);
 			$_POST['post']['post_author']=get_current_admin_id();
-			$result=$this->posts_obj->add($_POST['post']);
+			$page=I("post.post");
+			$page['smeta']=json_encode($_POST['smeta']);
+			$page['post_content']=htmlspecialchars_decode($page['post_content']);
+			$result=$this->posts_obj->add($page);
 			if ($result) {
 				$this->success("添加成功！");
 			} else {
@@ -146,7 +148,7 @@ class AdminPageController extends AdminbaseController {
 		$term=$terms_obj->where("term_id=$term_id")->find();
 		$post=$this->posts_obj->where("id=$id")->find();
 		$this->assign("post",$post);
-		$this->assign("smeta",(array)json_decode($post['smeta']));
+		$this->assign("smeta",json_decode($post['smeta'],true));
 			
 		$this->assign("author","1");
 		$this->assign("term",$term);
@@ -159,13 +161,14 @@ class AdminPageController extends AdminbaseController {
 		if (IS_POST) {
 			$_POST['smeta']['thumb'] = sp_asset_relative_url($_POST['smeta']['thumb']);
 			
-			$_POST['post']['smeta']=json_encode($_POST['smeta']);
 			unset($_POST['post']['post_author']);
-			$result=$this->posts_obj->save($_POST['post']);
+			$page=I("post.post");
+			$page['smeta']=json_encode($_POST['smeta']);
+			$page['post_content']=htmlspecialchars_decode($page['post_content']);
+			$result=$this->posts_obj->save($page);
 			if ($result !== false) {
 				//
 				$this->success("保存成功！");
-				//$this->success(json_encode($_POST['meta']));
 			} else {
 				$this->error("保存失败！");
 			}

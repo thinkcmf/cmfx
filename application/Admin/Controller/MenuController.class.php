@@ -46,7 +46,7 @@ class MenuController extends AdminbaseController {
 
         $tree->init($result);
         $str = "<tr id='node-\$id' \$parentid_node>
-					<td><input name='listorders[\$id]' type='text' size='3' value='\$listorder' class='input input-order'></td>
+					<td style='padding-left:20px;'><input name='listorders[\$id]' type='text' size='3' value='\$listorder' class='input input-order'></td>
 					<td>\$id</td>
         			<td>\$app</td>
 					<td>\$spacer\$name</td>

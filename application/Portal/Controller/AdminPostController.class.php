@@ -21,6 +21,7 @@ class AdminPostController extends AdminbaseController {
 	function add(){
 		$terms = $this->terms_obj->order(array("listorder"=>"asc"))->select();
 		$term_id = intval(I("get.term"));
+		$this->_getTermTree();
 		$term=$this->terms_obj->where("term_id=$term_id")->find();
 		$this->assign("author","1");
 		$this->assign("term",$term);
@@ -42,9 +43,11 @@ class AdminPostController extends AdminbaseController {
 			$_POST['smeta']['thumb'] = sp_asset_relative_url($_POST['smeta']['thumb']);
 			 
 			$_POST['post']['post_date']=date("Y-m-d H:i:s",time());
-			$_POST['post']['smeta']=json_encode($_POST['smeta']);
 			$_POST['post']['post_author']=get_current_admin_id();
-			$result=$this->posts_obj->add($_POST['post']);
+			$article=I("post.post");
+			$article['smeta']=json_encode($_POST['smeta']);
+			$article['post_content']=htmlspecialchars_decode($article['post_content']);
+			$result=$this->posts_obj->add($article);
 			if ($result) {
 				//
 				foreach ($_POST['term'] as $mterm_id){
@@ -63,7 +66,7 @@ class AdminPostController extends AdminbaseController {
 		$id=  intval(I("get.id"));
 		
 		$term_relationship = M('TermRelationships')->where("object_id=$id")->getField("term_id",true);
-		
+		$this->_getTermTree($term_relationship);
 		$terms=$this->terms_obj->select();
 		$post=$this->posts_obj->where("id=$id")->find();
 		$this->assign("post",$post);
@@ -95,10 +98,11 @@ class AdminPostController extends AdminbaseController {
 				}
 			}
 			$_POST['smeta']['thumb'] = sp_asset_relative_url($_POST['smeta']['thumb']);
-			$_POST['post']['smeta']=json_encode($_POST['smeta']);
 			unset($_POST['post']['post_author']);
-			$result=$this->posts_obj->save($_POST['post']);
-			//echo($this->posts_obj->getLastSql());die;
+			$article=I("post.post");
+			$article['smeta']=json_encode($_POST['smeta']);
+			$article['post_content']=htmlspecialchars_decode($article['post_content']);
+			$result=$this->posts_obj->save($article);
 			if ($result!==false) {
 				$this->success("保存成功！");
 			} else {
@@ -212,6 +216,30 @@ class AdminPostController extends AdminbaseController {
 		
 		$tree->init($array);
 		$str="<option value='\$id' \$selected>\$spacer\$name</option>";
+		$taxonomys = $tree->get_tree(0, $str);
+		$this->assign("taxonomys", $taxonomys);
+	}
+	
+	private function _getTermTree($term=array()){
+		$result = $this->terms_obj->order(array("listorder"=>"asc"))->select();
+		
+		$tree = new \Tree();
+		$tree->icon = array('&nbsp;&nbsp;&nbsp;│ ', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ ');
+		$tree->nbsp = '&nbsp;&nbsp;&nbsp;';
+		foreach ($result as $r) {
+			$r['str_manage'] = '<a href="' . U("AdminTerm/add", array("parent" => $r['term_id'])) . '">添加子类</a> | <a href="' . U("AdminTerm/edit", array("id" => $r['term_id'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("AdminTerm/delete", array("id" => $r['term_id'])) . '">删除</a> ';
+			$r['visit'] = "<a href='#'>访问</a>";
+			$r['taxonomys'] = $this->taxonomys[$r['taxonomy']];
+			$r['id']=$r['term_id'];
+			$r['parentid']=$r['parent'];
+			$r['selected']=in_array($r['term_id'], $term)?"selected":"";
+			$r['checked'] =in_array($r['term_id'], $term)?"checked":"";
+			$array[] = $r;
+		}
+		
+		$tree->init($array);
+		$str="<option value='\$id' \$selected>\$spacer\$name</option>";
+		//$str="<label class='checkbox'><input type='checkbox' value='\$id' name='term[]' \$checked>\$spacer\$name</label>";
 		$taxonomys = $tree->get_tree(0, $str);
 		$this->assign("taxonomys", $taxonomys);
 	}

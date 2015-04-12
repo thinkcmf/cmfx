@@ -23,6 +23,21 @@ var GV = {
 			$(this).removeClass("open");
 		});
 		
+		$.post("{:U('user/index/is_login')}",{},function(data){
+			if(data.status==1){
+				if(data.user.avatar){
+					$("#main-menu-user .headicon").attr("src",data.user.avatar.indexOf("http")==0?data.user.avatar:"__UPLOAD__avatar/"+data.user.avatar);
+				}
+				
+				$("#main-menu-user .user-nicename").text(data.user.user_nicename!=""?data.user.user_nicename:data.user.user_login);
+				$("#main-menu-user li.user.login").show();
+				
+			}
+			if(data.status==0){
+				$("#main-menu-user li.user.offline").show();
+			}
+			
+		});	
 		;(function($){
 			$.fn.totop=function(opt){
 				var scrolling=false;

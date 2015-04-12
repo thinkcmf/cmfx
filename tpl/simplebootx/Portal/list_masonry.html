@@ -46,7 +46,7 @@
                             <hr>
                         </div>
                         <div class="body">
-                        	<a href="{:leuu('article/index',array('id'=>$vo['tid']))}">{$vo.post_excerpt}</a>
+                        	<a href="{:leuu('article/index',array('id'=>$vo['tid']))}">{$vo.post_excerpt|msubstr=0,256}</a>
                         </div>
                         <div class="footer">
                         	<div class="pull-left"><span class="meta">{$vo.post_date}</span></div>

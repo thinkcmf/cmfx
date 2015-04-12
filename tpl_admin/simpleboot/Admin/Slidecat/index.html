@@ -1,49 +1,45 @@
-<admintpl file="header"/>
+<admintpl file="header" />
 <body class="J_scroll_fixed">
-<div class="wrap jj">
-   <ul class="nav nav-tabs">
-     <li class="active"><a href="{:U('slidecat/index')}">幻灯片分类</a></li>
-     <li><a href="{:U('slidecat/add')}">添加幻灯片分类 </a></li>
-  </ul>
-  <div class="common-form">
-    <form method="post" class="J_ajaxForm" action="{:U('term/listorders')}">
-      <div class="table_list">
-	    <table width="100%" class="table table-hover">
-	        <thead>
-	          <tr>
-	            <th width="50">ID</th>
-	            <th>分类名称</th>
-	            <th>分类标识</th>
-	            <th>描述</th>
-	            <th width="120">操作</th>
-	          </tr>
-	        </thead>
-	        <tbody>
-	        	<tr>
-		            <td>0</td>
-		            <td>默认分类</td>
-		            <td></td>
-		            <td>默认分类</td>
-		            <td>不允许修改</td>
-	          </tr>
-	        	<foreach name="slidecats" item="vo">
-	        	<tr>
-		            <td>{$vo.cid}</td>
-		            <td>{$vo.cat_name}</td>
-		            <td>{$vo.cat_idname}</td>
-		            <td>{$vo.cat_remark}</td>
-		            <td>
-		            	<a href="{:U('slidecat/edit',array('id'=>$vo['cid']))}" >修改</a>|
-			            <a href="{:U('slidecat/delete',array('id'=>$vo['cid']))}" class="J_ajax_del" >删除</a>
-			        </td>
-	          	</tr>
-	          	</foreach>
-			</tbody>
-	      </table>
-  </div>
-    </form>
-  </div>
-</div>
-<script src="__ROOT__/statics/js/common.js?"></script>
+	<div class="wrap jj">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="{:U('slidecat/index')}">幻灯片分类</a></li>
+			<li><a href="{:U('slidecat/add')}">添加幻灯片分类 </a></li>
+		</ul>
+		<form method="post" class="J_ajaxForm" action="{:U('term/listorders')}">
+			<table class="table table-hover table-bordered">
+				<thead>
+					<tr>
+						<th width="50">ID</th>
+						<th>分类名称</th>
+						<th>分类标识</th>
+						<th>描述</th>
+						<th width="120">操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>0</td>
+						<td>默认分类</td>
+						<td></td>
+						<td>默认分类</td>
+						<td>不允许修改</td>
+					</tr>
+					<foreach name="slidecats" item="vo">
+					<tr>
+						<td>{$vo.cid}</td>
+						<td>{$vo.cat_name}</td>
+						<td>{$vo.cat_idname}</td>
+						<td>{$vo.cat_remark}</td>
+						<td>
+							<a href="{:U('slidecat/edit',array('id'=>$vo['cid']))}">修改</a>|
+							<a href="{:U('slidecat/delete',array('id'=>$vo['cid']))}" class="J_ajax_del">删除</a>
+						</td>
+					</tr>
+					</foreach>
+				</tbody>
+			</table>
+		</form>
+	</div>
+	<script src="__ROOT__/statics/js/common.js?"></script>
 </body>
 </html>

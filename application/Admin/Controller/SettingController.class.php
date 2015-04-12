@@ -50,6 +50,7 @@ class SettingController extends AdminbaseController{
 			$configs["COMMENT_TIME_INTERVAL"]=$comment_time_interval;
 			$_POST['options']['comment_time_interval']=$comment_time_interval;
 			$configs["MOBILE_TPL_ENABLED"]=empty($_POST['options']['mobile_tpl_enabled'])?0:1;
+			$configs["HTML_CACHE_ON"]=empty($_POST['options']['html_cache_on'])?false:true;
 				
 			sp_set_dynamic_config($configs);//sae use same function
 				

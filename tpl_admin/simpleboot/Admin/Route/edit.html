@@ -1,45 +1,43 @@
-<admintpl file="header"/>
+<admintpl file="header" />
 <body class="J_scroll_fixed">
-<div class="wrap jj">
-  <ul class="nav nav-tabs">
-      <li><a href="{:U('setting/site')}">网站信息</a></li>
-      <li><a href="{:U('route/index')}" >URL美化</a></li>
-      <li><a href="{:U('route/add')}" >添加URL规则</a></li>
-  </ul>
-  <div class="common-form">
-    <form method="post" class="form-horizontal J_ajaxForm" action="{:U('route/edit_post')}">
-      <div class="table_list">
-        <table cellpadding="2" cellspacing="2" class="table_form" width="100%">
-          <tbody>
-            <tr>
-              <td width="180">原始网址:</td>
-              <td><input type="text" class="input" name="full_url" value="{$full_url}"><span class="must_red">*</span></td>
-            </tr>
-             <tr>
-              <td width="180">显示网址:</td>
-              <td><input type="text" class="input" name="url" value="{$url}"><span class="must_red">*</span></td>
-            </tr>
-            <tr>
-              <td width="180">显示网址:</td>
-              <td>
-              	<select name="status" class="normal_select">
-                  <option value="1" >启用</option>
-                  <php>$status_selected=$status?"":"selected";</php>
-                  <option value="0" {$status_selected}>禁用</option>
-                </select>
-				</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="form-actions">
-       		<input type="hidden" class="input" name="id" value="{$id}">
-            <button type="submit" class="btn btn-primary btn_submit J_ajax_submit_btn">保存</button>
-            <a class="btn" href="__URL__">返回</a>
-      </div>
-    </form>
-  </div>
-</div>
-<script src="__ROOT__/statics/js/common.js"></script>
+	<div class="wrap jj">
+		<ul class="nav nav-tabs">
+			<li><a href="{:U('setting/site')}">网站信息</a></li>
+			<li><a href="{:U('route/index')}">URL美化</a></li>
+			<li><a href="{:U('route/add')}">添加URL规则</a></li>
+		</ul>
+		<form method="post" class="form-horizontal J_ajaxForm" action="{:U('route/edit_post')}">
+			<fieldset>
+				<div class="control-group">
+					<label class="control-label">原始网址:</label>
+					<div class="controls">
+						<input type="text" class="input" name="full_url" value="{$full_url}"><span class="must_red">*</span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">显示网址:</label>
+					<div class="controls">
+						<input type="text" class="input" name="url" value="{$url}"><span class="must_red">*</span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">是否启用:</label>
+					<div class="controls">
+						<select name="status" class="normal_select">
+							<option value="1">启用</option>
+							<php>$status_selected=$status?"":"selected";</php>
+							<option value="0" {$status_selected}>禁用</option>
+						</select>
+					</div>
+				</div>
+			</fieldset>
+			<div class="form-actions">
+				<input type="hidden" class="input" name="id" value="{$id}">
+				<button type="submit" class="btn btn-primary btn_submit J_ajax_submit_btn">保存</button>
+				<a class="btn" href="__URL__">返回</a>
+			</div>
+		</form>
+	</div>
+	<script src="__ROOT__/statics/js/common.js"></script>
 </body>
 </html>

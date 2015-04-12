@@ -66,8 +66,9 @@
 						<label class="control-label">状态:</label>
 						<div class="controls">
 							<select name="status" class="normal_select">
-								<option value="1" name="data.status">selected&gt;显示</option>
-								<option value="0" name="data.status">selected&gt;隐藏</option>
+								<option value="1" name="data.status">显示</option>
+								<php>$status_selected=empty($data['type'])?"selected":"";</php>
+								<option value="0" name="data.status" {$status_selected}>隐藏</option>
 							</select>
 						</div>
 					</div>
@@ -75,9 +76,9 @@
 						<label class="control-label">类型:</label>
 						<div class="controls">
 							<select name="type" class="normal_select">
-								<option value="1" name="data.type">&gt;权限认证+菜单</option>
+								<option value="1" name="data.type">权限认证+菜单</option>
 								<php>$type_selected=empty($data['type'])?"selected":"";</php>
-								<option value="0" name="data.type" {$type_selected}>&gt;只作为菜单</option>
+								<option value="0" name="data.type" {$type_selected}>只作为菜单</option>
 							</select>
 							注意：“权限认证+菜单”表示加入后台权限管理，纯碎是菜单项请不要选择此项。
 						</div>

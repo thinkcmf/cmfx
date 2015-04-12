@@ -47,7 +47,7 @@ class SlideController extends AdminbaseController{
 		if(IS_POST){
 			if ($this->slide_obj->create()) {
 				$_POST['slide_pic']=sp_asset_relative_url($_POST['slide_pic']);
-				if ($this->slide_obj->add($_POST)!==false) {
+				if ($this->slide_obj->add()!==false) {
 					$this->success("添加成功！", U("slide/index"));
 				} else {
 					$this->error("添加失败！");
@@ -70,7 +70,7 @@ class SlideController extends AdminbaseController{
 		if(IS_POST){
 			if ($this->slide_obj->create()) {
 				$_POST['slide_pic']=sp_asset_relative_url($_POST['slide_pic']);
-				if ($this->slide_obj->save($_POST)!==false) {
+				if ($this->slide_obj->save()!==false) {
 					$this->success("保存成功！", U("slide/index"));
 				} else {
 					$this->error("保存失败！");

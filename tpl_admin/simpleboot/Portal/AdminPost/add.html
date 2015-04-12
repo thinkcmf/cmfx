@@ -1,40 +1,9 @@
 <admintpl file="header"/>
-<script type="text/javascript">
-    var catid = "12";
-</script>
 <style type="text/css">
-.col-auto {
-	overflow: hidden;
-	_zoom: 1;
-	_float: left;
-	border: 1px solid #c2d1d8;
-}
-.col-right {
-	float: right;
-	width: 210px;
-	overflow: hidden;
-	margin-left: 6px;
-	border: 1px solid #c2d1d8;
-}
-
-body fieldset {
-	border: 1px solid #D8D8D8;
-	padding: 10px;
-	background-color: #FFF;
-}
-body fieldset legend {
-    background-color: #F9F9F9;
-    border: 1px solid #D8D8D8;
-    font-weight: 700;
-    padding: 3px 8px;
-}
-.list-dot{ padding-bottom:10px}
-.list-dot li,.list-dot-othors li{padding:5px 0; border-bottom:1px dotted #c6dde0; font-family:"宋体"; color:#bbb; position:relative;_height:22px}
-.list-dot li span,.list-dot-othors li span{color:#004499}
-.list-dot li a.close span,.list-dot-othors li a.close span{display:none}
-.list-dot li a.close,.list-dot-othors li a.close{ background: url("__ROOT__/statics/images/cross.png") no-repeat left 3px; display:block; width:16px; height:16px;position: absolute;outline:none;right:5px; bottom:5px}
-.list-dot li a.close:hover,.list-dot-othors li a.close:hover{background-position: left -46px}
-.list-dot-othors li{float:left;width:24%;overflow:hidden;}
+.col-auto { overflow: auto; _zoom: 1;_float: left;}
+.col-right { float: right; width: 210px; overflow: hidden; margin-left: 6px; }
+.table th, .table td {vertical-align: middle;}
+.picList li{margin-bottom: 5px;}
 </style>
 </head>
 <body class="J_scroll_fixed">
@@ -46,7 +15,7 @@ body fieldset legend {
   <form name="myform" id="myform" action="{:u('AdminPost/add_post')}" method="post" class="form-horizontal J_ajaxForms" enctype="multipart/form-data">
   <div class="col-right">
     <div class="table_full">
-      <table width="100%">
+      <table class="table table-bordered">
          <tr>
           <td><b>缩略图</b></td>
         </tr>
@@ -64,7 +33,7 @@ body fieldset legend {
           <td><b>发布时间</b></td>
         </tr>
         <tr>
-          <td><input type="text" name="post[post_modified]" id="updatetime" value="{:date('Y-m-d H:i:s',time())}" size="21" class="input length_3 J_datetime "></td>
+          <td><input type="text" name="post[post_modified]" id="updatetime" value="{:date('Y-m-d H:i:s',time())}" size="21" class="input length_3 J_datetime" style="width: 160px;"></td>
         </tr>
         <tr>
           <td><b>状态</b></td>
@@ -72,24 +41,24 @@ body fieldset legend {
         <tr>
           <td>
           	<span class="switch_list cc">
-			<label><input type="radio" name="post[post_status]" value="1" checked><span>审核通过</span></label>
-			<label><input type="radio" name="post[post_status]" value="0"  ><span>待审核</span></label>
+			<label class="radio"><input type="radio" name="post[post_status]" value="1" checked><span>审核通过</span></label>
+			<label class="radio"><input type="radio" name="post[post_status]" value="0"  ><span>待审核</span></label>
 		 	</span>
 		 </td>
         </tr>
         <tr>
           <td>
-              <span class="switch_list cc">
-			<label><input type="radio" name="post[istop]" value="1" ><span>置顶</span></label>
-			<label><input type="radio" name="post[istop]" value="0" checked><span>未置顶</span></label>
+            <span class="switch_list cc">
+			<label class="radio"><input type="radio" name="post[istop]" value="1" ><span>置顶</span></label>
+			<label class="radio"><input type="radio" name="post[istop]" value="0" checked><span>未置顶</span></label>
 		 	</span>
 		 </td>
         </tr>
         <tr>
           <td>
           	<span class="switch_list cc">
-			<label><input type="radio" name="post[recommended]" value="1" ><span>推荐</span></label>
-			<label><input type="radio" name="post[recommended]" value="0" checked><span>未推荐</span></label>
+			<label class="radio"><input type="radio" name="post[recommended]" value="1" ><span>推荐</span></label>
+			<label class="radio"><input type="radio" name="post[recommended]" value="0" checked><span>未推荐</span></label>
 		 	</span>
 		 </td>
         </tr>
@@ -98,15 +67,16 @@ body fieldset legend {
   </div>
   <div class="col-auto">
     <div class="table_full">
-      <table width="100%" cellpadding="2" cellspacing="2">
+      <table class="table table-bordered">
             <tr>
               <th width="80">栏目</th>
               <td>
-				<foreach name="terms" item="vo">
-					<label class="checkbox inline">
-					  <input type="checkbox" value="{$vo.term_id}" name="term[]"> {$vo.name}
-					</label>
-				</foreach>
+				<select multiple="multiple" style="max-height: 100px;" name="term[]">
+					{$taxonomys}
+				</select>
+				<div>
+					windows：按住 Ctrl 按钮来选择多个选项,Mac：按住 command 按钮来选择多个选项
+				</div>
               </td>
             </tr>
             <tr>
@@ -130,7 +100,7 @@ body fieldset legend {
             </tr>
             <tr>
               <th width="80">内容</th>
-              <td><span class="must_red">*</span><div id='content_tip'></div>
+              <td><div id='content_tip'></div>
               <script type="text/plain" id="content" name="post[post_content]"></script>
                 <script type="text/javascript">
                 //编辑器路径定义
@@ -146,10 +116,10 @@ body fieldset legend {
               <td>
 				<fieldset class="blue pad-10">
 		        <legend>图片列表</legend>
-		        <ul id="photos" class="picList"></ul>
+		        <ul id="photos" class="picList unstyled"></ul>
 				</fieldset>
-				<div class="bk10"></div>
-				<a href='javascript:void(0);' onclick="javascript:flashupload('albums_images', '图片上传','photos',change_images,'10,gif|jpg|jpeg|png|bmp,0','','','')" class="btn">选择图片 </a> </td>
+				<a href="javascript:;" style="margin: 5px 0;" onclick="javascript:flashupload('albums_images', '图片上传','photos',change_images,'10,gif|jpg|jpeg|png|bmp,0','','','')" class="btn">选择图片 </a>
+			  </td>
             </tr>
                         
         </tbody>
@@ -157,7 +127,7 @@ body fieldset legend {
     </div>
   </div>
   <div class="form-actions">
-        <button class="btn btn_submit J_ajax_submit_btn"type="submit">提交</button>
+        <button class="btn btn-primary btn_submit J_ajax_submit_btn"type="submit">提交</button>
         <a class="btn" href="{:U('AdminPost/index')}">返回</a>
   </div>
  </form>

@@ -41,7 +41,7 @@ class NavcatController extends AdminbaseController {
 				$this->navcat->where("active=1")->save(array("active"=>0));
 			}
 			if ($this->navcat->create()) {
-				if ($this->navcat->add($_POST)) {
+				if ($this->navcat->add()) {
 					$this->success("添加成功！", U("navcat/index"));
 				} else {
 					$this->error("添加失败！");
@@ -73,7 +73,7 @@ class NavcatController extends AdminbaseController {
 				$this->navcat->where("active=1")->save(array("active"=>0));
 			}
 			if ($this->navcat->create()) {
-				if ($this->navcat->save($_POST) !== false) {
+				if ($this->navcat->save() !== false) {
 					$this->success("保存成功！", U("navcat/index"));
 				} else {
 					$this->error("保存失败！");

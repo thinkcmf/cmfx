@@ -6,11 +6,11 @@ namespace Admin\Controller;
 use Common\Controller\AdminbaseController;
 class NavcatController extends AdminbaseController {
 	
-	protected $navcat;
+	protected $navcat_model;
 	
 	function _initialize() {
 		parent::_initialize();
-		$this->navcat =D("Common/NavCat");
+		$this->navcat_model =D("Common/NavCat");
 	}
 	
 	
@@ -18,7 +18,7 @@ class NavcatController extends AdminbaseController {
 	 *  显示
 	 */
 	public function index() {
-		$cats=$this->navcat->select();
+		$cats=$this->navcat_model->select();
 		$this->assign("navcats",$cats);
 		$this->display();
 	}
@@ -38,16 +38,16 @@ class NavcatController extends AdminbaseController {
 			if(empty($_POST['active'])){
 				$_POST['active']=0;
 			}else{
-				$this->navcat->where("active=1")->save(array("active"=>0));
+				$this->navcat_model->where("active=1")->save(array("active"=>0));
 			}
-			if ($this->navcat->create()) {
-				if ($this->navcat->add()) {
+			if ($this->navcat_model->create()) {
+				if ($this->navcat_model->add()) {
 					$this->success("添加成功！", U("navcat/index"));
 				} else {
 					$this->error("添加失败！");
 				}
 			} else {
-				$this->error($this->navcat->getError());
+				$this->error($this->navcat_model->getError());
 			}
 		}
 	}
@@ -57,7 +57,7 @@ class NavcatController extends AdminbaseController {
 	 */
 	function edit(){
 		$id= intval(I("get.id"));
-		$navcat=$this->navcat->where("navcid=$id")->find();
+		$navcat=$this->navcat_model->where("navcid=$id")->find();
 		$this->assign($navcat);
 		$this->display();
 	}
@@ -70,16 +70,16 @@ class NavcatController extends AdminbaseController {
 			if(empty($_POST['active'])){
 				$_POST['active']=0;
 			}else{
-				$this->navcat->where("active=1")->save(array("active"=>0));
+				$this->navcat_model->where("active=1")->save(array("active"=>0));
 			}
-			if ($this->navcat->create()) {
-				if ($this->navcat->save() !== false) {
+			if ($this->navcat_model->create()) {
+				if ($this->navcat_model->save() !== false) {
 					$this->success("保存成功！", U("navcat/index"));
 				} else {
 					$this->error("保存失败！");
 				}
 			} else {
-				$this->error($this->navcat->getError());
+				$this->error($this->navcat_model->getError());
 			}
 		}
 	}
@@ -87,7 +87,7 @@ class NavcatController extends AdminbaseController {
 	
 	function delete(){
 		$id = intval(I("get.id"));
-		if ($this->navcat->where("navcid=$id")->delete()!==false) {
+		if ($this->navcat_model->where("navcid=$id")->delete()!==false) {
 			$nav_obj=D("Common/Nav");
 			$nav_obj->where("cid=$id")->delete();
 			$this->success("删除成功！");

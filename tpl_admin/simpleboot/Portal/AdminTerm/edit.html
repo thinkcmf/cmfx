@@ -18,10 +18,7 @@
 									<td>
 										<select name="parent">
 												<option value="0">作为一级菜单</option>
-												<foreach name="terms" item="vo">
-													<php>$selected=$data['parent']==$vo['term_id']?"selected":""</php>
-										        	<option value="{$vo.term_id}" {$selected}>{$vo.spacer}{$vo.name}</option>
-												</foreach>
+												{$terms_tree}
 										</select>
 									</td>
 								</tr>

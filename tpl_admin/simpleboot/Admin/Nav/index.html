@@ -15,29 +15,35 @@
 			</select>
 		</form>
 		<form class="J_ajaxForm" action="{:U('nav/listorders')}" method="post">
-			<table width="100%" class="table table-hover table-bordered">
+			<div class="table-actions">
+				<button type="submit" class="btn btn-primary btn-small btn_submit J_ajax_submit_btn">排序</button>
+			</div>
+			<table width="100%" class="table table-hover table-bordered table-list">
 				<thead>
 					<tr>
-						<td colspan="5">
-							<button type="submit"
-								class="btn btn-primary btn-small btn_submit J_ajax_submit_btn">排序</button>
-						</td>
-					</tr>
-					<tr>
-						<th width="80">排序</th>
-						<th width="100">ID</th>
-						<th>菜单英文名称</th>
+						<th width="50">排序</th>
+						<th width="50">ID</th>
+						<th>菜单名称</th>
 						<th width="80">状态</th>
-						<th width="200">管理操作</th>
+						<th width="150">管理操作</th>
 					</tr>
 				</thead>
+				<tbody>
 				{$categorys}
-				<tr>
-					<td colspan="5">
-						<button type="submit" class="btn btn-primary btn-small btn_submit J_ajax_submit_btn">排序</button>
-					</td>
-				</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+						<th width="50">排序</th>
+						<th width="50">ID</th>
+						<th>菜单名称</th>
+						<th width="80">状态</th>
+						<th width="150">管理操作</th>
+					</tr>
+				</tfoot>
 			</table>
+			<div class="table-actions">
+				<button type="submit" class="btn btn-primary btn-small btn_submit J_ajax_submit_btn">排序</button>
+			</div>
 		</form>
 	</div>
 	<script src="__ROOT__/statics/js/common.js"></script>

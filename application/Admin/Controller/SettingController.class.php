@@ -3,17 +3,16 @@ namespace Admin\Controller;
 use Common\Controller\AdminbaseController;
 class SettingController extends AdminbaseController{
 	
-	
-	protected $options_obj;
+	protected $options_model;
 	
 	function _initialize() {
 		parent::_initialize();
-		$this->options_obj = D("Common/Options");
+		$this->options_model = D("Common/Options");
 	}
 	
 	function site(){
-		$option=$this->options_obj->where("option_name='site_options'")->find();
-		$cmf_settings=$this->options_obj->where("option_name='cmf_settings'")->getField("option_value");
+		$option=$this->options_model->where("option_name='site_options'")->find();
+		$cmf_settings=$this->options_model->where("option_name='cmf_settings'")->getField("option_value");
 		$tpls=sp_scan_dir(C("SP_TMPL_PATH")."*",GLOB_ONLYDIR);
 		$noneed=array(".","..",".svn");
 		$tpls=array_diff($tpls, $noneed);
@@ -56,19 +55,16 @@ class SettingController extends AdminbaseController{
 				
 			$data['option_name']="site_options";
 			$data['option_value']=json_encode($_POST['options']);
-			if($this->options_obj->where("option_name='site_options'")->find()){
-				$r=$this->options_obj->where("option_name='site_options'")->save($data);
+			if($this->options_model->where("option_name='site_options'")->find()){
+				$r=$this->options_model->where("option_name='site_options'")->save($data);
 			}else{
-				$r=$this->options_obj->add($data);
+				$r=$this->options_model->add($data);
 			}
 			
 			$banned_usernames=preg_replace("/[^0-9A-Za-z_\x{4e00}-\x{9fa5}-]/u", ",", $_POST['cmf_settings']['banned_usernames']);
 			$_POST['cmf_settings']['banned_usernames']=$banned_usernames;
 
 			sp_set_cmf_setting($_POST['cmf_settings']);
-			
-			
-			
 			
 			if ($r!==false) {
 				$this->success("保存成功！");
@@ -78,7 +74,6 @@ class SettingController extends AdminbaseController{
 			
 		}
 	}
-	
 	
 	function password(){
 		$this->display();

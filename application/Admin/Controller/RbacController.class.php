@@ -7,18 +7,18 @@ namespace Admin\Controller;
 use Common\Controller\AdminbaseController;
 class RbacController extends AdminbaseController {
 
-    protected $User, $Role, $Role_user,$auth_access_model;
+    protected $role_model, $auth_access_model;
 
     function _initialize() {
         parent::_initialize();
-        $this->Role = D("Common/Role");
+        $this->role_model = D("Common/Role");
     }
 
     /**
      * 角色管理，有add添加，edit编辑，delete删除
      */
     public function index() {
-        $data = $this->Role->order(array("listorder" => "asc", "id" => "desc"))->select();
+        $data = $this->role_model->order(array("listorder" => "asc", "id" => "desc"))->select();
         $this->assign("roles", $data);
         $this->display();
     }
@@ -35,14 +35,14 @@ class RbacController extends AdminbaseController {
      */
     public function roleadd_post() {
     	if (IS_POST) {
-    		if ($this->Role->create()) {
-    			if ($this->Role->add()!==false) {
+    		if ($this->role_model->create()) {
+    			if ($this->role_model->add()!==false) {
     				$this->success("添加角色成功",U("rbac/index"));
     			} else {
     				$this->error("添加失败！");
     			}
     		} else {
-    			$this->error($this->Role->getError());
+    			$this->error($this->role_model->getError());
     		}
     	}
     }
@@ -60,7 +60,7 @@ class RbacController extends AdminbaseController {
         if($count){
         	$this->error("该角色已经有用户！");
         }else{
-        	$status = $this->Role->delete($id);
+        	$status = $this->role_model->delete($id);
         	if ($status!==false) {
         		$this->success("删除成功！", U('Rbac/index'));
         	} else {
@@ -81,7 +81,7 @@ class RbacController extends AdminbaseController {
         if ($id == 1) {
             $this->error("超级管理员角色不能被修改！");
         }
-        $data = $this->Role->where(array("id" => $id))->find();
+        $data = $this->role_model->where(array("id" => $id))->find();
         if (!$data) {
         	$this->error("该角色不存在！");
         }
@@ -101,15 +101,15 @@ class RbacController extends AdminbaseController {
     		$this->error("超级管理员角色不能被修改！");
     	}
     	if (IS_POST) {
-    		$data = $this->Role->create();
+    		$data = $this->role_model->create();
     		if ($data) {
-    			if ($this->Role->save($data)!==false) {
+    			if ($this->role_model->save($data)!==false) {
     				$this->success("修改成功！", U('Rbac/index'));
     			} else {
     				$this->error("修改失败！");
     			}
     		} else {
-    			$this->error($this->Role->getError());
+    			$this->error($this->role_model->getError());
     		}
     	}
     }
@@ -133,7 +133,6 @@ class RbacController extends AdminbaseController {
         $priv_data=$this->auth_access_model->where(array("role_id"=>$roleid))->getField("rule_name",true);//获取权限表数据
         foreach ($result as $m){
         	$newmenus[$m['id']]=$m;
-        	
         }
         
         foreach ($result as $n => $t) {

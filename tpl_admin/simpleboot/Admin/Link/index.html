@@ -1,65 +1,64 @@
-<admintpl file="header"/>
+<admintpl file="header" />
 <body class="J_scroll_fixed">
-<div class="wrap J_check_wrap">
-  <ul class="nav nav-tabs">
-     <li class="active"><a href="{:U('link/index')}">友情链接</a></li>
-     <li><a href="{:U('link/add')}">添加链接</a></li>
-  </ul>
-  <div class="common-form">
-    <form method="post" class="J_ajaxForm" action="{:U('Link/listorders')}">
-      <div class="table_list">
-      	<php>
-        		$status=array("1"=>"显示","0"=>"隐藏");
-        </php>
-	    <table width="100%" class="table table-hover table-bordered">
-	        <thead>
-	        	<tr>
-	          		<td colspan="7">
-	          			<label class="checkbox inline" for="check_all"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y" id="check_all">全选</label>  
-			    		<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit">排序</button>
-			    		<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('link/toggle',array('display'=>1))}" data-subcheck="true" >显示</button>
-			        	<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('link/toggle',array('hide'=>1))}" data-subcheck="true" >隐藏</button>
-	          		</td>
-	          	</tr>
-	          <tr>
-	          	<th width="16"><label><input type="checkbox" class="J_check_all" data-direction="x" data-checklist="J_check_x"></label></th>
-	           	<th width="50">排序</th>
-	            <th>ID</th>
-	            <th>链接名称</th>
-	            <th>链接地址</th>
-	            <th width="45">状态</th>
-	            <th width="120">操作</th>
-	          </tr>
-	        </thead>
-	        <tbody>
-	        	<foreach name="links" item="vo">
-		        	<tr>
-		        		<td><input type="checkbox" class="J_check" data-yid="J_check_y" data-xid="J_check_x" name="ids[]" value="{$vo.link_id}"></td>
-			        	<td><input name='listorders[{$vo.link_id}]' class="input input-order mr5"  type='text' size='3' value='{$vo.listorder}'></td>
-			            <td>{$vo.link_id}</td>
-			            <td>{$vo.link_name}</td>
-			            <td><a href="{$vo.link_url}" target="_blank">{$vo.link_url}</a></td>
-			            <td>{$status[$vo['link_status']]}</td>
-			            <td>
-			            	<a href="{:U('link/edit',array('id'=>$vo['link_id']))}" >修改</a>|
-				            <a href="{:U('link/delete',array('id'=>$vo['link_id']))}" class="J_ajax_del" >删除</a>
-				        </td>
-		          	</tr>
-	          	</foreach>
-	          	<tr>
-	          		<td colspan="7">
-	          			<label class="checkbox inline" for="check_all"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y" id="check_all">全选</label>  
-			    		<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit">排序</button>
-			    		<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('link/toggle',array('display'=>1))}" data-subcheck="true" >显示</button>
-			        	<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('link/toggle',array('hide'=>1))}" data-subcheck="true" >隐藏</button>
-	          		</td>
-	          	</tr>
-			</tbody>
-	      </table>
-  </div>
-    </form>
-  </div>
-</div>
-<script src="__ROOT__/statics/js/common.js?"></script>
+	<div class="wrap J_check_wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="{:U('link/index')}">友情链接</a></li>
+			<li><a href="{:U('link/add')}">添加链接</a></li>
+		</ul>
+		<form method="post" class="J_ajaxForm" action="{:U('Link/listorders')}">
+			<div class="table-actions">
+				<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit">排序</button>
+				<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('link/toggle',array('display'=>1))}" data-subcheck="true">显示</button>
+				<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('link/toggle',array('hide'=>1))}" data-subcheck="true">隐藏</button>
+			</div>
+			<php>$status=array("1"=>"显示","0"=>"隐藏");</php>
+			<table class="table table-hover table-bordered table-list">
+				<thead>
+					<tr>
+						<th width="16"><label><input type="checkbox" class="J_check_all" data-direction="x" data-checklist="J_check_x"></label></th>
+						<th width="50">排序</th>
+						<th width="50">ID</th>
+						<th>链接名称</th>
+						<th>链接地址</th>
+						<th width="45">状态</th>
+						<th width="120">操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<foreach name="links" item="vo">
+					<tr>
+						<td><input type="checkbox" class="J_check" data-yid="J_check_y" data-xid="J_check_x" name="ids[]" value="{$vo.link_id}"></td>
+						<td><input name='listorders[{$vo.link_id}]' class="input input-order mr5" type='text' size='3' value='{$vo.listorder}'></td>
+						<td>{$vo.link_id}</td>
+						<td>{$vo.link_name}</td>
+						<td><a href="{$vo.link_url}" target="_blank">{$vo.link_url}</a></td>
+						<td>{$status[$vo['link_status']]}</td>
+						<td>
+							<a href="{:U('link/edit',array('id'=>$vo['link_id']))}">修改</a>|
+							<a href="{:U('link/delete',array('id'=>$vo['link_id']))}" class="J_ajax_del">删除</a>
+						</td>
+					</tr>
+					</foreach>
+				</tbody>
+				<tfoot>
+					<tr>
+						<th width="16"><label><input type="checkbox" class="J_check_all" data-direction="x" data-checklist="J_check_x"></label></th>
+						<th width="50">排序</th>
+						<th width="50">ID</th>
+						<th>链接名称</th>
+						<th>链接地址</th>
+						<th width="45">状态</th>
+						<th width="120">操作</th>
+					</tr>
+				</tfoot>
+			</table>
+			<div class="table-actions">
+				<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit">排序</button>
+				<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('link/toggle',array('display'=>1))}" data-subcheck="true">显示</button>
+				<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('link/toggle',array('hide'=>1))}" data-subcheck="true">隐藏</button>
+			</div>
+		</form>
+	</div>
+	<script src="__ROOT__/statics/js/common.js?"></script>
 </body>
 </html>

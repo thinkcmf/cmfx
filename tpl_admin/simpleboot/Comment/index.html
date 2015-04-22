@@ -5,54 +5,58 @@
 	   <li class="active"><a href="{:U('commentadmin/index')}">所有评论</a></li>
 	</ul>
 	<form class="J_ajaxForm" action="" method="post">
-		<div class="table_list">
-			<table width="100%" class="table table-hover table-bordered">
-				<thead>
-					<tr>
-						<td colspan="8">
-							<label class="checkbox inline"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y">全选</label>
-							<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('Commentadmin/check',array('check'=>1))}" data-subcheck="true">审核</button>
-							<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('Commentadmin/check',array('uncheck'=>1))}" data-subcheck="true">取消审核</button>
-							<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('Commentadmin/delete')}" data-subcheck="true" data-msg="你确定删除吗？">删除</button>
-						</td>
-					</tr>
-					<tr>
-						<th width="15"><label><input type="checkbox" class="J_check_all" data-direction="x" data-checklist="J_check_x"></label></th>
-						<th width="50">ID</th>
-						<th width="100">用户名/姓名</th>
-						<th width="150">邮箱</th>
-						<th>内容</th>
-						<th width="120">评论时间</th>
-						<th width="50">状态</th>
-						<th width="50">操作</th>
-					</tr>
-				</thead>
-				<php>$status=array("1"=>"已审核","0"=>"未审核");</php>
-				<foreach name="comments" item="vo">
-				<tr>
-					<td><input type="checkbox" class="J_check" data-yid="J_check_y" data-xid="J_check_x" name="ids[]" value="{$vo.id}" ></td>
-					<td>{$vo.id}</td>
-					<td>{$vo.full_name}</td>
-					<td>{$vo.email}</td>
-					<td>{$vo.content}</td>
-					<td>{$vo.createtime}</td>
-					<td>{$status[$vo['status']]}</td>
-					<td>
-						<a href="{:U('Commentadmin/delete',array('id'=>$vo['id']))}" class="J_ajax_del" >删除</a>
-					</td>
-				</tr>
-				</foreach>
-			    <tr>
-					<td colspan="8">
-						<label class="checkbox inline"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y">全选</label>                
-						<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('Commentadmin/check',array('check'=>1))}" data-subcheck="true">审核</button>
-						<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('Commentadmin/check',array('uncheck'=>1))}" data-subcheck="true">取消审核</button>
-						<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('Commentadmin/delete')}" data-subcheck="true" data-msg="你确定删除吗？">删除</button>
-					</td>
-			    </tr>
-			</table>
-			<div class="pagination">{$Page}</div>
+		<div class="table-actions">
+			<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('Commentadmin/check',array('check'=>1))}" data-subcheck="true">审核</button>
+			<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('Commentadmin/check',array('uncheck'=>1))}" data-subcheck="true">取消审核</button>
+			<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('Commentadmin/delete')}" data-subcheck="true" data-msg="你确定删除吗？">删除</button>
 		</div>
+		<table class="table table-hover table-bordered table-list">
+			<thead>
+				<tr>
+					<th width="15"><label><input type="checkbox" class="J_check_all" data-direction="x" data-checklist="J_check_x"></label></th>
+					<th width="50">ID</th>
+					<th width="100">用户名/姓名</th>
+					<th width="150">邮箱</th>
+					<th>内容</th>
+					<th width="120">评论时间</th>
+					<th width="50">状态</th>
+					<th width="50">操作</th>
+				</tr>
+			</thead>
+			<php>$status=array("1"=>"已审核","0"=>"未审核");</php>
+			<foreach name="comments" item="vo">
+			<tr>
+				<td><input type="checkbox" class="J_check" data-yid="J_check_y" data-xid="J_check_x" name="ids[]" value="{$vo.id}" ></td>
+				<td>{$vo.id}</td>
+				<td>{$vo.full_name}</td>
+				<td>{$vo.email}</td>
+				<td>{$vo.content}</td>
+				<td>{$vo.createtime}</td>
+				<td>{$status[$vo['status']]}</td>
+				<td>
+					<a href="{:U('Commentadmin/delete',array('id'=>$vo['id']))}" class="J_ajax_del" >删除</a>
+				</td>
+			</tr>
+			</foreach>
+		    <tfoot>
+				<tr>
+					<th width="15"><label><input type="checkbox" class="J_check_all" data-direction="x" data-checklist="J_check_x"></label></th>
+					<th width="50">ID</th>
+					<th width="100">用户名/姓名</th>
+					<th width="150">邮箱</th>
+					<th>内容</th>
+					<th width="120">评论时间</th>
+					<th width="50">状态</th>
+					<th width="50">操作</th>
+				</tr>
+			</tfoot>
+		</table>
+		<div class="table-actions">
+			<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('Commentadmin/check',array('check'=>1))}" data-subcheck="true">审核</button>
+			<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('Commentadmin/check',array('uncheck'=>1))}" data-subcheck="true">取消审核</button>
+			<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:u('Commentadmin/delete')}" data-subcheck="true" data-msg="你确定删除吗？">删除</button>
+		</div>
+		<div class="pagination">{$Page}</div>
 	</form>
 </div>
 <script src="__ROOT__/statics/js/common.js"></script>

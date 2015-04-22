@@ -122,8 +122,8 @@ right: initial !important;}
 <body style="min-width:900px;" screen_capture_injected="true">
 	<div id="loading"><i class="loadingicon"></i><span>正在加载...</span></div>
 	<div id="right_tools_wrapper">
-		<!--<span id="right_tools_clearcache" title="清除缓存" onclick="javascript:openapp('{:u('admin/setting/clearcache')}','right_tool_clearcache','清除缓存');"><i class="fa fa-trash-o right_tool_icon"></i></span>
-		--><span id="refresh_wrapper" title="刷新当前页" ><i class="fa fa-refresh right_tool_icon"></i></span>
+		<!--<span id="right_tools_clearcache" title="清除缓存" onclick="javascript:openapp('{:U('admin/setting/clearcache')}','right_tool_clearcache','清除缓存');"><i class="fa fa-trash-o right_tool_icon"></i></span>-->
+		<span id="refresh_wrapper" title="刷新当前页" ><i class="fa fa-refresh right_tool_icon"></i></span>
 	</div>
 	<div class="navbar">
 		<div class="navbar-inner">
@@ -140,19 +140,19 @@ right: initial !important;}
 					</a>
 					
 					<if condition="sp_auth_check(sp_get_current_admin_id(),'portal/AdminTerm/index')">
-					<a class="btn btn-small btn-success" href="javascript:openapp('{:u('portal/AdminTerm/index')}','index_termlist','分类管理');" title="分类管理">
+					<a class="btn btn-small btn-success" href="javascript:openapp('{:U('portal/AdminTerm/index')}','index_termlist','分类管理');" title="分类管理">
 						<i class="fa fa-th"></i>
 					</a>
 					</if>
 					
 					<if condition="sp_auth_check(sp_get_current_admin_id(),'portal/AdminPost/index')">
-					<a class="btn btn-small btn-info" href="javascript:openapp('{:u('portal/AdminPost/index')}','index_postlist','文章管理');" title="文章管理">
+					<a class="btn btn-small btn-info" href="javascript:openapp('{:U('portal/AdminPost/index')}','index_postlist','文章管理');" title="文章管理">
 						<i class="fa fa-pencil"></i>
 					</a>
 					</if>
 
 					<if condition="sp_auth_check(sp_get_current_admin_id(),'admin/setting/clearcache')">
-					<a class="btn btn-small btn-danger" href="javascript:openapp('{:u('admin/setting/clearcache')}','index_clearcache','清除缓存');" title="清除缓存">
+					<a class="btn btn-small btn-danger" href="javascript:openapp('{:U('admin/setting/clearcache')}','index_clearcache','清除缓存');" title="清除缓存">
 						<i class="fa fa-trash-o"></i>
 					</a>
 					</if>
@@ -199,7 +199,7 @@ right: initial !important;}
 				<a id="task-pre" class="task-changebt">←</a>
 				<div id="task-content">
 				<ul class="macro-component-tab" id="task-content-inner">
-					<li class="macro-component-tabitem noclose" app-id="0" app-url="{:u('main/index')}" app-name="首页">
+					<li class="macro-component-tabitem noclose" app-id="0" app-url="{:U('main/index')}" app-name="首页">
 						<span class="macro-tabs-item-text">首页</span>
 					</li>
 				</ul>
@@ -217,48 +217,39 @@ right: initial !important;}
 	<script src="__ROOT__/statics/js/jquery.js"></script>
 	<script src="__ROOT__/statics/simpleboot/bootstrap/js/bootstrap.min.js"></script>
 	<script>
-	var b = $("#sidebar").hasClass("menu-min");
-	var a = "ontouchend" in document;
-	$(".nav-list").on(
-			"click",
-			function(g) {
-				var f = $(g.target).closest("a");
-				if (!f || f.length == 0) {
-					return
+	var ismenumin = $("#sidebar").hasClass("menu-min");
+	$(".nav-list").on( "click",function(event) {
+		var closest_a = $(event.target).closest("a");
+		if (!closest_a || closest_a.length == 0) {
+			return
+		}
+		if (!closest_a.hasClass("dropdown-toggle")) {
+			if (ismenumin && "click" == "tap" && closest_a.get(0).parentNode.parentNode == this) {
+				var closest_a_menu_text = closest_a.find(".menu-text").get(0);
+				if (event.target != closest_a_menu_text && !$.contains(closest_a_menu_text, event.target)) {
+					return false
 				}
-				if (!f.hasClass("dropdown-toggle")) {
-					if (b && "click" == "tap"
-							&& f.get(0).parentNode.parentNode == this) {
-						var h = f.find(".menu-text").get(0);
-						if (g.target != h && !$.contains(h, g.target)) {
-							return false
+			}
+			return
+		}
+		var closest_a_next = closest_a.next().get(0);
+		if (!$(closest_a_next).is(":visible")) {
+			var closest_ul = $(closest_a_next.parentNode).closest("ul");
+			if (ismenumin && closest_ul.hasClass("nav-list")) {
+				return
+			}
+			closest_ul.find("> .open > .submenu").each(function() {
+						if (this != closest_a_next && !$(this.parentNode).hasClass("active")) {
+							$(this).slideUp(150).parent().removeClass("open")
 						}
-					}
-					return
-				}
-				var d = f.next().get(0);
-				if (!$(d).is(":visible")) {
-					var c = $(d.parentNode).closest("ul");
-					if (b && c.hasClass("nav-list")) {
-						return
-					}
-					c.find("> .open > .submenu").each(
-							function() {
-								if (this != d
-										&& !$(this.parentNode).hasClass(
-												"active")) {
-									$(this).slideUp(150).parent().removeClass(
-											"open")
-								}
-							})
-				} else {
-				}
-				if (b && $(d.parentNode.parentNode).hasClass("nav-list")) {
-					return false;
-				}
-				$(d).slideToggle(150).parent().toggleClass("open");
-				return false;
 			});
+		}
+		if (ismenumin && $(closest_a_next.parentNode.parentNode).hasClass("nav-list")) {
+			return false;
+		}
+		$(closest_a_next).slideToggle(150).parent().toggleClass("open");
+		return false;
+	});
 	</script>
 	<script src="__TMPL__assets/js/index.js"></script>
 

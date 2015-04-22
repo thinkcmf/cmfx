@@ -16,10 +16,7 @@
 									<td width="140">上级:</td>
 									<td><select name="parent" class="normal_select">
 											<option value="0">作为一级分类</option>
-											<foreach name="terms" item="vo">
-												<php>$selected=$parent==$vo['term_id']?"selected":""</php>
-									        	<option value="{$vo.term_id}" {$selected}>{$vo.spacer}{$vo.name}</option>
-											</foreach>
+											{$terms_tree}
 									</select></td>
 								</tr>
 								<tr>

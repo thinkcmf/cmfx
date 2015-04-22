@@ -1,40 +1,8 @@
 <admintpl file="header"/>
-<script type="text/javascript">
-    var catid = "12";
-</script>
 <style type="text/css">
-.col-auto {
-	overflow: hidden;
-	_zoom: 1;
-	_float: left;
-	border: 1px solid #c2d1d8;
-}
-.col-right {
-	float: right;
-	width: 210px;
-	overflow: hidden;
-	margin-left: 6px;
-	border: 1px solid #c2d1d8;
-}
-
-body fieldset {
-	border: 1px solid #D8D8D8;
-	padding: 10px;
-	background-color: #FFF;
-}
-body fieldset legend {
-    background-color: #F9F9F9;
-    border: 1px solid #D8D8D8;
-    font-weight: 700;
-    padding: 3px 8px;
-}
-.list-dot{ padding-bottom:10px}
-.list-dot li,.list-dot-othors li{padding:5px 0; border-bottom:1px dotted #c6dde0; font-family:"宋体"; color:#bbb; position:relative;_height:22px}
-.list-dot li span,.list-dot-othors li span{color:#004499}
-.list-dot li a.close span,.list-dot-othors li a.close span{display:none}
-.list-dot li a.close,.list-dot-othors li a.close{ background: url("__ROOT__/statics/images/cross.png") no-repeat left 3px; display:block; width:16px; height:16px;position: absolute;outline:none;right:5px; bottom:5px}
-.list-dot li a.close:hover,.list-dot-othors li a.close:hover{background-position: left -46px}
-.list-dot-othors li{float:left;width:24%;overflow:hidden;}
+.col-auto { overflow: auto; _zoom: 1;_float: left;}
+.col-right { float: right; width: 210px; overflow: hidden; margin-left: 6px; }
+.table th, .table td {vertical-align: middle;}
 </style>
 </head>
 <body class="J_scroll_fixed">
@@ -46,7 +14,7 @@ body fieldset legend {
   <form name="myform" id="myform" action="{:U('slide/add_post')}" method="post" class="form-horizontal J_ajaxForms" enctype="multipart/form-data">
   <div class="col-right">
     <div class="table_full">
-      <table width="100%" cellpadding="2" cellspacing="2">
+      <table class="table table-bordered">
          <tr>
           <td><b>缩略图</b></td>
         </tr>
@@ -65,7 +33,7 @@ body fieldset legend {
   </div>
   <div class="col-auto">
     <div class="table_full">
-      <table width="100%" cellpadding="2" cellspacing="2">
+      <table class="table table-bordered">
             <tr>
               <th width="80">栏目</th>
               <td>

@@ -26,15 +26,11 @@
     </div>
   </form>
   <form class="J_ajaxForm" action="" method="post">
-    <div class="table_list">
-      <table width="100%" class="table table-hover table-bordered">
+  		<div class="table-actions">
+			<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:U('AdminPage/delete')}" data-subcheck="true" data-msg="你确定删除吗？">删除</button>
+		</div>
+      <table class="table table-hover table-bordered table-list">
         <thead>
-        	<tr>
-          		<td colspan="6">
-          			<label class="checkbox inline"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y">全选</label>                
-        			<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:U('AdminPage/delete')}" data-subcheck="true">删除</button>
-          		</td>
-          	</tr>
 	          <tr>
 	            <th width="16"><label><input type="checkbox" class="J_check_all" data-direction="x" data-checklist="J_check_x"></label></th>
 	            <th width="100">ID</th>
@@ -61,16 +57,22 @@
 					</td>
 	          	</tr>
           	</foreach>
-          	<tr>
-          		<td colspan="6">
-          			<label class="checkbox inline"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y">全选</label>                
-        			<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:U('AdminPage/delete')}" data-subcheck="true">删除</button>
-          		</td>
-          	</tr>
+          	<tfoot>
+	          <tr>
+	            <th width="16"><label><input type="checkbox" class="J_check_all" data-direction="x" data-checklist="J_check_x"></label></th>
+	            <th width="100">ID</th>
+	            <th>标题</th>
+	            <!-- <th>点击量</th> -->
+	            <th width="80">发布人</th>
+	            <th width="120"><span>发布时间</span></th>
+	            <th width="120">操作</th>
+	          </tr>
+		    </tfoot>
           </table>
+          <div class="table-actions">
+			<button class="btn btn-primary btn-small J_ajax_submit_btn" type="submit" data-action="{:U('AdminPage/delete')}" data-subcheck="true" data-msg="你确定删除吗？">删除</button>
+		</div>
       		<div class="pagination">{$Page}</div>
-     
-    </div>
   </form>
 </div>
 <script src="__ROOT__/statics/js/common.js"></script>

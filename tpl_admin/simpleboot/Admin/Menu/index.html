@@ -11,31 +11,37 @@
 			</if>
 		</ul>
 		<form class="J_ajaxForm" action="{:U('Menu/listorders')}" method="post">
-			<table class="table table-hover table-bordered" id="menus-table">
+			<div class="table-actions">
+				<button class="btn btn_submit btn-primary btn-small J_ajax_submit_btn" type="submit">排序</button>
+			</div>
+			<table class="table table-hover table-bordered table-list" id="menus-table">
 				<thead>
-					<tr>
-						<td colspan="6">
-							<button class="btn btn_submit btn-primary btn-small J_ajax_submit_btn" type="submit">排序</button>
-						</td>
-					</tr>
 					<tr>
 						<th width="80">排序</th>
 						<th width="50">ID</th>
 						<th>应用</th>
 						<th>菜单名称</th>
 						<th width="80">状态</th>
-						<th width="200">管理操作</th>
+						<th width="150">管理操作</th>
 					</tr>
 				</thead>
 				<tbody>
 					{$categorys}
-					<tr>
-						<td colspan="6">
-							<button class="btn btn_submit btn-primary btn-small J_ajax_submit_btn" type="submit">排序</button>
-						</td>
-					</tr>
 				</tbody>
+				<tfoot>
+					<tr>
+						<th width="80">排序</th>
+						<th width="50">ID</th>
+						<th>应用</th>
+						<th>菜单名称</th>
+						<th width="80">状态</th>
+						<th width="150">管理操作</th>
+					</tr>
+				</tfoot>
 			</table>
+			<div class="table-actions">
+				<button class="btn btn_submit btn-primary btn-small J_ajax_submit_btn" type="submit">排序</button>
+			</div>
 		</form>
 	</div>
 	<script src="__ROOT__/statics/js/common.js"></script>

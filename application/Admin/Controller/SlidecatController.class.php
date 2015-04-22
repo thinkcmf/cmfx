@@ -3,15 +3,15 @@ namespace Admin\Controller;
 use Common\Controller\AdminbaseController;
 class SlidecatController extends AdminbaseController{
 	
-	protected $slidecat_obj;
+	protected $slidecat_model;
 	
 	function _initialize() {
 		parent::_initialize();
-		$this->slidecat_obj = D("Common/SlideCat");
+		$this->slidecat_model = D("Common/SlideCat");
 	}
 	
 	function index(){
-		$cats=$this->slidecat_obj->where("cat_status!=0")->select();
+		$cats=$this->slidecat_model->where("cat_status!=0")->select();
 		$this->assign("slidecats",$cats);
 		$this->display();
 	}
@@ -28,34 +28,34 @@ class SlidecatController extends AdminbaseController{
      */
     public function add_post() {
     	if (IS_POST) {
-    		if ($this->slidecat_obj->create()) {
-    			if ($this->slidecat_obj->add()!==false) {
+    		if ($this->slidecat_model->create()) {
+    			if ($this->slidecat_model->add()!==false) {
     				$this->success("添加成功！", U("slidecat/index"));
     			} else {
     				$this->error("添加失败！");
     			}
     		} else {
-    			$this->error($this->slidecat_obj->getError());
+    			$this->error($this->slidecat_model->getError());
     		}
     	}
     }
 	function edit(){
 		$id= intval(I("get.id"));
-		$slidecat=$this->slidecat_obj->where("cid=$id")->find();
+		$slidecat=$this->slidecat_model->where("cid=$id")->find();
 		$this->assign($slidecat);
 		$this->display();
 	}
 	
 	function edit_post(){
 		if (IS_POST) {
-			if ($this->slidecat_obj->create()) {
-				if ($this->slidecat_obj->save()!==false) {
+			if ($this->slidecat_model->create()) {
+				if ($this->slidecat_model->save()!==false) {
 					$this->success("保存成功！", U("slidecat/index"));
 				} else {
 					$this->error("保存失败！");
 				}
 			} else {
-				$this->error($this->slidecat_obj->getError());
+				$this->error($this->slidecat_model->getError());
 			}
 		}
 	}
@@ -64,7 +64,7 @@ class SlidecatController extends AdminbaseController{
 	function delete(){
 
 		$id = intval(I("get.id"));
-		if ($this->slidecat_obj->delete($id)!==false) {
+		if ($this->slidecat_model->delete($id)!==false) {
 			$slide_obj=M("Slide");
 			$slide_obj->where("slide_cid=$id")->save(array("slide_cid"=>0));
 			$this->success("删除成功！");

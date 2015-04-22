@@ -37,7 +37,7 @@ $configs= array(
 		'VAR_ACTION'            =>  'a',    // 默认操作获取变量
 		
 		'APP_USE_NAMESPACE'     =>   true, // 关闭应用的命名空间定义
-		'APP_AUTOLOAD_LAYER'    =>  'Action,Model', // 模块自动加载的类库后缀
+		'APP_AUTOLOAD_LAYER'    =>  'Controller,Model', // 模块自动加载的类库后缀
 		
 		'SP_TMPL_PATH'     		=> 'tpl/',       // 前台模板文件根目录
 		'SP_DEFAULT_THEME'		=> 'simplebootx',       // 前台模板文件
@@ -75,7 +75,7 @@ $configs= array(
 		
 		'OUTPUT_ENCODE'			=>true,// 页面压缩输出
 		
-		'HTML_CACHE_ON'     =>    true, // 开启静态缓存
+		'HTML_CACHE_ON'     =>    false, // 开启静态缓存
 		'HTML_CACHE_TIME'   =>    60,   // 全局静态缓存有效期（秒）
 		'HTML_FILE_SUFFIX'  =>    '.html', // 设置静态缓存文件后缀
 		

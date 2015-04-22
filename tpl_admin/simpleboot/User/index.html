@@ -28,8 +28,7 @@
 							<td align='center'>{$vo.id}</td>
 							<td>{$vo.user_login|default='第三方用户'}</td>
 							<td>{$vo.user_nicename|default='未填写'}</td>
-							<td><img width="25" height="25"
-								src="{:U('user/public/avatar',array('id'=>$vo['id']))}" /></td>
+							<td><img width="25" height="25" src="{:U('user/public/avatar',array('id'=>$vo['id']))}" /></td>
 							<td>{$vo.user_email}</td>
 							<td>{$vo.create_time}</td>
 							<td>{$vo.last_login_time}</td>

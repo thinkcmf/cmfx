@@ -1,30 +1,28 @@
-<admintpl file="header"/>
+<admintpl file="header" />
 <body class="J_scroll_fixed">
-<div class="wrap jj">
-  <div class="common-form">
-    <form method="post" class="J_ajaxForm" >
-      <div class="table_list">
-        <table cellpadding="2" cellspacing="2" width="100%">
-          <tbody>
-            <tr>
-              <td width="140">上级:</td>
-              <td>
-              	<select name="term_id" class="normal_select">
-					<foreach name="terms" item="vo">
-						<option value="{$vo.term_id}" >{$vo.spacer}{$vo.name}</option>
-					</foreach>
-				</select>
-			  </td>														
-            </tr>
-          </tbody>
-        </table>
-      </div>
-     <div class="form-actions">
-           <button class="btn btn-primary btn_submit J_ajax_submit_btn"type="submit">移动</button>
-      </div>
-    </form>
-  </div>
-</div>
-<script src="__ROOT__/statics/js/common.js"></script>
+	<div class="wrap jj">
+		<form method="post" class="J_ajaxForm">
+			<div class="table_list">
+				<table cellpadding="2" cellspacing="2" width="100%">
+					<tbody>
+						<tr>
+							<td width="140">上级:</td>
+							<td>
+								<select name="term_id">
+									{$terms_tree}
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<button class="btn btn-primary btn_submit J_ajax_submit_btn" type="submit">移动</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</form>
+	</div>
+	<script src="__ROOT__/statics/js/common.js"></script>
 </body>
 </html>

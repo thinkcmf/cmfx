@@ -1,18 +1,33 @@
 <?php
 
-
+/**
+ * 获取当前登录的管事员id
+ * @return int
+ */
 function get_current_admin_id(){
 	return $_SESSION['ADMIN_ID'];
 }
 
+/**
+ * 获取当前登录的管事员id
+ * @return int
+ */
 function sp_get_current_admin_id(){
 	return get_current_admin_id();
 }
 
+/**
+ * 判断前台用户是否登录
+ * @return boolean
+ */
 function sp_is_user_login(){
 	return  !empty($_SESSION['user']);
 }
 
+/**
+ * 获取当前登录的前台用户的信息，未登录时，返回false
+ * @return array|boolean
+ */
 function sp_get_current_user(){
 	if(isset($_SESSION['user'])){
 		return $_SESSION['user'];
@@ -21,10 +36,18 @@ function sp_get_current_user(){
 	}
 }
 
+/**
+ * 更新当前登录前台用户的信息
+ * @param array $user 前台用户的信息
+ */
 function sp_update_current_user($user){
 	$_SESSION['user']=$user;
 }
 
+/**
+ * 获取当前登录前台用户id,推荐使用sp_get_current_userid
+ * @return int
+ */
 function get_current_userid(){
 	
 	if(isset($_SESSION['user'])){
@@ -34,6 +57,10 @@ function get_current_userid(){
 	}
 }
 
+/**
+ * 获取当前登录前台用户id
+ * @return int
+ */
 function sp_get_current_userid(){
 	return get_current_userid();
 }
@@ -88,16 +115,28 @@ function sp_get_user_avatar_url($avatar){
 	}
 	
 }
+
+/**
+ * CMF密码加密方法
+ * @param string $pw 要加密的字符串
+ * @return string
+ */
 function sp_password($pw){
 	$decor=md5(C('DB_PREFIX'));
 	$mi=md5($pw);
 	return substr($decor,0,12).$mi.substr($decor,-4,4);
 }
 
+
 function sp_log($content,$file="log.txt"){
 	file_put_contents($file, $content,FILE_APPEND);
 }
 
+/**
+ * 随机字符串生成
+ * @param int $len 生成的字符串长度
+ * @return string
+ */
 function sp_random_string($len = 6) {
 	$chars = array(
 			"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
@@ -117,7 +156,7 @@ function sp_random_string($len = 6) {
 }
 
 /**
- * 清空缓存
+ * 清空系统缓存，兼容sae
  */
 function sp_clear_cache(){
 		import ( "ORG.Util.Dir" );
@@ -184,14 +223,24 @@ function sp_clear_cache(){
 }
 
 /**
- * 保存变量
+ * 保存数组变量到php文件
  */
 function sp_save_var($path,$value){
 	$ret = file_put_contents($path, "<?php\treturn " . var_export($value, true) . ";?>");
 	return $ret;
 }
 
+/**
+ * 更新系统配置文件
+ * @param array $data <br>如：array("URL_MODEL"=>0);
+ * @return boolean
+ */
 function sp_set_dynamic_config($data){
+	
+	if(!is_array($data)){
+		return false;
+	}
+	
 	if(sp_is_sae()){
 		$kv = new SaeKV();
 		$ret = $kv->init();
@@ -238,16 +287,15 @@ function sp_param_lable($tag = ''){
 
 
 /**
- * 
+ * 获取后台管理设置的网站信息，此类信息一般用于前台，推荐使用sp_get_site_options
  */
-
 function get_site_options(){
 	$site_options = F("site_options");
 	if(empty($site_options)){
 		$options_obj = M("Options");
 		$option = $options_obj->where("option_name='site_options'")->find();
 		if($option){
-			$site_options = (array)json_decode($option['option_value']);
+			$site_options = json_decode($option['option_value'],true);
 		}else{
 			$site_options = array();
 		}
@@ -257,11 +305,18 @@ function get_site_options(){
 	return $site_options;	
 }
 
+/**
+ * 获取后台管理设置的网站信息，此类信息一般用于前台
+ */
 function sp_get_site_options(){
 	get_site_options();
 }
 
-
+/**
+ * 获取CMF系统的设置，此类设置用于全局
+ * @param string $key 设置key，为空时返回所有配置信息
+ * @return mixed
+ */
 function sp_get_cmf_settings($key=""){
 	$cmf_settings = F("cmf_settings");
 	if(empty($cmf_settings)){
@@ -280,9 +335,13 @@ function sp_get_cmf_settings($key=""){
 	return $cmf_settings;
 }
 
-
+/**
+ * 更新CMF系统的设置，此类设置用于全局
+ * @param array $data 
+ * @return boolean
+ */
 function sp_set_cmf_setting($data){
-	if(empty($data)){
+	if(!is_array($data) || empty($data) ){
 		return false;
 	}
 	$cmf_settings['option_name']="cmf_settings";
@@ -290,7 +349,7 @@ function sp_set_cmf_setting($data){
 	$find_setting=$options_model->where("option_name='cmf_settings'")->find();
 	F("cmf_settings",null);
 	if($find_setting){
-		$setting=json_decode($find_setting,true);
+		$setting=json_decode($find_setting['option_value'],true);
 		if($setting){
 			$setting=array_merge($setting,$data);
 		}else {
@@ -337,10 +396,7 @@ hello;
 }
 
 
-
-
 /**
- * 10
  * 返回指定id的菜单
  * 同上一类方法，jquery treeview 风格，可伸缩样式
  * @param $myid 表示获得这个ID下的所有子级
@@ -394,12 +450,20 @@ function sp_get_menu($id="main",$effected_id="mainmenu",$filetpl="<span class='f
 	$tree->init($navs);
 	return $tree->get_treeview_menu(0,$effected_id, $filetpl, $foldertpl,  $showlevel,$ul_class,$li_class,  $style,  1, FALSE, $dropdown);
 }
+
+
 function _sp_get_menu_datas($id){
 	$nav_obj= M("Nav");
 	if($id=="main"){
 		$navcat_obj= M("NavCat");
 		$main=$navcat_obj->where("active=1")->find();
 		$id=$main['navcid'];
+	}
+	
+	$id= intval($id);
+	
+	if(empty($id)){
+		return array();
 	}
 	$navs= $nav_obj->where("cid=$id and status=1")->order(array("listorder" => "ASC"))->select();
 	foreach ($navs as $key=>$nav){
@@ -426,6 +490,8 @@ function _sp_get_menu_datas($id){
 	F("site_nav",$navs);
 	return $navs;
 }
+
+
 function sp_get_menu_tree($id="main"){
 	$navs=F("site_nav_".$id);
 	if(empty($navs)){
@@ -441,13 +507,13 @@ function sp_get_menu_tree($id="main"){
 
 
 /**
- * 11
+ *获取html文本里的img
  * @param string $content
  * @return array
  */
 function sp_getcontent_imgs($content){
 	import("phpQuery");
-	phpQuery::newDocumentHTML($content);
+	\phpQuery::newDocumentHTML($content);
 	$pq=pq();
 	$imgs=$pq->find("img");
 	$imgs_data=array();
@@ -460,7 +526,7 @@ function sp_getcontent_imgs($content){
 			$imgs_data[]=$im;
 		}
 	}
-	phpQuery::$documents=null;
+	\phpQuery::$documents=null;
 	return $imgs_data;
 }
 
@@ -520,16 +586,28 @@ function sp_get_apphome_tpl($tplname,$default_tplname,$default_theme=""){
 }
 
 
-/*
- * 作用：去除字符串中的指定字符
- * 参数: $str, string, 待处理字符串
- *       $chars, string, 需去掉的特殊字符
+/**
+ * 去除字符串中的指定字符
+ * @param string $str 待处理字符串
+ * @param string $chars 需去掉的特殊字符
+ * @return string
  */
 function sp_strip_chars($str, $chars='?<*.>\'\"'){
 	return preg_replace('/['.$chars.']/is', '', $str);
 }
 
-
+/**
+ * 发送邮件
+ * @param string $address
+ * @param string $subject
+ * @param string $message
+ * @return array<br>
+ * 返回格式：<br>
+ * array(<br>
+ * 	"error"=>0|1,//0代表出错<br>
+ * 	"message"=> "出错信息"<br>
+ * );
+ */
 function sp_send_email($address,$subject,$message){
 	import("PHPMailer");
 	$mail=new \PHPMailer();
@@ -560,10 +638,16 @@ function sp_send_email($address,$subject,$message){
 		$mailerror=$mail->ErrorInfo;
 		return array("error"=>1,"message"=>$mailerror);
 	}else{
-		return array("error"=>0);
+		return array("error"=>0,"message"=>"success");
 	}
 }
 
+/**
+ * 转化数据库保存的文件路径，为可以访问的url
+ * @param string $file
+ * @param boolean $withhost
+ * @return string
+ */
 function sp_get_asset_upload_path($file,$withhost=false){
 	if(strpos($file,"http")===0){
 		return $file;
@@ -1053,9 +1137,18 @@ function leuu($url='',$vars='',$suffix=true,$domain=false){
 	}
 }
 
+/**
+ * URL组装 支持不同URL模式
+ * @param string $url URL表达式，格式：'[模块/控制器/操作#锚点@域名]?参数1=值1&参数2=值2...'
+ * @param string|array $vars 传入的参数，支持数组和字符串
+ * @param string $suffix 伪静态后缀，默认为true表示获取配置值
+ * @param boolean $domain 是否显示域名
+ * @return string
+ */
 function UU($url='',$vars='',$suffix=true,$domain=false){
 	return leuu($url,$vars,$suffix,$domain);
 }
+
 
 function sp_get_routes($refresh=false){
 	$routes=F("routes");
@@ -1121,7 +1214,10 @@ function sp_get_routes($refresh=false){
 	
 }
 
-
+/**
+ * 判断是否为手机访问
+ * @return  boolean
+ */
 function sp_is_mobile() {
 	static $sp_is_mobile;
 

@@ -155,14 +155,14 @@ class RbacController extends AdminbaseController {
      * 角色授权
      */
     public function authorize_post() {
-    	
+    	$this->auth_access_model = D("Common/AuthAccess");
     	if (IS_POST) {
     		$roleid = intval(I("post.roleid"));
     		if(!$roleid){
     			$this->error("需要授权的角色不存在！");
     		}
     		if (is_array($_POST['menuid']) && count($_POST['menuid'])>0) {
-    			$this->auth_access_model = D("Common/AuthAccess");
+    			
     			$menu_model=M("Menu");
     			$auth_rule_model=M("AuthRule");
     			$this->auth_access_model->where(array("role_id"=>$roleid,'type'=>'admin_url'))->delete();

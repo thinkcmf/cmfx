@@ -14,7 +14,7 @@
 							<select name="cid" id="navcid_select" class="normal_select">
 							<foreach name="navcats" item="vo">
 								<php>$navcid_selected=$navcid==$vo['navcid']?"selected":"";</php>
-								<option value="{$vo.navcid}">{$vo.name}</option>
+								<option value="{$vo.navcid}" {$navcid_selected}>{$vo.name}</option>
 							</foreach>
 							</select>
 						</div>
@@ -85,8 +85,15 @@
 	<script>
 		$(function() {
 
+			
 			$("#navcid_select").change(function() {
-				location.href = location.href + "&cid=" + $(this).val();
+				if(location.search.indexOf("?")>=0){
+					location.href = location.href + "&cid=" + $(this).val();
+				}else{
+					location.href = location.href + "?cid=" + $(this).val();
+				}
+				
+				
 			});
 
 			$("#selecthref").click(function() {

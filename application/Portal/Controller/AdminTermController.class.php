@@ -60,10 +60,11 @@ class AdminTermController extends AdminbaseController {
 	 	foreach ($terms as $r) {
 	 		$r['id']=$r['term_id'];
 	 		$r['parentid']=$r['parent'];
+	 		$r['selected']= (!empty($parentid) && $r['term_id']==$parentid)? "selected":"";
 	 		$new_terms[] = $r;
 	 	}
 	 	$tree->init($new_terms);
-	 	$tree_tpl="<option value='\$id'>\$spacer\$name</option>";
+	 	$tree_tpl="<option value='\$id' \$selected>\$spacer\$name</option>";
 	 	$tree=$tree->get_tree(0,$tree_tpl);
 	 	
 	 	$this->assign("terms_tree",$tree);

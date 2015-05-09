@@ -86,7 +86,13 @@
 	<script>
 		$(function() {
 			$("#navcid_select").change(function() {
-				location.href = location.href + "&cid=" + $(this).val();
+				if(location.search.indexOf("?")>=0){
+					location.href = location.href + "&cid=" + $(this).val();
+				}else{
+					location.href = location.href + "?cid=" + $(this).val();
+				}
+				
+				
 			});
 
 			$("#selecthref").click(function() {

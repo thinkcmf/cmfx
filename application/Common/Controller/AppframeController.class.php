@@ -1,34 +1,15 @@
 <?php
 namespace Common\Controller;
 use Think\Controller;
-/**
- * Appframe项目公共Controller
- */
+
 class AppframeController extends Controller {
 
-
     function _initialize() {
-        //消除所有的magic_quotes_gpc转义
-        //Input::noGPC();
-        //跳转时间
         $this->assign("waitSecond", 3);
-        //$this->assign("__token__", $this->getToken());
        	$time=time();
         $this->assign("js_debug",APP_DEBUG?"?v=$time":"");
         if(APP_DEBUG){
-        	//sp_clear_cache();
         }
-    }
-
-    //获取表单令牌
-    protected function getToken() {
-        $tokenName = C('TOKEN_NAME');
-        // 标识当前页面唯一性
-        $tokenKey = md5($_SERVER['REQUEST_URI']);
-        $tokenAray = session($tokenName);
-        //获取令牌
-        $tokenValue = $tokenAray[$tokenKey];
-        return $tokenKey . '_' . $tokenValue;
     }
 
     /**
@@ -72,9 +53,6 @@ class AppframeController extends Controller {
         }
         
     }
-
-
-
     
     //分页
     protected function page($Total_Size = 1, $Page_Size = 0, $Current_Page = 1, $listRows = 6, $PageParam = '', $PageLink = '', $Static = FALSE) {
@@ -88,30 +66,6 @@ class AppframeController extends Controller {
     	$Page = new \Page($Total_Size, $Page_Size, $Current_Page, $listRows, $PageParam, $PageLink, $Static);
     	$Page->SetPager('default', '{first}{prev}{liststart}{list}{listend}{next}{last}', array("listlong" => "9", "first" => "首页", "last" => "尾页", "prev" => "上一页", "next" => "下一页", "list" => "*", "disabledclass" => ""));
     	return $Page;
-    }
-
-
-    /**
-     * 验证码验证
-     * @param type $verify 验证码
-     * @param type $type 验证码类型
-     * @return boolean
-     */
-    static public function verify($verify, $type = "verify") {
-        $verifyArr = session("_verify_");
-        if (!is_array($verifyArr)) {
-            $verifyArr = array();
-        }
-        if ($verifyArr[$type] == strtolower($verify)) {
-            unset($verifyArr[$type]);
-            if (!$verifyArr) {
-                $verifyArr = array();
-            }
-            session('_verify_', $verifyArr);
-            return true;
-        } else {
-            return false;
-        }
     }
 
     //空操作

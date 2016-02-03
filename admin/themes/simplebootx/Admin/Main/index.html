@@ -1,0 +1,80 @@
+<admintpl file="header" />
+<style>
+.home_info li em {
+	float: left;
+	width: 120px;
+	font-style: normal;
+}
+li {
+	list-style: none;
+}
+</style>
+</head>
+<body>
+	<div class="wrap">
+		<div id="home_toptip"></div>
+		<h4 class="well">{:L('SYSTEM_NOTIFICATIONS')}</h4>
+		<div class="home_info">
+			<ul id="thinkcmf_notices">
+				<li><img src="__TMPL__Public/assets/images/loading.gif"style="vertical-align: middle;" /><span style="display: inline-block; vertical-align: middle;">加载中...</span></li>
+			</ul>
+		</div>
+		<h4 class="well">{:L('SYSTEM_INFORMATIONS')}</h4>
+		<div class="home_info">
+			<ul>
+				<volist name="server_info" id="vo">
+					<li><em>{$key}</em> <span>{$vo}</span></li>
+				</volist>
+			</ul>
+		</div>
+		<h4 class="well">{:L('INITIATE_TEAM')}</h4>
+		<div class="home_info" id="home_devteam">
+			<ul>
+				<li><em>ThinkCMF</em> <a href="http://www.thinkcmf.com" target="_blank">www.thinkcmf.com</a></li>
+				<li><em>{:L('TEAM_MEMBERS')}</em> <span>Dean,Sam,Tuolaji,Smile,Codefans,睡不醒的猪,Jack,日本那只猫</span></li>
+				<li><em>{:L('CONTACT_EMAIL')}</em> <span>cmf@simplewind.net</span></li>
+			</ul>
+		</div>
+		<h4 class="well">{:L('CONTRIBUTORS')}</h4>
+		<div class="">
+			<ul class="inline" style="margin-left: 25px;">
+				<li>Kin Ho</li>
+				<li><a href="http://wzx.thinkcmf.com" target="_blank">Powerless</a></li>
+				<li>Jess</li>
+				<li>木兰情</li>
+				<li><a href="http://www.91freeweb.com/" target="_blank">Labulaka</a></li>
+				<li><a href="http://www.syousoft.com/" target="_blank">WelKinVan</a></li>
+				<li><a href="http://blog.sina.com.cn/u/1918098881" target="_blank">Jeson</a></li>
+				<li>Yim</li>
+				<li><a href="http://www.jamlee.cn/" target="_blank">Jamlee</a></li>
+				<li><a>香香咸蛋黄</a></li>
+				<li><a>小夏</a></li>
+				<li><a href="http://www.xdmeng.com" target="_blank">小凯</a></li>
+				<li><a href="https://www.devmsg.com" target="_blank">Co</a></li>
+				
+			</ul>
+		</div>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+	<script>
+		//获取官方通知
+		$.getJSON("http://www.thinkcmf.com/service/sms_jsonp.php?lang={$Think.LANG_SET}&v={$Think.SIMPLEWIND_CMF_VERSION}&callback=?",
+		function(data) {
+			var tpl = '<li><em class="title"></em><span class="content"></span></li>';
+			var $thinkcmf_notices = $("#thinkcmf_notices");
+			$thinkcmf_notices.empty();
+			if (data.length > 0) {
+				$.each(data, function(i, n) {
+					var $tpl = $(tpl);
+					$(".title", $tpl).html(n.title);
+					$(".content", $tpl).html(n.content);
+					$thinkcmf_notices.append($tpl);
+				});
+			} else {
+				$thinkcmf_notices.append("<li>^_^,{:L('NO_NOTICE')}~~</li>");
+			}
+
+		});
+	</script>
+</body>
+</html>

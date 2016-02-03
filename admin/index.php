@@ -2,6 +2,8 @@
 /**
  * 后台入口文件
  */
-@session_start();
-$_SESSION['adminlogin'] = 1;
-header("Location: ../index.php?g=admin");
+
+$upw =empty($_GET['upw'])?"":'&upw='.$_GET['upw'];
+ 
+header("Location: ../index.php?g=admin&m=public&a=login".$upw );
+

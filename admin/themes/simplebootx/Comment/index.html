@@ -1,0 +1,66 @@
+<admintpl file="header" />
+</head>
+<body style="min-width: 800px;">
+	<div class="wrap js-check-wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="{:U('commentadmin/index')}">{:L('COMMENT_COMMENTADMIN_INDEX')}</a></li>
+		</ul>
+		<form class="js-ajax-form" method="post">
+			<div class="table-actions">
+				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('Commentadmin/check',array('check'=>1))}" data-subcheck="true">{:L('AUDIT')}</button>
+				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('Commentadmin/check',array('uncheck'=>1))}" data-subcheck="true">{:L('CANCEL_AUDIT')}</button>
+				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('Commentadmin/delete')}" data-subcheck="true" data-msg="{:L('DELETE_CONFIRM_MESSAGE')}">{:L('DELETE')}</button>
+			</div>
+			<table class="table table-hover table-bordered table-list">
+				<thead>
+					<tr>
+						<th width="15"><label><input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x"></label></th>
+						<th width="50">ID</th>
+						<th width="100">{:L('NAME')}</th>
+						<th width="150">{:L('EMAIL')}</th>
+						<th>{:L('CONTENT')}</th>
+						<th width="120">{:L('TIME')}</th>
+						<th width="50">{:L('STATUS')}</th>
+						<th width="80">{:L('ACTIONS')}</th>
+					</tr>
+				</thead>
+				<php>$status=array("1"=>L('AUDITED'),"0"=>L('NOT_AUDITED'));</php>
+				<foreach name="comments" item="vo">
+				<tr>
+					<td><input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]" value="{$vo.id}"></td>
+					<td>{$vo.id}</td>
+					<td>{$vo.full_name}</td>
+					<td>{$vo.email}</td>
+					<td>{$vo.content}</td>
+					<td>{$vo.createtime}</td>
+					<td>{$status[$vo['status']]}</td>
+					<td>
+						<a target="_blank" href="__ROOT__/{$vo.url}">查看原文</a> 
+						<a href="{:U('Commentadmin/delete',array('id'=>$vo['id']))}" class="js-ajax-delete">{:L('DELETE')}</a>
+					</td>
+				</tr>
+				</foreach>
+				<tfoot>
+					<tr>
+						<th width="15"><label><input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x"></label></th>
+						<th width="50">ID</th>
+						<th width="100">{:L('NAME')}</th>
+						<th width="150">{:L('EMAIL')}</th>
+						<th>{:L('CONTENT')}</th>
+						<th width="120">{:L('TIME')}</th>
+						<th width="50">{:L('STATUS')}</th>
+						<th width="80">{:L('ACTIONS')}</th>
+					</tr>
+				</tfoot>
+			</table>
+			<div class="table-actions">
+				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('Commentadmin/check',array('check'=>1))}" data-subcheck="true">{:L('AUDIT')}</button>
+				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('Commentadmin/check',array('uncheck'=>1))}" data-subcheck="true">{:L('CANCEL_AUDIT')}</button>
+				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('Commentadmin/delete')}" data-subcheck="true" data-msg="{:L('DELETE_CONFIRM_MESSAGE')}">{:L('DELETE')}</button>
+			</div>
+			<div class="pagination">{$Page}</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

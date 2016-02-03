@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>{$site_name}</title>
+<meta name="keywords" content="{$site_seo_keywords}" />
+<meta name="description" content="{$site_seo_description}">
+<meta name="author" content="ThinkCMF">
+<tc_include file="Public:head" />
+</head>
+
+<body class="body-white" id="top">
+	<tc_include file="Public:nav" />
+
+	<div class="container tc-main">
+		<div class="row">
+			<div class="span3">
+				<tc_include file="Public:usernav" />
+			</div>
+			<div class="span9">
+				<div class="tabs">
+					<ul class="nav nav-tabs">
+						<li class="active"><a href="#one" data-toggle="tab"><i class="fa fa-comments-o"></i> 我的评论</a></li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="one">
+							<table class="table table-bordered table-striped table-hover">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th>评论内容</th>
+										<th width="150">评论时间</th>
+										<th width="150">操作</th>
+									</tr>
+								</thead>
+								<tbody>
+									<foreach name="comments" item="vo">
+									<tr>
+										<td>{$vo.id}</td>
+										<td>{$vo.content}</td>
+										<td>{$vo.createtime}</td>
+										<td>
+											<a href="__ROOT__/{$vo.url}#comment{$vo.id}">查看原文</a>
+											<!-- | <a class="js-ajax-dialog-btn" href="{:U('user/favorite/delete_favorite',array('id'=>$vo['id']))}" data-msg="您确定要取消收藏吗？" data-ok="" data-cacel="取消">取消收藏</a> -->
+										</td>
+									</tr>
+									</foreach>
+								</tbody>
+							</table>
+						</div>
+
+						<div class="pagination"><ul>{$pager}</ul></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<tc_include file="Public:footer" />
+
+	</div>
+	<!-- /container -->
+
+	<tc_include file="Public:scripts" />
+</body>
+</html>

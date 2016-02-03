@@ -10,8 +10,8 @@
  * 搜索结果页面
  */
 namespace Portal\Controller;
-use Common\Controller\HomeBaseController;
-class SearchController extends HomeBaseController {
+use Common\Controller\HomebaseController;
+class SearchController extends HomebaseController {
     //文章内页
     public function index() {
     	$_GET = array_merge($_GET, $_POST);

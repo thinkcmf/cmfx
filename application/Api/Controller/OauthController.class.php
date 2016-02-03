@@ -11,8 +11,8 @@
  * 修改日期：2013-12-11
  */
 namespace Api\Controller;
-use Common\Controller\HomeBaseController;
-class OauthController extends HomeBaseController {
+use Common\Controller\HomebaseController;
+class OauthController extends HomebaseController {
 	
 	function _initialize() {}
 	
@@ -113,7 +113,7 @@ class OauthController extends HomeBaseController {
 						'create_time' =>date("Y-m-d H:i:s"),
 						'uid' => $current_uid,
 						'last_login_time' => date("Y-m-d H:i:s"),
-						'last_login_ip' => get_client_ip(),
+						'last_login_ip' => get_client_ip(0,true),
 						'login_times' => 1,
 						'status' => 1,
 						'access_token' => $token['access_token'],
@@ -164,7 +164,7 @@ class OauthController extends HomeBaseController {
 					'user_nicename' => $user_info['name'],
 					'avatar' => $user_info['head'],
 					'last_login_time' => date("Y-m-d H:i:s"),
-					'last_login_ip' => get_client_ip(),
+					'last_login_ip' => get_client_ip(0,true),
 					'create_time' => date("Y-m-d H:i:s"),
 					'user_status' => '1',
 					"user_type"	  => '2',//会员
@@ -181,7 +181,7 @@ class OauthController extends HomeBaseController {
 						'create_time' =>date("Y-m-d H:i:s"),
 						'uid' => $new_user_id,
 						'last_login_time' => date("Y-m-d H:i:s"),
-						'last_login_ip' => get_client_ip(),
+						'last_login_ip' => get_client_ip(0,true),
 						'login_times' => 1,
 						'status' => 1,
 						'access_token' => $token['access_token'],

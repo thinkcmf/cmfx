@@ -1,0 +1,4 @@
+<Files *.sql>
+Order Allow,Deny 
+Deny from all
+</Files>

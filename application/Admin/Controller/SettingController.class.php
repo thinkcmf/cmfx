@@ -11,6 +11,7 @@ class SettingController extends AdminbaseController{
 	}
 	
 	function site(){
+	    C(S('sp_dynamic_config'));//加载动态配置
 		$option=$this->options_model->where("option_name='site_options'")->find();
 		$cmf_settings=$this->options_model->where("option_name='cmf_settings'")->getField("option_value");
 		$tpls=sp_scan_dir(C("SP_TMPL_PATH")."*",GLOB_ONLYDIR);
@@ -18,7 +19,7 @@ class SettingController extends AdminbaseController{
 		$tpls=array_diff($tpls, $noneed);
 		$this->assign("templates",$tpls);
 		
-		$adminstyles=sp_scan_dir(SPSTATIC."simpleboot/themes/*",GLOB_ONLYDIR);
+		$adminstyles=sp_scan_dir("public/simpleboot/themes/*",GLOB_ONLYDIR);
 		$adminstyles=array_diff($adminstyles, $noneed);
 		$this->assign("adminstyles",$adminstyles);
 		if($option){
@@ -38,6 +39,7 @@ class SettingController extends AdminbaseController{
 				$data['option_id']=intval($_POST['option_id']);
 			}
 			
+			$configs["SP_SITE_ADMIN_URL_PASSWORD"]=empty($_POST['options']['site_admin_url_password'])?"":md5(md5(C("AUTHCODE").$_POST['options']['site_admin_url_password']));
 			$configs["SP_DEFAULT_THEME"]=$_POST['options']['site_tpl'];
 			$configs["DEFAULT_THEME"]=$_POST['options']['site_tpl'];
 			$configs["SP_ADMIN_STYLE"]=$_POST['options']['site_adminstyle'];
@@ -92,9 +94,9 @@ class SettingController extends AdminbaseController{
 			$admin=$user_obj->where(array("id"=>$uid))->find();
 			$old_password=$_POST['old_password'];
 			$password=$_POST['password'];
-			if(sp_password($old_password)==$admin['user_pass']){
+			if(sp_compare_password($old_password,$admin['user_pass'])){
 				if($_POST['password']==$_POST['repassword']){
-					if($admin['user_pass']==sp_password($password)){
+					if(sp_compare_password($password,$admin['user_pass'])){
 						$this->error("新密码不能和原始密码相同！");
 					}else{
 						$data['user_pass']=sp_password($password);

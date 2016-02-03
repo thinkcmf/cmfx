@@ -4,8 +4,8 @@
  * 
  */
 namespace User\Controller;
-use Common\Controller\HomeBaseController;
-class PublicController extends HomeBaseController {
+use Common\Controller\HomebaseController;
+class PublicController extends HomebaseController {
     
 	function avatar(){
 		
@@ -43,11 +43,11 @@ class PublicController extends HomeBaseController {
 		}
 		
 		if($should_show_default){
-			$imageInfo = getimagesize("statics/images/headicon.png");
+			$imageInfo = getimagesize("public/images/headicon.png");
 			if ($imageInfo !== false) {
 				$mime=$imageInfo['mime'];
 				header("Content-type: $mime");
-				echo file_get_contents("statics/images/headicon.png");
+				echo file_get_contents("public/images/headicon.png");
 			}
 			
 		}

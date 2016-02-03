@@ -10,13 +10,20 @@
 // +---------------------------------------------------------------------
 
 namespace Api\Controller;
-use Think\Controller;
+use Common\Controller\AppframeController;
 
 /**
  * 插件控制器
  * 用于调度各个插件的URL访问需求
  */
-class PluginController extends Controller{
+class PluginController extends AppframeController{
+    
+    //5iymt 增加插件跳转页设置 2015-6-12 目录为插件视图目录下的success.html,error.html文件
+	public function __construct(){
+		C("TMPL_ACTION_SUCCESS",'/success');
+		C("TMPL_ACTION_ERROR",'/error');
+		parent::__construct();
+	}
 	
 	public $config=array();
 	
@@ -95,8 +102,8 @@ class PluginController extends Controller{
 		
 		$v_layer=C("DEFAULT_V_LAYER");
 		
-		$file="./plugins/$plugin/$v_layer".$theme.$template.C('TMPL_TEMPLATE_SUFFIX');
-		if(!is_file($file)) E(L('_TEMPLATE_NOT_EXIST_').':'.$file);
+		$file = sp_add_template_file_suffix("./plugins/$plugin/$v_layer".$theme.$template);
+		if(!file_exists_case($file)) E(L('_TEMPLATE_NOT_EXIST_').':'.$file);
 		return $file;
 
 	}

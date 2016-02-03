@@ -74,8 +74,8 @@ class MenuModel extends CommonModel {
             $result = array_merge($result2, $result);
         }
         //权限检查
-        if (session("roleid") == 1) {
-            //如果角色为 1 直接通过
+        if (sp_get_current_admin_id() == 1) {
+            //如果是超级管理员 直接通过
             return $result;
         } 
         
@@ -133,13 +133,14 @@ class MenuModel extends CommonModel {
         $data = $this->admin_menu($myid);
         $Level++;
         if (is_array($data)) {
+            $ret = NULL;
             foreach ($data as $a) {
                 $id = $a['id'];
                 $name = ucwords($a['app']);
                 $model = ucwords($a['model']);
                 $action = $a['action'];
                 //附带参数
-              $fu = "";
+              	$fu = "";
                 if ($a['data']) {
                     $fu = "?" . htmlspecialchars_decode($a['data']);
                 }
@@ -149,6 +150,7 @@ class MenuModel extends CommonModel {
                     "name" => $a['name'],
                     "parent" => $parent,
                     "url" => U("{$name}/{$model}/{$action}{$fu}", array("menuid" => $id)),
+                    'lang'=> strtoupper($name.'_'.$model.'_'.$action)
                 ); 
                 
                 
@@ -231,4 +233,3 @@ class MenuModel extends CommonModel {
     }
 
 }
-

@@ -128,6 +128,7 @@ class Page {
     	if(empty($wraper)){
     		
     	}else{
+    	    $this->linkwraper=$wraper;
     		$this->linkwraper_after="</$wraper>";
     		$this->linkwraper_pre="<$wraper>";
     	}
@@ -221,7 +222,8 @@ class Page {
             $pStart = 1;
         for ($i = $pStart; $i <= $pEnd; $i++) {
             if ($i == $cfg ['pageindex']) {
-                $pList .= $this->linkwraper_pre.'<span class="' . $cfg ['currentclass'] . '" >' . str_replace('*', $i, $cfg ['list']) . '</span> '.$this->linkwraper_after;
+                $wraper= empty($this->linkwraper)?'':'<'.$this->linkwraper.' class="active '.$cfg ['currentclass'].'">';
+                $pList .=$wraper.'<span class="' . $cfg ['currentclass'] . '" >' . str_replace('*', $i, $cfg ['list']) . '</span> '.$this->linkwraper_after;
             } else {
                 //此处是为了照顾静态地址生成时，第一页不显示当前分页1，启用该方法，静态地址需要$this->PageLink传入的是array，并且包含两个 index,list。index是首页
                 //事例用法  new Page(50,5,2,6,"page",array("index"=>"http://www.a.com/192.html","list"=>"http://www.a.com/192-{page}.html",),true);

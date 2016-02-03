@@ -1,0 +1,66 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap js-check-wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="{:U('storage/index')}">{:L('ADMIN_STORAGE_INDEX')}</a></li>
+		</ul>
+		<form method="post" class="form-horizontal js-ajax-form" action="{:U('storage/setting_post')}">
+			<php>$support_storages=array("Local"=>L('DEFAULT'),"Qiniu"=>L('QINIU'));</php>
+			<select name="type">
+				<foreach name="support_storages" item="vo"> <php>$type_selected=$type==$key?"selected":"";</php>
+				<option value="{$key}"{$type_selected}>{$vo}</option>
+				</foreach>
+			</select>
+			<div style="margin-top: 10px;">
+				<ul class="nav nav-tabs">
+					<li class="active"><a>{:L('QINIU')}</a></li>
+				</ul>
+
+				<fieldset>
+					<div class="control-group">
+						<label class="control-label">AccessKey</label>
+						<div class="controls">
+							<input type="text" class="input mr5" name="Qiniu[accessKey]" value="{$Qiniu.accessKey}">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">SecretKey</label>
+						<div class="controls">
+							<input type="text" class="input mr5" name="Qiniu[secrectKey]" value="{$Qiniu.secrectKey}">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">{:L('DOMAIN')}</label>
+						<div class="controls">
+							<input type="text" class="input mr5" name="Qiniu[domain]" value="{$Qiniu.domain}">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">{:L('BUCKET')}</label>
+						<div class="controls">
+							<input type="text" class="input mr5" name="Qiniu[bucket]" value="{$Qiniu.bucket}">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">{:L('GET_ACCESS_KEY')}</label>
+						<div class="controls">
+							<a href="https://portal.qiniu.com/signup?code=3lfihpz361o42" target="_blank">{:L('GET_IT_NOW')}</a>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">{:L('QINIU_PROMOTION_CODE')}</label>
+						<div class="controls">
+							<a href="http://www.thinkcmf.com/topic/topic/index/id/103.html" target="_blank">507670e8</a>
+						</div>
+					</div>
+				</fieldset>
+			</div>
+			<div class="form-actions">
+				<button type="submit" class="btn btn-primary js-ajax-submit">{:L('SAVE')}</button>
+			</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

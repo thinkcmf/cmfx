@@ -25,7 +25,7 @@ class ProfileController extends MemberbaseController {
     	if(IS_POST){
     		$userid=sp_get_current_userid();
     		$_POST['id']=$userid;
-    		if ($this->users_model->create()) {
+    		if ($this->users_model->field('id,user_nicename,sex,birthday,user_url,signature')->create()) {
 				if ($this->users_model->save()!==false) {
 					$user=$this->users_model->find($userid);
 					sp_update_current_user($user);
@@ -59,9 +59,9 @@ class ProfileController extends MemberbaseController {
     		$admin=$this->users_model->where("id=$uid")->find();
     		$old_password=$_POST['old_password'];
     		$password=$_POST['password'];
-    		if(sp_password($old_password)==$admin['user_pass']){
+    		if(sp_compare_password($old_password, $admin['user_pass'])){
     			if($_POST['password']==$_POST['repassword']){
-    				if($admin['user_pass']==sp_password($password)){
+    				if(sp_compare_password($password, $admin['user_pass'])){
     					$this->error("新密码不能和原始密码相同！");
     				}else{
     					$data['user_pass']=sp_password($password);
@@ -106,7 +106,6 @@ class ProfileController extends MemberbaseController {
     
     function avatar_upload(){
     	$config=array(
-    			'FILE_UPLOAD_TYPE' => sp_is_sae()?"Sae":'Local',//TODO 其它存储类型暂不考虑
     			'rootPath' => './'.C("UPLOADPATH"),
     			'savePath' => './avatar/',
     			'maxSize' => 512000,//500K
@@ -114,7 +113,8 @@ class ProfileController extends MemberbaseController {
     			'exts'       =>    array('jpg', 'png', 'jpeg'),
     			'autoSub'    =>    false,
     	);
-    	$upload = new \Think\Upload($config);//
+    	$driver_type = sp_is_sae()?"Sae":'Local';//TODO 其它存储类型暂不考虑
+    	$upload = new \Think\Upload($config,$driver_type);//
     	$info=$upload->upload();
     	//开始上传
     	if ($info) {

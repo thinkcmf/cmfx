@@ -23,9 +23,9 @@ class AdController extends AdminbaseController{
 		if(IS_POST){
 			if ($this->ad_model->create()){
 				if ($this->ad_model->add()!==false) {
-					$this->success("添加成功！", U("ad/index"));
+					$this->success(L('ADD_SUCCESS'), U("ad/index"));
 				} else {
-					$this->error("添加失败！");
+					$this->error(L('ADD_FAILED'));
 				}
 			} else {
 				$this->error($this->ad_model->getError());

@@ -25,6 +25,7 @@ class MailerController extends AdminbaseController {
     	$configs['SP_MAIL_ADDRESS'] = $_POST['address'];
     	$configs['SP_MAIL_SENDER'] = $_POST['sender'];
     	$configs['SP_MAIL_SMTP'] = $_POST['smtp'];
+    	$configs['SP_MAIL_SMTP_PORT'] = $_POST['smtp_port'];
     	$configs['SP_MAIL_LOGINNAME'] = $_POST['loginname'];
     	$configs['SP_MAIL_PASSWORD'] = $_POST['password'];
     	$rst=sp_set_dynamic_config($configs);
@@ -43,7 +44,6 @@ class MailerController extends AdminbaseController {
     	if($option){
     		$options = json_decode($option['option_value'], true);
     		$this->assign('options', $options);
-    		$this->assign('option_id', $option['option_id']);
     	}
     	$this->display();
     }
@@ -52,7 +52,6 @@ class MailerController extends AdminbaseController {
     	$configs['SP_MEMBER_EMAIL_ACTIVE'] = intval($_POST['lightup']);
     	sp_set_dynamic_config($configs);
 
-    	if(!empty($_POST['option_id'])) $data['option_id']=intval($_POST['option_id']);
     	$data['option_name'] = "member_email_active";
     	$stripChar = '?<*>\'\"';
     	$_POST['options']['title'] = preg_replace('/['.$stripChar.']/s','',$_POST['options']['title']);

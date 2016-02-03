@@ -4,8 +4,8 @@
  * 会员注册登录
  */
 namespace User\Controller;
-use Common\Controller\HomeBaseController;
-class IndexController extends HomeBaseController {
+use Common\Controller\HomebaseController;
+class IndexController extends HomebaseController {
     //登录
 	public function index() {
 		$id=I("get.id");

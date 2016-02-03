@@ -36,12 +36,12 @@ class TagLibSpadmin extends TagLib {
         $file = $tag['file'];
         $counts = count($file);
         if ($counts < 3) {
-            $file_path = DIRECTORY_SEPARATOR . "Admin" .  DIRECTORY_SEPARATOR . $tag['file'];
+            $file_path = "Admin" .  "/" . $tag['file'];
         } else {
-            $file_path = DIRECTORY_SEPARATOR . $file[0] . DIRECTORY_SEPARATOR . "Tpl" . DIRECTORY_SEPARATOR . $file[1] . DIRECTORY_SEPARATOR . $file[2];
+            $file_path = $file[0] . "/" . "Tpl" . "/" . $file[1] . "/" . $file[2];
         }
         //模板路径
-        $TemplatePath =  C("SP_ADMIN_TMPL_PATH") .C("SP_ADMIN_DEFAULT_THEME")."/". $file_path . C("TMPL_TEMPLATE_SUFFIX");
+        $TemplatePath = sp_add_template_file_suffix( C("SP_ADMIN_TMPL_PATH") .C("SP_ADMIN_DEFAULT_THEME")."/". $file_path );
         //判断模板是否存在
         if (!file_exists_case($TemplatePath)) {
             return false;

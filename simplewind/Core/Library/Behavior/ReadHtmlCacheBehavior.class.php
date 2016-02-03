@@ -80,7 +80,18 @@ class ReadHtmlCacheBehavior {
                 }else{
                     $cacheTime  =   $cacheTime;
                 }
-                $rule = (C('MOBILE_TPL_ENABLED') && sp_is_mobile())?$rule."_mobile":$rule;//修复手机模板开启时，只生成一个缓存
+                
+                //ThinkCMF NOTE 多语言下和手机模式下静态缓存读取写入
+                $rule_suffix  =  '';
+                if(C('MOBILE_TPL_ENABLED') && sp_is_mobile()){
+                    $rule_suffix  =  '_mobile';
+                }
+                
+                if (C('LANG_SWITCH_ON',null,false)){
+                    $rule_suffix  .=  '_'.sp_check_lang();
+                }
+                
+                $rule = $rule.$rule_suffix;
                 // 当前缓存文件
                 define('HTML_FILE_NAME',HTML_PATH . $rule.C('HTML_FILE_SUFFIX',null,'.html'));
                 return $cacheTime;

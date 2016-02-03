@@ -12,28 +12,36 @@ namespace Admin\Controller;
 use Common\Controller\AdminbaseController;
 class PublicController extends AdminbaseController {
 
-    function _initialize() {}
+    function _initialize() {
+        C(S('sp_dynamic_config'));//加载动态配置
+    }
     
     //后台登陆界面
     public function login() {
     	if(isset($_SESSION['ADMIN_ID'])){//已经登录
     		$this->success(L('LOGIN_SUCCESS'),U("Index/index"));
     	}else{
-    		if(empty($_SESSION['adminlogin'])){
+    	    $site_admin_url_password =C("SP_SITE_ADMIN_URL_PASSWORD");
+    	    $upw=session("__SP_UPW__");
+    		if(!empty($site_admin_url_password) && $upw!=$site_admin_url_password){
     			redirect(__ROOT__."/");
     		}else{
+    		    session("__SP_ADMIN_LOGIN_PAGE_SHOWED_SUCCESS__",true);
     			$this->display(":login");
     		}
-    		
     	}
     }
     
     public function logout(){
     	session('ADMIN_ID',null); 
-    	$this->redirect("public/login");
+    	redirect(__ROOT__."/");
     }
     
     public function dologin(){
+        $login_page_showed_success=session("__SP_ADMIN_LOGIN_PAGE_SHOWED_SUCCESS__");
+        if(!$login_page_showed_success){
+            $this->error('login error!');
+        }
     	$name = I("post.username");
     	if(empty($name)){
     		$this->error(L('USERNAME_OR_EMAIL_EMPTY'));
@@ -59,7 +67,7 @@ class PublicController extends AdminbaseController {
     		
     		$result = $user->where($where)->find();
     		if(!empty($result) && $result['user_type']==1){
-    			if($result['user_pass'] == sp_password($pass)){
+    			if(sp_compare_password($pass,$result['user_pass'])){
     				
     				$role_user_model=M("RoleUser");
     				
@@ -73,7 +81,7 @@ class PublicController extends AdminbaseController {
     				//登入成功页面跳转
     				$_SESSION["ADMIN_ID"]=$result["id"];
     				$_SESSION['name']=$result["user_login"];
-    				$result['last_login_ip']=get_client_ip();
+    				$result['last_login_ip']=get_client_ip(0,true);
     				$result['last_login_time']=date("Y-m-d H:i:s");
     				$user->save($result);
     				setcookie("admin_username",$name,time()+30*24*3600,"/");

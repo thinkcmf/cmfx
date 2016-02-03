@@ -1,8 +1,7 @@
 <?php
-
 /**
- * 项目入口文件
- * Some rights reserved：www.simplewind.net
+ * 入口文件
+ * Some rights reserved：www.thinkcmf.com
  */
 if (ini_get('magic_quotes_gpc')) {
 	function stripslashesRecursive(array $array){
@@ -31,20 +30,22 @@ define('SPAPP',   './application/');
 //项目资源目录，不可更改
 define('SPSTATIC',   SITE_PATH.'statics/');
 //定义缓存存放路径
-define("RUNTIME_PATH", SITE_PATH . "/data/runtime/");
+define("RUNTIME_PATH", SITE_PATH . "data/runtime/");
 //静态缓存目录
-define("HTML_PATH", SITE_PATH . "/data/runtime/Html/");
+define("HTML_PATH", SITE_PATH . "data/runtime/Html/");
 //版本号
-define("SIMPLEWIND_CMF_VERSION", 'X1.6.0');
+define("SIMPLEWIND_CMF_VERSION", 'X2.1.0');
 
 define("THINKCMF_CORE_TAGLIBS", 'cx,Common\Lib\Taglib\TagLibSpadmin,Common\Lib\Taglib\TagLibHome');
 
 if(function_exists('saeAutoLoader') || isset($_SERVER['HTTP_BAE_ENV_APPID'])){
 	
 }else{
-	if(file_exists("install") && !file_exists("install/install.lock")){
-		header("Location:./install");
-		exit();
+	if(!file_exists("data/install.lock")){
+		if(strtolower($_GET['g'])!="install"){
+		    header("Location:./index.php?g=install");
+		    exit();
+		}
 	}
 }
 //uc client root

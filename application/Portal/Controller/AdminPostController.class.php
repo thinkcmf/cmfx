@@ -15,9 +15,9 @@ class AdminPostController extends AdminbaseController {
 	
 	function _initialize() {
 		parent::_initialize();
-		$this->posts_model = D("Common/Posts");
-		$this->terms_model = D("Common/Terms");
-		$this->term_relationships_model = D("Common/TermRelationships");
+		$this->posts_model = D("Portal/Posts");
+		$this->terms_model = D("Portal/Terms");
+		$this->term_relationships_model = D("Portal/TermRelationships");
 	}
 	function index(){
 		$this->_lists();
@@ -216,7 +216,7 @@ class AdminPostController extends AdminbaseController {
 		$tree->icon = array('&nbsp;&nbsp;&nbsp;│ ', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ ');
 		$tree->nbsp = '&nbsp;&nbsp;&nbsp;';
 		foreach ($result as $r) {
-			$r['str_manage'] = '<a href="' . U("AdminTerm/add", array("parent" => $r['term_id'])) . '">添加子类</a> | <a href="' . U("AdminTerm/edit", array("id" => $r['term_id'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("AdminTerm/delete", array("id" => $r['term_id'])) . '">删除</a> ';
+			$r['str_manage'] = '<a href="' . U("AdminTerm/add", array("parent" => $r['term_id'])) . '">添加子类</a> | <a href="' . U("AdminTerm/edit", array("id" => $r['term_id'])) . '">修改</a> | <a class="js-ajax-delete" href="' . U("AdminTerm/delete", array("id" => $r['term_id'])) . '">删除</a> ';
 			$r['visit'] = "<a href='#'>访问</a>";
 			$r['taxonomys'] = $this->taxonomys[$r['taxonomy']];
 			$r['id']=$r['term_id'];
@@ -238,7 +238,7 @@ class AdminPostController extends AdminbaseController {
 		$tree->icon = array('&nbsp;&nbsp;&nbsp;│ ', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ ');
 		$tree->nbsp = '&nbsp;&nbsp;&nbsp;';
 		foreach ($result as $r) {
-			$r['str_manage'] = '<a href="' . U("AdminTerm/add", array("parent" => $r['term_id'])) . '">添加子类</a> | <a href="' . U("AdminTerm/edit", array("id" => $r['term_id'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("AdminTerm/delete", array("id" => $r['term_id'])) . '">删除</a> ';
+			$r['str_manage'] = '<a href="' . U("AdminTerm/add", array("parent" => $r['term_id'])) . '">添加子类</a> | <a href="' . U("AdminTerm/edit", array("id" => $r['term_id'])) . '">修改</a> | <a class="js-ajax-delete" href="' . U("AdminTerm/delete", array("id" => $r['term_id'])) . '">删除</a> ';
 			$r['visit'] = "<a href='#'>访问</a>";
 			$r['taxonomys'] = $this->taxonomys[$r['taxonomy']];
 			$r['id']=$r['term_id'];

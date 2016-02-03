@@ -21,11 +21,11 @@ class AssetController extends AdminbaseController {
      */
     public function swfupload() {
         if (IS_POST) {
-			
+			$savepath=date('Ymd').'/';
             //上传处理类
             $config=array(
             		'rootPath' => './'.C("UPLOADPATH"),
-            		'savePath' => '',
+            		'savePath' => $savepath,
             		'maxSize' => 11048576,
             		'saveName'   =>    array('uniqid',''),
             		'exts'       =>    array('jpg', 'gif', 'png', 'jpeg',"txt",'zip'),
@@ -41,7 +41,7 @@ class AssetController extends AdminbaseController {
                 if(!empty($first['url'])){
                 	$url=$first['url'];
                 }else{
-                	$url=C("TMPL_PARSE_STRING.__UPLOAD__").$first['savename'];
+                	$url=C("TMPL_PARSE_STRING.__UPLOAD__").$savepath.$first['savename'];
                 }
                 
 				echo "1," . $url.",".'1,'.$first['name'];

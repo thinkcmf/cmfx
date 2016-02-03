@@ -465,6 +465,9 @@ function sp_admin_get_tpl_file_list(){
 				if($result){
 					$tpl=str_replace($suffix, "", $f);
 					$tpl_files[$tpl]=$tpl;
+				}else if(preg_match("/\.php$/", $f)){
+				    $tpl=str_replace($suffix, "", $f);
+				    $tpl_files[$tpl]=$tpl;
 				}
 			}
 		}

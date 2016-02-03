@@ -10,23 +10,29 @@
  * 文章内页
  */
 namespace Portal\Controller;
-use Common\Controller\HomeBaseController;
-class ArticleController extends HomeBaseController {
+use Common\Controller\HomebaseController;
+class ArticleController extends HomebaseController {
     //文章内页
     public function index() {
     	$id=intval($_GET['id']);
     	$article=sp_sql_post($id,'');
+    	if(empty($article)){
+    	    header('HTTP/1.1 404 Not Found');
+    	    header('Status:404 Not Found');
+    	    if(sp_template_file_exists(MODULE_NAME."/404")){
+    	        $this->display(":404");
+    	    }
+    	    
+    	    return ;
+    	}
     	$termid=$article['term_id'];
     	$term_obj= M("Terms");
     	$term=$term_obj->where("term_id='$termid'")->find();
     	
     	$article_id=$article['object_id'];
     	
-    	$should_change_post_hits=sp_check_user_action("posts$article_id",1,true);
-    	if($should_change_post_hits){
-    		$posts_model=M("Posts");
-    		$posts_model->save(array("id"=>$article_id,"post_hits"=>array("exp","post_hits+1")));
-    	}
+    	$posts_model=M("Posts");
+    	$posts_model->save(array("id"=>$article_id,"post_hits"=>array("exp","post_hits+1")));
     	
     	$article_date=$article['post_modified'];
     	

@@ -30,10 +30,6 @@ class CommentController extends MemberbaseController{
 	}
 	
 	function post(){
-		/* if($_SESSION['_verify_']['verify']!=I("post.verify")){
-			$this->error("验证码错误！");
-		} */
-		
 		if (IS_POST){
 			
 			$post_table=sp_authcode($_POST['post_table']);

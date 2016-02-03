@@ -1,6 +1,6 @@
 <admintpl file="header"/>
-<body class="J_scroll_fixed">
-<div class="wrap J_check_wrap">
+<body>
+<div class="wrap js-check-wrap">
   <ul class="nav nav-tabs">
      <li class="active"><a>插件演示后台</a></li>
   </ul>
@@ -19,7 +19,7 @@
 	</p>
 
 </div>
-    <form method="post" class="J_ajaxForm" action="#">
+    <form method="post" class="js-ajax-form" action="#">
       <div class="table_list">
 	    <table width="100%" class="table table-hover">
 	        <thead>
@@ -40,7 +40,7 @@
 		            <td>{$vo.create_time}</td>
 		            <td>
 		            	<a href="javascript:;" >修改</a>|
-			            <a href="javascript:;" class="J_ajax_del" >删除</a>
+			            <a href="javascript:;" class="js-ajax-delete" >删除</a>
 			        </td>
 	          	</tr>
 	          	</foreach>
@@ -50,6 +50,6 @@
     </form>
   </div>
 </div>
-<script src="__ROOT__/statics/js/common.js?"></script>
+<script src="__PUBLIC__/js/common.js?"></script>
 </body>
 </html>

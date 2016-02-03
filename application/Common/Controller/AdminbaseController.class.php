@@ -3,7 +3,6 @@
 /**
  * 后台Controller
  */
-//定义是后台
 namespace Common\Controller;
 use Common\Controller\AppframeController;
 
@@ -20,6 +19,7 @@ class AdminbaseController extends AppframeController {
 
     function _initialize(){
        parent::_initialize();
+       $this->load_app_admin_menu_lang();
     	if(isset($_SESSION['ADMIN_ID'])){
     		$users_obj= M("Users");
     		$id=$_SESSION['ADMIN_ID'];
@@ -39,6 +39,17 @@ class AdminbaseController extends AppframeController {
     		}
     		
     	}
+    }
+    
+    /**
+     * 初始化后台菜单
+     */
+    public function initMenu() {
+        $Menu = F("Menu");
+        if (!$Menu) {
+            $Menu=D("Common/Menu")->menu_cache();
+        }
+        return $Menu;
     }
 
     /**
@@ -63,6 +74,20 @@ class AdminbaseController extends AppframeController {
         parent::display($this->parseTemplate($templateFile), $charset, $contentType);
     }
     
+    /**
+     * 获取输出页面内容
+     * 调用内置的模板引擎fetch方法，
+     * @access protected
+     * @param string $templateFile 指定要调用的模板文件
+     * 默认为空 由系统自动定位模板文件
+     * @param string $content 模板输出内容
+     * @param string $prefix 模板缓存前缀*
+     * @return string
+     */
+    public function fetch($templateFile='',$content='',$prefix=''){
+        $templateFile = empty($content)?$this->parseTemplate($templateFile):'';
+		return parent::fetch($templateFile,$content,$prefix);
+    }
     
     /**
      * 自动定位模板文件
@@ -72,6 +97,7 @@ class AdminbaseController extends AppframeController {
      */
     public function parseTemplate($template='') {
     	$tmpl_path=C("SP_ADMIN_TMPL_PATH");
+    	define("SP_TMPL_PATH", $tmpl_path);
 		// 获取当前主题名称
 		$theme      =    C('SP_ADMIN_DEFAULT_THEME');
 		
@@ -103,22 +129,12 @@ class AdminbaseController extends AppframeController {
 		
 		C('SP_VIEW_PATH',$tmpl_path);
 		C('DEFAULT_THEME',$theme);
+		define("SP_CURRENT_THEME", $theme);
 		
-		$file=THEME_PATH.$module.$template.C('TMPL_TEMPLATE_SUFFIX');
-		if(!is_file($file)) E(L('_TEMPLATE_NOT_EXIST_').':'.$file);
+		$file = sp_add_template_file_suffix(THEME_PATH.$module.$template);
+		$file= str_replace("//",'/',$file);
+		if(!file_exists_case($file)) E(L('_TEMPLATE_NOT_EXIST_').':'.$file);
 		return $file;
-    }
-
-
-    /**
-     * 初始化后台菜单
-     */
-    public function initMenu() {
-        $Menu = F("Menu");
-        if (!$Menu) {
-            $Menu=D("Common/Menu")->menu_cache();
-        }
-        return $Menu;
     }
 
     /**
@@ -137,29 +153,47 @@ class AdminbaseController extends AppframeController {
         return true;
     }
 
-    protected function page($Total_Size = 1, $Page_Size = 0, $Current_Page = 1, $listRows = 6, $PageParam = '', $PageLink = '', $Static = FALSE) {
-        import('Page');
-        if ($Page_Size == 0) {
-            $Page_Size = C("PAGE_LISTROWS");
+    /**
+     * 后台分页
+     * 
+     */
+    protected function page($total_size = 1, $page_size = 0, $current_page = 1, $listRows = 6, $pageParam = '', $pageLink = '', $static = FALSE) {
+        if ($page_size == 0) {
+            $page_size = C("PAGE_LISTROWS");
         }
-        if (empty($PageParam)) {
-            $PageParam = C("VAR_PAGE");
+        
+        if (empty($pageParam)) {
+            $pageParam = C("VAR_PAGE");
         }
-        $Page = new \Page($Total_Size, $Page_Size, $Current_Page, $listRows, $PageParam, $PageLink, $Static);
+        
+        $Page = new \Page($total_size, $page_size, $current_page, $listRows, $pageParam, $pageLink, $static);
         $Page->SetPager('Admin', '{first}{prev}&nbsp;{liststart}{list}{listend}&nbsp;{next}{last}', array("listlong" => "9", "first" => "首页", "last" => "尾页", "prev" => "上一页", "next" => "下一页", "list" => "*", "disabledclass" => ""));
         return $Page;
     }
 
     private function check_access($uid){
-    	
     	//如果用户角色是1，则无需判断
     	if($uid == 1){
     		return true;
     	}
-    	if(MODULE_NAME.CONTROLLER_NAME.ACTION_NAME!="AdminIndexindex"){
+    	
+    	$rule=MODULE_NAME.CONTROLLER_NAME.ACTION_NAME;
+    	$no_need_check_rules=array("AdminIndexindex","AdminMainindex");
+    	
+    	if( !in_array($rule,$no_need_check_rules) ){
     		return sp_auth_check($uid);
     	}else{
     		return true;
+    	}
+    }
+    
+    private function load_app_admin_menu_lang(){
+    	if (C('LANG_SWITCH_ON',null,false)){
+    		$admin_menu_lang_file=SPAPP.MODULE_NAME."/Lang/".LANG_SET."/admin_menu.php";
+    		if(is_file($admin_menu_lang_file)){
+    			$lang=include $admin_menu_lang_file;
+    			L($lang);
+    		}
     	}
     }
 }

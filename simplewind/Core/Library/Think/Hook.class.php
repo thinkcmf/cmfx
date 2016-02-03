@@ -102,6 +102,36 @@ class Hook {
         }
         return;
     }
+    
+    /**
+     * 监听标签的插件,只执行一个插件
+     * @param string $tag 标签名称
+     * @param mixed $params 传入参数
+     * @return mixed boolean|mixed
+     */
+    static public function listen_one($tag, &$params=NULL) {
+        if(isset(self::$tags[$tag])) {
+            if(APP_DEBUG) {
+                G($tag.'Start');
+                trace('[ '.$tag.' ] --START--','','INFO');
+            }
+            
+            if(count(self::$tags[$tag])>0){
+                $name=self::$tags[$tag][0];
+                APP_DEBUG && G($name.'_start');
+                $result =   self::exec($name, $tag,$params);
+                if(APP_DEBUG){
+                    G($name.'_end');
+                    trace('Run '.$name.' [ RunTime:'.G($name.'_start',$name.'_end',6).'s ]','','INFO');
+                }
+                return $result;
+            }
+            if(APP_DEBUG) { // 记录行为的执行日志
+                trace('[ '.$tag.' ] --END-- [ RunTime:'.G($tag.'Start',$tag.'End',6).'s ]','','INFO');
+            }
+        }
+        return false;
+    }
 
     /**
      * 执行某个插件
@@ -118,7 +148,7 @@ class Hook {
         }else{
         	$class   =  "plugins\\{$name}\\{$name}Plugin";
         }
-        if(class_exists($class)){ //插件或者行为存在时才执行
+        if(class_exists($class)){ //ThinkCMF NOTE 插件或者行为存在时才执行
         	$addon   = new $class();
         	return $addon->$tag($params);
         }

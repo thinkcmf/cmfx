@@ -147,6 +147,8 @@ class  Template {
         if(empty($content)) return '';
         $begin      =   $this->config['taglib_begin'];
         $end        =   $this->config['taglib_end'];
+        // 检查tc_extend语法
+        $content    =   $this->parseTcExtend($content);//ThinkCMF NOTE
         // 检查include语法
         $content    =   $this->parseInclude($content);
         // 检查PHP语法
@@ -256,6 +258,29 @@ class  Template {
             $array      =   $this->parseXmlAttrs($matches[1]);
             $content    =   $this->parseTemplateName($array['name']);
             $content    =   $this->parseInclude($content, false); //对继承模板中的include进行分析
+            // 替换block标签
+            $content = $this->replaceBlock($content);
+        }else{
+            $content    =   preg_replace_callback('/'.$begin.'block\sname=[\'"](.+?)[\'"]\s*?'.$end.'(.*?)'.$begin.'\/block'.$end.'/is', function($match){return stripslashes($match[2]);}, $content);
+        }
+        return $content;
+    }
+    
+    // 解析模板中的tc_extend标签 ThinkCMF NOTE
+    protected function parseTcExtend($content) {
+        $begin      =   $this->config['taglib_begin'];
+        $end        =   $this->config['taglib_end'];
+        // 读取模板中的继承标签
+        $find       =   preg_match('/'.$begin.'tc_extend\s(.+?)\s*?\/'.$end.'/is',$content,$matches);
+        if($find) {
+            //替换extend标签
+            $content    =   str_replace($matches[0],'',$content);
+            // 记录页面中的block标签
+            preg_replace_callback('/'.$begin.'block\sname=[\'"](.+?)[\'"]\s*?'.$end.'(.*?)'.$begin.'\/block'.$end.'/is', array($this, 'parseBlock'),$content);
+            // 读取继承模板
+            $array      =   $this->parseXmlAttrs($matches[1]);
+            $content    =   $this->parseTcTemplateName($array['name']);
+            //$content    =   $this->parseTcInclude($content, false); // TODO 暂不支持继承模板中的tc_include
             // 替换block标签
             $content = $this->replaceBlock($content);
         }else{
@@ -696,5 +721,35 @@ class  Template {
             $parseStr .= file_get_contents($templateName);
         }
         return $parseStr;
-    }    
+    }
+    
+    /**
+     * CMF 分析加载的模板文件并读取内容 支持多个模板文件读取 ThinkCMF NOTE
+     * @access private
+     * @param string $tmplPublicName  模板文件名
+     * @return string
+     */
+    private function parseTcTemplateName($templateName){
+        if(substr($templateName,0,1)=='$')
+            //支持加载变量文件名
+            $templateName = $this->get(substr($templateName,1));
+        $array  =   explode(',',$templateName);
+        $parseStr   =   '';
+        foreach ($array as $templateName){
+            if(empty($templateName)) continue;
+            if(false === file_exists_case($templateName)) {
+                
+                $templateName   =   str_replace(':', "/", $templateName);
+                defined("SP_TMPL_PATH")?SP_TMPL_PATH:define("SP_TMPL_PATH", "tpl/");
+                $templateName = sp_add_template_file_suffix(SP_TMPL_PATH.SP_CURRENT_THEME."/".$templateName);
+                $templateName = str_replace("//", "/", $templateName);
+            }
+            // 获取模板文件内容
+            $parseStr .= file_get_contents($templateName);
+        }
+        
+        return $parseStr;
+    }
+
+    
 }

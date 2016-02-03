@@ -1,7 +1,7 @@
 <?php
 namespace Common\Controller;
-use Common\Controller\HomeBaseController;
-class MemberbaseController extends HomeBaseController{
+use Common\Controller\HomebaseController;
+class MemberbaseController extends HomebaseController{
 	
 	function _initialize() {
 		parent::_initialize();

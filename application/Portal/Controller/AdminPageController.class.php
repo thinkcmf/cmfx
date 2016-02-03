@@ -163,7 +163,7 @@ class AdminPageController extends AdminbaseController {
 	}
 	
 	public function edit_post(){
-		$terms_obj = D("Common/Terms");
+		$terms_obj = D("Portal/Terms");
 	
 		if (IS_POST) {
 			$_POST['smeta']['thumb'] = sp_asset_relative_url($_POST['smeta']['thumb']);

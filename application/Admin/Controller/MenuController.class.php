@@ -37,8 +37,8 @@ class MenuController extends AdminbaseController {
         	$result[$n]['level'] = $this->_get_level($r['id'], $newmenus);
         	$result[$n]['parentid_node'] = ($r['parentid']) ? ' class="child-of-node-' . $r['parentid'] . '"' : '';
         	
-            $result[$n]['str_manage'] = '<a href="' . U("Menu/add", array("parentid" => $r['id'], "menuid" => $_GET['menuid'])) . '">添加子菜单</a> | <a target="_blank" href="' . U("Menu/edit", array("id" => $r['id'], "menuid" => $_GET['menuid'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("Menu/delete", array("id" => $r['id'], "menuid" => I("get.menuid")) ). '">删除</a> ';
-            $result[$n]['status'] = $r['status'] ? "显示" : "隐藏";
+            $result[$n]['str_manage'] = '<a href="' . U("Menu/add", array("parentid" => $r['id'], "menuid" => I("get.menuid"))) . '">'.L('ADD_SUB_MENU').'</a> | <a target="_blank" href="' . U("Menu/edit", array("id" => $r['id'], "menuid" => I("get.menuid"))) . '">'.L('EDIT').'</a> | <a class="js-ajax-delete" href="' . U("Menu/delete", array("id" => $r['id'], "menuid" => I("get.menuid")) ). '">'.L('DELETE').'</a> ';
+            $result[$n]['status'] = $r['status'] ? L('DISPLAY') : L('HIDDEN');
             if(APP_DEBUG){
             	$result[$n]['app']=$r['app']."/".$r['model']."/".$r['action'];
             }
@@ -231,6 +231,38 @@ class MenuController extends AdminbaseController {
     	$this->display("export_menu");
     }
     
+    public function spmy_export_menu_lang(){
+    	$apps=sp_scan_dir(SPAPP."*",GLOB_ONLYDIR);
+    	foreach ($apps as $app){
+    		if(is_dir(SPAPP.$app)){
+    			$lang_dirs=sp_scan_dir(SPAPP."$app/Lang/*",GLOB_ONLYDIR);
+    			
+    			$menus = $this->menu_model->where(array("app"=>$app))->order(array("listorder"=>"ASC","app" => "ASC","model" => "ASC","action" => "ASC"))->select();
+    			foreach ($lang_dirs as $lang_dir){
+    				$admin_menu_lang_file=SPAPP.$app."/Lang/".$lang_dir."/admin_menu.php";
+    				$lang=array();
+    				if(is_file($admin_menu_lang_file)){
+    					$lang=include $admin_menu_lang_file;
+    				}
+    				
+    				foreach ($menus as $menu){
+    					$lang_key=strtoupper($menu['app'].'_'.$menu['model'].'_'.$menu['action']);
+    					if(!isset($lang[$lang_key])){
+    						$lang[$lang_key]=$menu['name'];
+    					}
+    				}
+    				
+    				$lang_str= var_export($lang,true);
+    				$lang_str=preg_replace("/\s+\d+\s=>\s(\n|\r)/", "\n", $lang_str);
+    		
+    				file_put_contents($admin_menu_lang_file, "<?php\nreturn $lang_str;");
+    			}
+    			
+    		}
+    	}
+    	
+    	echo "success!";
+    }
     /* public function dev_import_menu(){
     	$menus=F("Menu");
     	if(!empty($menus)){
@@ -449,4 +481,3 @@ class MenuController extends AdminbaseController {
     }
 
 }
-

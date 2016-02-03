@@ -28,6 +28,7 @@ class WidgetController extends Controller{
 		$data['post_id']=$post_id;
 		$this->assign($data);
 		$this->assign("comments",$new_comments);
+		$this->assign("params",$params);
 		$this->assign("parent_comments",$parent_comments);
 		$tpl= (isset($params['tpl'])&& !empty($params['tpl']) )?$params['tpl']:"comment";
 		return $this->fetch(":$tpl");
@@ -79,8 +80,8 @@ class WidgetController extends Controller{
 		}elseif(false === strpos($template, '/')){
 			$template = MODULE_NAME . $depr . $template;
 		}
-		$templateFile=THEME_PATH.$group.$template.C('TMPL_TEMPLATE_SUFFIX');
-		if(!is_file($templateFile))
+		$templateFile = sp_add_template_file_suffix(THEME_PATH.$group.$template);
+		if(!file_exists_case($templateFile))
 			throw_exception(L('_TEMPLATE_NOT_EXIST_').'['.$templateFile.']');
 		return $templateFile;
 	}

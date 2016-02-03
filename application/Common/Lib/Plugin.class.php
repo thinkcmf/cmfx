@@ -44,6 +44,15 @@ abstract class Plugin{
     public function __construct(){
         $this->view         =   \Think\Think::instance('Think\View');
         $this->plugin_path   =   './plugins/'.$this->getName().'/';
+        
+        //多语言
+        if (C('LANG_SWITCH_ON',null,false)){
+            $lang_file= $this->plugin_path."Lang/".LANG_SET.".php";
+            if(is_file($lang_file)){
+                $lang=include $lang_file;
+                L($lang);
+            }
+        }
         $TMPL_PARSE_STRING = C('TMPL_PARSE_STRING');
         
         $plugin_root= __ROOT__ . '/plugins/'.$this->getName();
@@ -112,8 +121,8 @@ abstract class Plugin{
         	
         	$theme=empty($theme)?"":$theme.$depr;
         	
-            $templateFile = "./".$this->tmpl_root.$templateFile.C('TMPL_TEMPLATE_SUFFIX');
-            if(!is_file($templateFile)){
+            $templateFile = sp_add_template_file_suffix("./".$this->tmpl_root.$templateFile);
+            if(!file_exists_case($templateFile)){
                 throw new \Exception("模板不存在:$templateFile");
             }
         }

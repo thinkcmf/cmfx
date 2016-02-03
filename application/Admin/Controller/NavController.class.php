@@ -34,8 +34,8 @@ class NavController extends AdminbaseController {
 		$tree->icon = array('&nbsp;&nbsp;&nbsp;│ ', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ ');
 		$tree->nbsp = '&nbsp;&nbsp;&nbsp;';
 		foreach ($result as $r) {
-			$r['str_manage'] = '<a href="' . U("nav/add", array("parentid" => $r['id'],"cid"=>$r['cid'])) . '">添加子菜单</a> | <a href="' . U("nav/edit", array("id" => $r['id'],"parentid"=>$r['parentid'],"cid"=>$r['cid'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("nav/delete", array("id" => $r['id'])) . '">删除</a> ';
-			$r['status'] = $r['status'] ? "显示" : "隐藏";
+			$r['str_manage'] = '<a href="' . U("nav/add", array("parentid" => $r['id'],"cid"=>$r['cid'])) . '">'.L('ADD_SUB_NAV').'</a> | <a href="' . U("nav/edit", array("id" => $r['id'],"parentid"=>$r['parentid'],"cid"=>$r['cid'])) . '">'.L('EDIT').'</a> | <a class="js-ajax-delete" href="' . U("nav/delete", array("id" => $r['id'])) . '">'.L('DELETE').'</a> ';
+			$r['status'] = $r['status'] ? L('DISPLAY') : L('HIDDEN');
 			$array[] = $r;
 		}
 	
@@ -69,7 +69,7 @@ class NavController extends AdminbaseController {
 		$tree->nbsp = '&nbsp;';
 		$parentid=I("get.parentid");
 		foreach ($result as $r) {
-			$r['str_manage'] = '<a href="' . U("Menu/add", array("parentid" => $r['id'])) . '">添加子菜单</a> | <a href="' . U("Menu/edit", array("id" => $r['id'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("Menu/delete", array("id" => $r['id'])) . '">删除</a> ';
+			$r['str_manage'] = '<a href="' . U("Menu/add", array("parentid" => $r['id'], "menuid" => I("get.menuid"))) . '">添加子菜单</a> | <a href="' . U("Menu/edit", array("id" => $r['id'], "menuid" => I("get.menuid"))) . '">修改</a> | <a class="js-ajax-delete" href="' . U("Menu/delete", array("id" => $r['id'], "menuid" => I("get.menuid"))) . '">删除</a> ';
 			$r['status'] = $r['status'] ? "显示" : "隐藏";
 			$r['selected'] = $r['id']==$parentid?"selected":"";
 			$array[] = $r;
@@ -139,7 +139,7 @@ class NavController extends AdminbaseController {
 		$tree->nbsp = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		$parentid= I("get.parentid");
 		foreach ($result as $r) {
-			$r['str_manage'] = '<a href="' . U("Menu/add", array("parentid" => $r['id'], "menuid" => $_GET['menuid'])) . '">添加子菜单</a> | <a href="' . U("Menu/edit", array("id" => $r['id'], "menuid" => $_GET['menuid'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("Menu/delete", array("id" => $r['id'], "menuid" => $_GET["menuid"])) . '">删除</a> ';
+			$r['str_manage'] = '<a href="' . U("Menu/add", array("parentid" => $r['id'], "menuid" => I("get.menuid"))) . '">添加子菜单</a> | <a href="' . U("Menu/edit", array("id" => $r['id'], "menuid" => I("get.menuid"))) . '">修改</a> | <a class="js-ajax-delete" href="' . U("Menu/delete", array("id" => $r['id'], "menuid" => I("get.menuid"))) . '">删除</a> ';
 			$r['status'] = $r['status'] ? "显示" : "隐藏";
 			$r['selected'] = $r['id']==$parentid?"selected":"";
 			$array[] = $r;

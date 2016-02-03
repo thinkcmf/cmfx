@@ -36,7 +36,7 @@ class TagLibHome extends TagLib {
            return $_tc_include_templateParseCache[$cacheIterateId];
         }
         //模板路径
-        $TemplatePath =  C("SP_TMPL_PATH") .C('SP_DEFAULT_THEME')."/". $file . C("TMPL_TEMPLATE_SUFFIX");
+        $TemplatePath = sp_add_template_file_suffix( C("SP_TMPL_PATH") .C('SP_DEFAULT_THEME')."/". $file ) ;
         //判断模板是否存在
         if (!file_exists_case($TemplatePath)) {
             return false;

@@ -1,8 +1,8 @@
 <?php
 namespace Demo\Controller;
-use Common\Controller\HomeBaseController;
+use Common\Controller\HomebaseController;
 
-class IndexController extends HomeBaseController{
+class IndexController extends HomebaseController{
 	
 	function index(){
 		echo "hello";

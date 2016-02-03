@@ -17,11 +17,11 @@ class InitHookBehavior extends Behavior {
 
     // 行为扩展的执行入口必须是run
     public function run(&$content){
-        if(isset($_GET['m']) && $_GET['m'] === 'Install') return;
+        if(isset($_GET['g']) && strtolower($_GET['g']) === 'install') return;
         
         $data = S('hooks');
         if(!$data){
-           $plugins = M('Plugins')->where("status=1")->getField("name,hooks");
+           is_array($plugins = M('Plugins')->where("status=1")->getField("name,hooks"))?null:$plugins = array();
            foreach ($plugins as $plugin => $hooks) {
                 if($hooks){
                 	$hooks=explode(",", $hooks);

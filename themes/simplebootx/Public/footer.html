@@ -1,0 +1,28 @@
+<br>
+<br>
+<br>
+<!-- Footer ================================================== -->
+<hr>
+{:hook('footer')}
+<div id="footer">
+	<div class="links">
+		<php>$links=sp_getlinks();</php>
+		<foreach name="links" item="vo">
+			<a href="{$vo.link_url}" target="{$vo.link_target}">{$vo.link_name}</a>
+		</foreach>
+	</div>
+	<p>
+		Made by <a href="http://www.thinkcmf.com" target="_blank">ThinkCMF</a>
+		Code licensed under the 
+		<a href="http://www.apache.org/licenses/LICENSE-2.0" rel="nofollow" target="_blank">Apache License v2.0</a>.
+		<br />
+		Based on 
+		<a href="http://getbootstrap.com/2.3.2/" target="_blank">Bootstrap</a>.
+		Icons from 
+		<a href="http://fortawesome.github.com/Font-Awesome/" target="_blank">Font Awesome</a>
+	</p>
+</div>
+<div id="backtotop">
+	<i class="fa fa-arrow-circle-up"></i>
+</div>
+{$site_tongji}

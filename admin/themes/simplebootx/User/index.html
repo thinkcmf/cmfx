@@ -1,0 +1,50 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a>{:L('USER_INDEXADMIN_INDEX')}</a></li>
+		</ul>
+		<form method="post" class="js-ajax-form">
+			<table class="table table-hover table-bordered">
+				<thead>
+					<tr>
+						<th align="center">ID</th>
+						<th>{:L('USERNAME')}</th>
+						<th>{:L('NICENAME')}</th>
+						<th>{:L('AVATAR')}</th>
+						<th>{:L('EMAIL')}</th>
+						<th>{:L('REGISTRATION_TIME')}</th>
+						<th>{:L('LAST_LOGIN_TIME')}</th>
+						<th>{:L('LAST_LOGIN_IP')}</th>
+						<th>{:L('STATUS')}</th>
+						<th align="center">{:L('ACTIONS')}</th>
+					</tr>
+				</thead>
+				<tbody>
+					<php>$user_statuses=array("0"=>L('USER_STATUS_BLOCKED'),"1"=>L('USER_STATUS_ACTIVATED'),"2"=>L('USER_STATUS_UNVERIFIED'));</php>
+					<foreach name="lists" item="vo">
+					<tr>
+						<td align="center">{$vo.id}</td>
+						<td>{$vo['user_login']?$vo['user_login']:L('THIRD_PARTY_USER')}</td>
+						<td>{$vo['user_nicename']?$vo['user_nicename']:L('NOT_FILLED')}</td>
+						<td><img width="25" height="25" src="{:U('user/public/avatar',array('id'=>$vo['id']))}" /></td>
+						<td>{$vo.user_email}</td>
+						<td>{$vo.create_time}</td>
+						<td>{$vo.last_login_time}</td>
+						<td>{$vo.last_login_ip}</td>
+						<td>{$user_statuses[$vo['user_status']]}</td>
+						<td align="center">
+							<a href="{:U('indexadmin/ban',array('id'=>$vo['id']))}" class="js-ajax-dialog-btn" data-msg="{:L('BLOCK_USER_CONFIRM_MESSAGE')}">{:L('BLOCK_USER')}</a>|
+							<a href="{:U('indexadmin/cancelban',array('id'=>$vo['id']))}" class="js-ajax-dialog-btn" data-msg="{:L('ACTIVATE_USER_CONFIRM_MESSAGE')}">{:L('ACTIVATE_USER')}</a>
+						</td>
+					</tr>
+					</foreach>
+				</tbody>
+			</table>
+			<div class="pagination">{$page}</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

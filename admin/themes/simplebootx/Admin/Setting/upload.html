@@ -1,0 +1,54 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a>上传设置</a></li>
+		</ul>
+		<form method="post" class="form-horizontal js-ajax-form" action="{:U('setting/upload_post')}">
+			<fieldset>
+				<div class="control-group">
+					<label class="control-label">图片文件</label>
+					<div class="controls">
+						<input type="text" name="image[upload_max_filesize]" title="允许上传大小KB,1M=1024KB" placeholder="允许上传大小KB,1M=1024KB" value="{$image.upload_max_filesize|default=10240}">
+						<input type="text" name="image[extensions]" title="扩展名,以英文逗号分隔" placeholder="扩展名,以英文逗号分隔" value="{$image.extensions|default='jpg,jpeg,png,gif,bmp'}">
+						<span class="form-required">*</span>
+						<span class="help-block">允许上传大小默认为10240KB,1M=1024KB，允许上传格式默认为jpg,jpeg,png,gif,bmp</span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">视频文件</label>
+					<div class="controls">
+						<input type="text" name="video[upload_max_filesize]" title="允许上传大小KB,1M=1024KB" placeholder="允许上传大小KB,1M=1024KB" value="{$video.upload_max_filesize|default=10240}">
+						<input type="text" name="video[extensions]" title="扩展名,以英文逗号分隔" placeholder="扩展名,以英文逗号分隔" value="{$video.extensions|default='mp4,avi,wmv,rm,rmvb,mkv'}">
+						<span class="form-required">*</span>
+						<span class="help-block">允许上传大小默认为102400KB,1M=1024KB，允许上传格式默认为mp4,avi,wmv,rm,rmvb,mkv</span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">音频文件</label>
+					<div class="controls">
+						<input type="text" name="audio[upload_max_filesize]" title="允许上传大小KB,1M=1024KB" placeholder="允许上传大小KB,1M=1024KB" value="{$audio.upload_max_filesize|default=10240}">
+						<input type="text" name="audio[extensions]" title="扩展名,以英文逗号分隔" placeholder="扩展名,以英文逗号分隔" value="{$audio.extensions|default='mp3,wma,wav'}">
+						<span class="form-required">*</span>
+						<span class="help-block">允许上传大小默认为10240KB,1M=1024KB，允许上传格式默认为mp3,wma,wav</span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">附件</label>
+					<div class="controls">
+						<input type="text" name="file[upload_max_filesize]" title="允许上传大小KB,1M=1024KB" placeholder="允许上传大小KB,1M=1024KB" value="{$file.upload_max_filesize|default=10240}">
+						<input type="text" name="file[extensions]" title="扩展名,以英文逗号分隔" placeholder="扩展名,以英文逗号分隔" value="{$file.extensions|default='txt,pdf,doc,docx,xls,xlsx,ppt,pptx,zip,rar'}">
+						<span class="form-required">*</span>
+						<span class="help-block">允许上传大小默认为10240KB,1M=1024KB，允许上传格式默认为除以上文档类型以外的其它常用文件,如：txt,pdf,doc,docx,xls,xlsx,ppt,pptx,zip,rar</span>
+					</div>
+				</div>
+			</fieldset>
+			<div class="form-actions">
+				<button type="submit" class="btn btn-primary js-ajax-submit">{:L('SAVE')}</button>
+			</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

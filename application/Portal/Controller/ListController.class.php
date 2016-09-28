@@ -15,7 +15,8 @@ class ListController extends HomebaseController {
 
 	//文章内页
 	public function index() {
-		$term=sp_get_term($_GET['id']);
+	    $term_id=I('get.id',0,'intval');
+		$term=sp_get_term($term_id);
 		
 		if(empty($term)){
 		    header('HTTP/1.1 404 Not Found');
@@ -23,28 +24,33 @@ class ListController extends HomebaseController {
 		    if(sp_template_file_exists(MODULE_NAME."/404")){
 		        $this->display(":404");
 		    }
-		    	
-		    return ;
+		    return;
 		}
 		
 		$tplname=$term["list_tpl"];
     	$tplname=sp_get_apphome_tpl($tplname, "list");
     	$this->assign($term);
-    	$this->assign('cat_id', intval($_GET['id']));
+    	$this->assign('cat_id', $term_id);
     	$this->display(":$tplname");
 	}
 	
 	public function nav_index(){
 		$navcatname="文章分类";
-		$datas=sp_get_terms("field:term_id,name");
-		$navrule=array(
-				"action"=>"List/index",
-				"param"=>array(
-						"id"=>"term_id"
-				),
-				"label"=>"name");
-		exit(sp_get_nav4admin($navcatname,$datas,$navrule));
-		
+        $term_obj= M("Terms");
+
+        $where=array();
+        $where['status'] = array('eq',1);
+        $terms=$term_obj->field('term_id,name,parent')->where($where)->order('term_id')->select();
+		$datas=$terms;
+		$navrule = array(
+		    "id"=>'term_id',
+            "action" => "Portal/List/index",
+            "param" => array(
+                "id" => "term_id"
+            ),
+            "label" => "name",
+		    "parentid"=>'parent'
+        );
+		return sp_get_nav4admin($navcatname,$datas,$navrule) ;
 	}
-	
 }

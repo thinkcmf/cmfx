@@ -46,6 +46,7 @@
             'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|',
             'print', 'preview', 'searchreplace', 'help', 'drafts'
         ]]
+    	//,allowDivTransToP:false
         //当鼠标放在工具栏上时显示的tooltip提示,留空支持自动多语言配置，否则以配置值为准
         //,labelMap:{
         //    'anchor':'', 'undo':''
@@ -296,6 +297,9 @@
         //编辑器底部距离工具栏高度(如果参数大于等于编辑器高度，则设置无效)
         //,toolbarTopOffset:400
 
+        //设置远程图片是否抓取到本地保存
+        //,catchRemoteImageEnable: true //设置是否抓取远程图片
+
         //pageBreakTag
         //分页标识符,默认是_ueditor_page_break_tag_
         //,pageBreakTag:'_ueditor_page_break_tag_'
@@ -324,7 +328,7 @@
         //表格是否可以拖拽
         //,tableDragable: true
 
-        //,disabledTableInTable:true  //禁止表格嵌套
+
 
         //sourceEditor
         //源码的查看方式,codemirror 是代码高亮，textarea是文本框,默认是codemirror
@@ -344,8 +348,97 @@
         //    'anchor':'~/dialogs/anchor/anchor.html',
         //}
 
+        //allowLinkProtocol 允许的链接地址，有这些前缀的链接地址不会自动添加http
+        //, allowLinkProtocols: ['http:', 'https:', '#', '/', 'ftp:', 'mailto:', 'tel:', 'git:', 'svn:']
+
         //webAppKey 百度应用的APIkey，每个站长必须首先去百度官网注册一个key后方能正常使用app功能，注册介绍，http://app.baidu.com/static/cms/getapikey.html
         //, webAppKey: ""
+
+        //默认过滤规则相关配置项目
+        //,disabledTableInTable:true  //禁止表格嵌套
+        //,allowDivTransToP:true      //允许进入编辑器的div标签自动变成p标签
+        //,rgb2Hex:true               //默认产出的数据中的color自动从rgb格式变成16进制格式
+
+		// xss 过滤是否开启,inserthtml等操作
+		,xssFilterRules: true
+		//input xss过滤
+		,inputXssFilter: true
+		//output xss过滤
+		,outputXssFilter: true
+		// xss过滤白名单 名单来源: https://raw.githubusercontent.com/leizongmin/js-xss/master/lib/default.js
+		,whitList: {
+			a:      ['target', 'href', 'title', 'class', 'style'],
+			abbr:   ['title', 'class', 'style'],
+			address: ['class', 'style', 'id'],
+			area:   ['shape', 'coords', 'href', 'alt'],
+			article: [],
+			aside:  [],
+			audio:  ['autoplay', 'controls', 'loop', 'preload', 'src', 'class', 'style'],
+			b:      ['class', 'style', 'id'],
+			bdi:    ['dir'],
+			bdo:    ['dir'],
+			big:    [],
+			blockquote: ['cite','class', 'style', 'id'],
+			br:     ['class', 'style', 'id'],
+			caption: ['class', 'style', 'id'],
+			center: [],
+			cite:   [],
+			code:   ['class', 'style', 'id'],
+			col:    ['align', 'valign', 'span', 'width', 'class', 'style', 'id'],
+			colgroup: ['align', 'valign', 'span', 'width', 'class', 'style', 'id'],
+			dd:     ['class', 'style', 'id'],
+			del:    ['datetime', 'class', 'style', 'id'],
+			details: ['open'],
+			div:    ['class', 'style', 'id'],
+			dl:     ['class', 'style', 'id'],
+			dt:     ['class', 'style', 'id'],
+			em:     ['class', 'style', 'id'],
+			embed:  [
+				'type', 'class', 'style', 'pluginspage',
+				'src', 'width', 'height', 'align', 'wmode',
+				'play', 'loop', 'menu', 'allowscriptaccess',
+				'allowfullscreen', 'id'
+			],
+			font:   ['color', 'size', 'face'],
+			footer: [],
+			h1:     ['class', 'style', 'id'],
+			h2:     ['class', 'style', 'id'],
+			h3:     ['class', 'style', 'id'],
+			h4:     ['class', 'style', 'id'],
+			h5:     ['class', 'style', 'id'],
+			h6:     ['class', 'style', 'id'],
+			header: [],
+			hr:     ['class', 'style', 'id'],
+			i:      ['class', 'style', 'id'],
+			iframe: ['src', 'width', 'height', 'class', 'id', 'style', 'frameborder', 'name'],
+			img:    ['src', 'alt', 'title', 'width', 'height', 'id', '_src', 'loadingclass', '_url', 'data-latex'],
+			ins:    ['datetime', 'class', 'style', 'id'],
+			li:     ['class', 'style', 'id'],
+			mark:   [],
+			nav:    [],
+			ol:     ['class', 'style', 'id'],
+			p:      ['class', 'style', 'id'],
+			pre:    ['class', 'style', 'id'],
+			s:      [],
+			section:[],
+			small:  ['class', 'style', 'id'],
+			source: ['src', 'type'],
+			span:   ['class', 'style', 'id'],
+			sub:    ['class', 'style', 'id'],
+			sup:    ['class', 'style', 'id'],
+			strong: ['class', 'style', 'id'],
+			table:  ['width', 'border', 'align', 'valign', 'class', 'style', 'id'],
+			tbody:  ['align', 'valign', 'width', 'class', 'style', 'id'],
+			td:     ['width', 'rowspan', 'colspan', 'align', 'valign', 'class', 'style', 'id'],
+			tfoot:  ['align', 'valign', 'class', 'style', 'id'],
+			th:     ['width', 'rowspan', 'colspan', 'align', 'valign', 'class', 'style', 'id'],
+			thead:  ['align', 'valign', 'class', 'style', 'id'],
+			tr:     ['rowspan', 'align', 'valign', 'class', 'style', 'id'],
+			tt:     ['class', 'style', 'id'],
+			u:      [],
+			ul:     ['class', 'style', 'id'],
+			video:  ['autoplay', 'controls', 'loop', 'preload', 'src', 'height', 'width', 'class', 'style', 'id']
+		}
     };
 
     function getUEBasePath(docUrl, confUrl) {

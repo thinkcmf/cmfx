@@ -31,7 +31,8 @@ li {
 		<div class="home_info" id="home_devteam">
 			<ul>
 				<li><em>ThinkCMF</em> <a href="http://www.thinkcmf.com" target="_blank">www.thinkcmf.com</a></li>
-				<li><em>{:L('TEAM_MEMBERS')}</em> <span>Dean,Sam,Tuolaji,Smile,Codefans,睡不醒的猪,Jack,日本那只猫</span></li>
+				<li><em>核心开发者</em> <span>老猫,Sam,Tuolaji,Codefans,睡不醒的猪,小夏,Powerless</span></li>
+				<li><em>{:L('TEAM_MEMBERS')}</em> <span>老猫,Sam,Tuolaji,Smile,Codefans,睡不醒的猪,Jack,日本那只猫</span></li>
 				<li><em>{:L('CONTACT_EMAIL')}</em> <span>cmf@simplewind.net</span></li>
 			</ul>
 		</div>
@@ -51,14 +52,14 @@ li {
 				<li><a>小夏</a></li>
 				<li><a href="http://www.xdmeng.com" target="_blank">小凯</a></li>
 				<li><a href="https://www.devmsg.com" target="_blank">Co</a></li>
-				
+				<li><a href="http://www.rainfer.cn" target="_blank">Rainfer</a></li>
 			</ul>
 		</div>
 	</div>
 	<script src="__PUBLIC__/js/common.js"></script>
 	<script>
 		//获取官方通知
-		$.getJSON("http://www.thinkcmf.com/service/sms_jsonp.php?lang={$Think.LANG_SET}&v={$Think.SIMPLEWIND_CMF_VERSION}&callback=?",
+		$.getJSON("http://www.thinkcmf.com/service/sms_jsonp.php?lang={$Think.LANG_SET}&v={$Think.THINKCMF_VERSION}&callback=?",
 		function(data) {
 			var tpl = '<li><em class="title"></em><span class="content"></span></li>';
 			var $thinkcmf_notices = $("#thinkcmf_notices");

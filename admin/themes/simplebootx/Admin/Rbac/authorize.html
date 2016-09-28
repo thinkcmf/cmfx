@@ -25,7 +25,7 @@
 	var ajaxForm_list = $('form.js-ajax-form');
 	if (ajaxForm_list.length) {
 	    Wind.use('ajaxForm', 'artDialog', function () {
-	        if ($.browser.msie) {
+	        if ($.browser && $.browser.msie) {
 	            //ie8及以下，表单中只有一个可见的input:text时，会整个页面会跳转提交
 	            ajaxForm_list.on('submit', function (e) {
 	                //表单中只有一个可见的input:text时，enter提交无效
@@ -68,7 +68,7 @@
 	            }
 	
 	            //ie处理placeholder提交问题
-	            if ($.browser.msie) {
+	            if ($.browser && $.browser.msie) {
 	                form.find('[placeholder]').each(function () {
 	                    var input = $(this);
 	                    if (input.val() == input.attr('placeholder')) {

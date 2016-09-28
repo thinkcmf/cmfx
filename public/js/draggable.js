@@ -65,7 +65,7 @@
         	 if(options.mousedown) {
 		        	options.mousedown(element);
 		        }
-        	if($.browser.msie){
+        	if($.browser && $.browser.msie){
 		        //设置鼠标捕获
 		        handle[0].setCapture();
 		    }else{

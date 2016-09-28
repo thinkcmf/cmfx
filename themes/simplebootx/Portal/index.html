@@ -5,7 +5,7 @@
 		<meta name="keywords" content="{$site_seo_keywords}" />
 		<meta name="description" content="{$site_seo_description}">
 		<tc_include file="Public:head" />
-		<link href="__TMPL__Public/css/slippry/slippry.css" rel="stylesheet">
+		<link href="__TMPL__Public/assets/css/slippry/slippry.css" rel="stylesheet">
 		<style>
 			.caption-wraper{position: absolute;left:50%;bottom:2em;}
 			.caption-wraper .caption{
@@ -93,7 +93,7 @@ $home_slides=empty($home_slides)?$default_home_slides:$home_slides;
 		<h3 class="text-center">Last News</h3>
 	</div>
 	<php>
-		$lastnews=sp_sql_posts("cid:$portal_index_lastnews;field:post_title,post_excerpt,tid,smeta;order:listorder asc;limit:4;"); 
+		$lastnews=sp_sql_posts("cid:$portal_index_lastnews;field:post_title,post_excerpt,object_id,smeta,term_id;order:listorder asc;limit:4;"); 
 	</php>
 	<div class="row">
 		<foreach name="lastnews" item="vo">
@@ -102,19 +102,19 @@ $home_slides=empty($home_slides)?$default_home_slides:$home_slides;
 			<div class="tc-gridbox">
 				<div class="header">
 					<div class="item-image">
-						<a href="{:leuu('article/index',array('id'=>$vo['tid'],'cid'=>$vo['term_id']))}">
+						<a href="{:leuu('article/index',array('id'=>$vo['object_id'],'cid'=>$vo['term_id']))}">
 							<if condition="empty($smeta['thumb'])"> 
-								<img src="__TMPL__Public/images/default_tupian1.png" class="img-responsive" alt="{$vo.post_title}"/>
+								<img src="__TMPL__Public/assets/images/default_tupian1.png" class="img-responsive" alt="{$vo.post_title}"/>
 							<else /> 
 								<img src="{:sp_get_asset_upload_path($smeta['thumb'])}" class="img-responsive img-thumbnail" alt="{$vo.post_title}" />
 							</if>
 						</a>
 					</div>
-					<h3><a href="{:leuu('article/index',array('id'=>$vo['tid'],'cid'=>$vo['term_id']))}">{$vo.post_title}</a></h3>
+					<h3><a href="{:leuu('article/index',array('id'=>$vo['object_id'],'cid'=>$vo['term_id']))}">{$vo.post_title}</a></h3>
 					<hr>
 				</div>
 				<div class="body">
-					<p><a href="{:leuu('article/index',array('id'=>$vo['tid'],'cid'=>$vo['term_id']))}">{:msubstr($vo['post_excerpt'],0,32)}</a></p>
+					<p><a href="{:leuu('article/index',array('id'=>$vo['object_id'],'cid'=>$vo['term_id']))}">{:msubstr($vo['post_excerpt'],0,32)}</a></p>
 				</div>
 			</div>
 		</div>
@@ -124,7 +124,7 @@ $home_slides=empty($home_slides)?$default_home_slides:$home_slides;
 </div>
 
 <tc_include file="Public:scripts"/>
-<script src="__TMPL__Public/js/slippry.min.js"></script>
+<script src="__TMPL__Public/assets/js/slippry.min.js"></script>
 <script>
 $(function() {
 	var demo1 = $("#homeslider").slippry({

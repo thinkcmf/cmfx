@@ -7,9 +7,10 @@
 			<li><a href="#B" data-toggle="tab">{:L('SEO_SETTING')}</a></li>
 			<li><a href="#C" data-toggle="tab">{:L('URL_SETTING')}</a></li>
 			<li><a href="{:U('route/index')}">{:L('URL_OPTIMIZATION')}</a></li>
-			<li><a href="#D" data-toggle="tab">{:L('UCENTER_SETTING')}</a></li>
+			<!-- <li><a href="#D" data-toggle="tab">{:L('UCENTER_SETTING')}</a></li> -->
 			<li><a href="#E" data-toggle="tab">{:L('COMMENT_SETTING')}</a></li>
 			<li><a href="#F" data-toggle="tab">{:L("USERNAME_FILTER")}</a></li>
+			<li><a href="#G" data-toggle="tab">CDN设置</a></li>
 		</ul>
 		<form class="form-horizontal js-ajax-forms" action="{:U('setting/site_post')}" method="post">
 			<fieldset>
@@ -24,12 +25,6 @@
 										<php>if($option_id):</php>
 										<input type="hidden" name="option_id" value="{$option_id}">
 										<php>endif;</php>
-									</div>
-								</div>
-								<div class="control-group">
-									<label class="control-label">{:L('WEBSITE_DOMAIN')}</label>
-									<div class="controls">
-										<input type="text" name="options[site_host]" value="{$site_host}"><span class="form-required">*</span>
 									</div>
 								</div>
 								<div class="control-group">
@@ -151,17 +146,6 @@
 								</div>
 							</fieldset>
 						</div>
-						<div class="tab-pane" id="D">
-							<fieldset>
-								<div class="control-group">
-									<label class="control-label">{:L('ENABLE_UCENTER')}</label>
-									<div class="controls">
-										<php>$ucenter_enabled_checked=empty($ucenter_enabled)?"":"checked";</php>
-										<input type="checkbox" class="js-check" name="options[ucenter_enabled]" value="1" {$ucenter_enabled_checked}>
-									</div>
-								</div>
-							</fieldset>
-						</div>
 						<div class="tab-pane" id="E">
 							<fieldset>
 								<div class="control-group">
@@ -185,6 +169,25 @@
 									<label class="control-label">{:L('SPECAIL_USERNAME')}</label>
 									<div class="controls">
 										<textarea name="cmf_settings[banned_usernames]" rows="5" cols="57">{$cmf_settings.banned_usernames}</textarea>
+									</div>
+								</div>
+							</fieldset>
+						</div>
+						<div class="tab-pane" id="G">
+							<fieldset>
+								<div class="control-group">
+									<label class="control-label">静态资源cdn地址</label>
+									<div class="controls">
+										<input type="text" name="cdn_settings[cdn_static_root]" value="{$cdn_settings.cdn_static_root}">
+										<span class="help-block">
+											不能以/结尾；设置这个地址后，请将ThinkCMF下的静态资源文件放在其下面；<br>
+											ThinkCMF下的静态资源文件大致包含以下(如果你自定义后，请自行增加)：<br>
+											admin/themes/simplebootx/Public/assets<br>
+											public<br>
+											themes/simplebootx/Public/assets<br>
+											例如未设置cdn前：jquery的访问地址是/public/js/jquery.js, 设置cdn是后它的访问地址就是：静态资源cdn地址+/public/js/jquery.js
+											
+										</span>
 									</div>
 								</div>
 							</fieldset>
@@ -220,7 +223,7 @@
 			//javascript
 			var form = $('form.js-ajax-forms');
 			//ie处理placeholder提交问题
-			if ($.browser.msie) {
+			if ($.browser && $.browser.msie) {
 				form.find('[placeholder]').each(function() {
 					var input = $(this);
 					if (input.val() == input.attr('placeholder')) {

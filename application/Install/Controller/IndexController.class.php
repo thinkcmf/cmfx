@@ -18,6 +18,9 @@ class IndexController extends Controller {
     }
     
     public function step2(){
+        if(file_exists_case('data/conf/config.php')){
+            @unlink('data/conf/config.php');
+        }
         $data=array();
         $data['phpversion'] = @ phpversion();
         $data['os']=PHP_OS;
@@ -52,6 +55,23 @@ class IndexController extends Controller {
             $err++;
         }
         
+        if (extension_loaded('curl')) {
+            $data['curl'] = '<i class="fa fa-check correct"></i> 已开启';
+        } else {
+            $data['curl'] = '<i class="fa fa-remove error"></i> 未开启';
+            $err++;
+        }
+        
+        if (extension_loaded('gd')) {
+            $data['gd'] = '<i class="fa fa-check correct"></i> 已开启';
+        } else {
+            $data['gd'] = '<i class="fa fa-remove error"></i> 未开启';
+            if (function_exists('imagettftext')) {
+                $data['gd'].='<br><i class="fa fa-remove error"></i> FreeType Support未开启';
+            }
+            $err++;
+        }
+        
         if (ini_get('file_uploads')) {
             $data['upload_size'] = '<i class="fa fa-check correct"></i> ' . ini_get('upload_max_filesize');
         } else {
@@ -66,7 +86,6 @@ class IndexController extends Controller {
         }
         
         $folders = array(
-            '',//根目录
             'data',
             'data/conf',
             'data/runtime',

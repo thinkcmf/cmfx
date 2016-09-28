@@ -1,27 +1,31 @@
 <?php
 namespace Admin\Controller;
+
 use Common\Controller\AdminbaseController;
+
 class RouteController extends AdminbaseController{
+    
 	protected $route_model;
 	
-	function _initialize() {
+	public function _initialize() {
 		parent::_initialize();
 		$this->route_model = D("Common/Route");
 	}
-	function index(){
-		
+	
+	public function index(){
 		$routes=$this->route_model->order("listorder asc")->select();
 		sp_get_routes(true);
 		$this->assign("routes",$routes);
 		$this->display();
 	}
 	
-	function add(){
+	public function add(){
 		$this->display();
 	}
-	function add_post(){
+	
+	public function add_post(){
 		if(IS_POST){
-			if ($this->route_model->create()){
+			if ($this->route_model->create()!==false){
 				if ($this->route_model->add()!==false) {
 					$this->success("添加成功！", U("route/index"));
 				} else {
@@ -34,17 +38,16 @@ class RouteController extends AdminbaseController{
 		}
 	}
 	
-	
-	function edit(){
-		$id=I("get.id");
-		$ad=$this->route_model->where("id=$id")->find();
-		$this->assign($ad);
+	public function edit(){
+		$id=I("get.id",0,'intval');
+		$route=$this->route_model->where(array('id'=>$id))->find();
+		$this->assign($route);
 		$this->display();
 	}
 	
-	function edit_post(){
+	public function edit_post(){
 		if (IS_POST) {
-			if ($this->route_model->create()) {
+			if ($this->route_model->create()!==false) {
 				if ($this->route_model->save()!==false) {
 					$this->success("保存成功！", U("route/index"));
 				} else {
@@ -59,10 +62,8 @@ class RouteController extends AdminbaseController{
 	/**
 	 *  删除
 	 */
-	function delete(){
+	public function delete(){
 		$id = I("get.id",0,"intval");
-		$data['status']=0;
-		$data['id']=$id;
 		if ($this->route_model->delete($id)!==false) {
 			$this->success("删除成功！");
 		} else {
@@ -74,8 +75,9 @@ class RouteController extends AdminbaseController{
 	/**
 	 *  禁用
 	 */
-	function ban(){
+	public function ban(){
 		$id = I("get.id",0,"intval");
+		$data=array();
 		$data['status']=0;
 		$data['id']=$id;
 		if ($this->route_model->save($data)!==false) {
@@ -88,8 +90,9 @@ class RouteController extends AdminbaseController{
 	/**
 	 *  启用
 	 */
-	function open(){
+	public function open(){
 		$id = I("get.id",0,"intval");
+		$data=array();
 		$data['status']=1;
 		$data['id']=$id;
 		if ($this->route_model->save($data)!==false) {
@@ -99,8 +102,9 @@ class RouteController extends AdminbaseController{
 		}
 	}
 	
-	
-	//排序
+	/**
+	 * 排序
+	 */
 	public function listorders() {
 		$status = parent::_listorders($this->route_model);
 		if ($status) {
@@ -109,9 +113,6 @@ class RouteController extends AdminbaseController{
 			$this->error("排序更新失败！");
 		}
 	}
-	
-	
-	
 	
 	
 }

@@ -21,15 +21,17 @@ class InitHookBehavior extends Behavior {
         
         $data = S('hooks');
         if(!$data){
-           is_array($plugins = M('Plugins')->where("status=1")->getField("name,hooks"))?null:$plugins = array();
-           foreach ($plugins as $plugin => $hooks) {
-                if($hooks){
-                	$hooks=explode(",", $hooks);
-                	foreach ($hooks as $hook){
-                		Hook::add($hook,$plugin);
-                	}
-                }
-            }
+           $plugins = M('Plugins')->where("status=1")->getField("name,hooks");
+           if(!empty($plugins)){
+               foreach ($plugins as $plugin => $hooks) {
+                   if($hooks){
+                       $hooks=explode(",", $hooks);
+                       foreach ($hooks as $hook){
+                           Hook::add($hook,$plugin);
+                       }
+                   }
+               }
+           }
             S('hooks',Hook::get());
         }else{
            Hook::import($data,false);

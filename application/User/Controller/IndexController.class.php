@@ -49,10 +49,11 @@ class IndexController extends HomebaseController {
     		include UC_CLIENT_ROOT."client.php";
     		echo uc_user_synlogout();
     	}
-		if(isset($_SESSION["user"])){
+    	$session_user=session('user');
+		if(!empty($session_user)){
 		$referer=$_SERVER["HTTP_REFERER"];
 			session("user",null);//只有前台用户退出
-			$_SESSION['login_http_referer']=$referer;
+			session('login_http_referer',$referer);
 			$this->success("退出成功！",__ROOT__."/");
 		}else{
 			redirect(__ROOT__."/");

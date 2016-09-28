@@ -7,15 +7,36 @@ namespace User\Controller;
 use Common\Controller\AdminbaseController;
 class IndexadminController extends AdminbaseController {
     function index(){
+        
+        $where=array();
+        $request=I('request.');
+        
+        if(!empty($request['uid'])){
+            $where['id']=intval($request['uid']);
+        }
+        
+        if(!empty($request['keyword'])){
+            $keyword=$request['keyword'];
+            $keyword_complex=array();
+            $keyword_complex['user_login']  = array('like', "%$keyword%");
+            $keyword_complex['user_nicename']  = array('like',"%$keyword%");
+            $keyword_complex['user_email']  = array('like',"%$keyword%");
+            $keyword_complex['_logic'] = 'or';
+            $where['_complex'] = $keyword_complex;
+        }
+        
     	$users_model=M("Users");
-    	$count=$users_model->where(array("user_type"=>2))->count();
+    	
+    	$count=$users_model->where($where)->count();
     	$page = $this->page($count, 20);
-    	$lists = $users_model
-    	->where(array("user_type"=>2))
+    	
+    	$list = $users_model
+    	->where($where)
     	->order("create_time DESC")
     	->limit($page->firstRow . ',' . $page->listRows)
     	->select();
-    	$this->assign('lists', $lists);
+    	
+    	$this->assign('list', $list);
     	$this->assign("page", $page->show('Admin'));
     	
     	$this->display(":index");

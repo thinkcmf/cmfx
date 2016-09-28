@@ -7,10 +7,13 @@
 // | Author: Dean <zxxjjforever@163.com>
 // +----------------------------------------------------------------------
 namespace Portal\Controller;
+
 use Common\Controller\HomebaseController;
+
 class PageController extends HomebaseController{
+    
 	public function index() {
-		$id=$_GET['id'];
+		$id=I('get.id',0,'intval');
 		$content=sp_sql_page($id);
 		
 		if(empty($content)){
@@ -19,13 +22,12 @@ class PageController extends HomebaseController{
 		    if(sp_template_file_exists(MODULE_NAME."/404")){
 		        $this->display(":404");
 		    }
-		     
 		    return ;
 		}
 		
 		$this->assign($content);
 		$smeta=json_decode($content['smeta'],true);
-		$tplname=isset($smeta['template'])?$smeta['template']:"";
+		$tplname=empty($smeta['template'])?"":$smeta['template'];
 		
 		$tplname=sp_get_apphome_tpl($tplname, "page");
 		
@@ -34,13 +36,23 @@ class PageController extends HomebaseController{
 	
 	public function nav_index(){
 		$navcatname="页面";
-		$datas=sp_sql_pages("field:id,post_title;");
+		
+		$where=array();
+		$where['post_status'] = array('eq',1);
+		$where['post_type'] = array('eq',2);
+		
+		$posts_model= M("Posts");
+		
+		$datas=$posts_model->where($where)->select();
 		$navrule=array(
-				"action"=>"Page/index",
+		        'id'=>'id',
+				"action"=>"Portal/Page/index",
 				"param"=>array(
 						"id"=>"id"
 				),
-				"label"=>"post_title");
-		exit( sp_get_nav4admin($navcatname,$datas,$navrule) );
+				"label"=>"post_title",
+		        'parentid'=>0
+		);
+		return sp_get_nav4admin($navcatname,$datas,$navrule);
 	}
 }

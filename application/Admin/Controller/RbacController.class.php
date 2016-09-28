@@ -1,24 +1,25 @@
 <?php
-
 /* * 
  * 系统权限配置，用户角色管理
  */
 namespace Admin\Controller;
+
 use Common\Controller\AdminbaseController;
+
 class RbacController extends AdminbaseController {
 
     protected $role_model, $auth_access_model;
 
-    function _initialize() {
+    public function _initialize() {
         parent::_initialize();
         $this->role_model = D("Common/Role");
     }
 
     /**
-     * 角色管理，有add添加，edit编辑，delete删除
+     * 角色管理列表
      */
     public function index() {
-        $data = $this->role_model->order(array("listorder" => "asc", "id" => "desc"))->select();
+        $data = $this->role_model->order(array("listorder" => "ASC", "id" => "DESC"))->select();
         $this->assign("roles", $data);
         $this->display();
     }
@@ -35,7 +36,7 @@ class RbacController extends AdminbaseController {
      */
     public function roleadd_post() {
     	if (IS_POST) {
-    		if ($this->role_model->create()) {
+    		if ($this->role_model->create()!==false) {
     			if ($this->role_model->add()!==false) {
     				$this->success("添加角色成功",U("rbac/index"));
     			} else {
@@ -51,13 +52,13 @@ class RbacController extends AdminbaseController {
      * 删除角色
      */
     public function roledelete() {
-        $id = intval(I("get.id"));
+        $id = I("get.id",0,'intval');
         if ($id == 1) {
             $this->error("超级管理员角色不能被删除！");
         }
         $role_user_model=M("RoleUser");
-        $count=$role_user_model->where("role_id=$id")->count();
-        if($count){
+        $count=$role_user_model->where(array('role_id'=>$id))->count();
+        if($count>0){
         	$this->error("该角色已经有用户！");
         }else{
         	$status = $this->role_model->delete($id);
@@ -74,10 +75,7 @@ class RbacController extends AdminbaseController {
      * 编辑角色
      */
     public function roleedit() {
-        $id = intval(I("get.id"));
-        if ($id == 0) {
-            $id = intval(I("post.id"));
-        }
+        $id = I("get.id",0,'intval');
         if ($id == 1) {
             $this->error("超级管理员角色不能被修改！");
         }
@@ -93,17 +91,13 @@ class RbacController extends AdminbaseController {
      * 编辑角色
      */
     public function roleedit_post() {
-    	$id = intval(I("get.id"));
-    	if ($id == 0) {
-    		$id = intval(I("post.id"));
-    	}
+    	$id = I("request.id",0,'intval');
     	if ($id == 1) {
     		$this->error("超级管理员角色不能被修改！");
     	}
     	if (IS_POST) {
-    		$data = $this->role_model->create();
-    		if ($data) {
-    			if ($this->role_model->save($data)!==false) {
+    		if ($this->role_model->create()!==false) {
+    			if ($this->role_model->save()!==false) {
     				$this->success("修改成功！", U('Rbac/index'));
     			} else {
     				$this->error("修改失败！");
@@ -120,8 +114,8 @@ class RbacController extends AdminbaseController {
     public function authorize() {
         $this->auth_access_model = D("Common/AuthAccess");
        //角色ID
-        $roleid = intval(I("get.id"));
-        if (!$roleid) {
+        $roleid = I("get.id",0,'intval');
+        if (empty($roleid)) {
         	$this->error("参数错误！");
         }
         import("Tree");
@@ -157,7 +151,7 @@ class RbacController extends AdminbaseController {
     public function authorize_post() {
     	$this->auth_access_model = D("Common/AuthAccess");
     	if (IS_POST) {
-    		$roleid = intval(I("post.roleid"));
+    		$roleid = I("post.roleid",0,'intval');
     		if(!$roleid){
     			$this->error("需要授权的角色不存在！");
     		}
@@ -185,6 +179,7 @@ class RbacController extends AdminbaseController {
     		}
     	}
     }
+    
     /**
      *  检查指定菜单是否有权限
      * @param array $menu menu表中数组
@@ -224,7 +219,6 @@ class RbacController extends AdminbaseController {
         	}
         		
     }
-    
     
     public function member(){
     	//TODO 添加角色成员管理

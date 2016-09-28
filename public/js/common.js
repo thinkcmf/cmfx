@@ -9,7 +9,7 @@
         }
     });
 
-    if ($.browser.msie) {
+    if ($.browser && $.browser.msie) {
         //ie 都不缓存
         $.ajaxSetup({
             cache: false
@@ -61,21 +61,13 @@
     // 所有的ajax form提交,由于大多业务逻辑都是一样的，故统一处理
     var ajaxForm_list = $('form.js-ajax-form');
     if (ajaxForm_list.length) {
-        Wind.use('ajaxForm', 'artDialog', function () {
-            if ($.browser.msie) {
-                //ie8及以下，表单中只有一个可见的input:text时，会整个页面会跳转提交
-                ajaxForm_list.on('submit', function (e) {
-                    //表单中只有一个可见的input:text时，enter提交无效
-                    e.preventDefault();
-                });
-            }
+        Wind.use('ajaxForm', 'artDialog','validate', function () {
+            
+            var $btn;
 
             $('button.js-ajax-submit').on('click', function (e) {
-                e.preventDefault();
-                /*var btn = $(this).find('button.js-ajax-submit'),
-					form = $(this);*/
-                var btn = $(this),
-                    form = btn.parents('form.js-ajax-form');
+                var btn = $(this),form = btn.parents('form.js-ajax-form');
+                $btn=btn;
                 
                 if(btn.data("loading")){
             		return;
@@ -113,7 +105,7 @@
                 }
 
                 //ie处理placeholder提交问题
-                if ($.browser.msie) {
+                if ($.browser && $.browser.msie) {
                     form.find('[placeholder]').each(function () {
                         var input = $(this);
                         if (input.val() == input.attr('placeholder')) {
@@ -121,62 +113,107 @@
                         }
                     });
                 }
-                
-                form.ajaxSubmit({
-                    url: btn.data('action') ? btn.data('action') : form.attr('action'), //按钮上是否自定义提交地址(多按钮情况)
-                    dataType: 'json',
-                    beforeSubmit: function (arr, $form, options) {
-                    	
-                    	btn.data("loading",true);
-                        var text = btn.text();
+            });
+            
+            ajaxForm_list.each(function(){
+            	$(this).validate({
+                	//是否在获取焦点时验证
+    				//onfocusout : false,
+    				//是否在敲击键盘时验证
+    				onkeyup : function( element, event ) {
+    					return;
 
-                        //按钮文案、状态修改
-                        btn.text(text + '中...').prop('disabled', true).addClass('disabled');
-                    },
-                    success: function (data, statusText, xhr, $form) {
-                        var text = btn.text();
+    					// Avoid revalidate the field when pressing one of the following keys
+    					// Shift       => 16
+    					// Ctrl        => 17
+    					// Alt         => 18
+    					// Caps lock   => 20
+    					// End         => 35
+    					// Home        => 36
+    					// Left arrow  => 37
+    					// Up arrow    => 38
+    					// Right arrow => 39
+    					// Down arrow  => 40
+    					// Insert      => 45
+    					// Num lock    => 144
+    					// AltGr key   => 225
+    					var excludedKeys = [
+    						16, 17, 18, 20, 35, 36, 37,
+    						38, 39, 40, 45, 144, 225
+    					];
 
-                        //按钮文案、状态修改
-                        btn.removeClass('disabled').text(text.replace('中...', '')).parent().find('span').remove();
-                        if (data.state === 'success') {
-                            $('<span class="tips_success">' + data.info + '</span>').appendTo(btn.parent()).fadeIn('slow').delay(1000).fadeOut(function () {
-                            });
-                        } else if (data.state === 'fail') {
-                        	var $verify_img=form.find(".verify_img");
-                        	if($verify_img.length){
-                        		$verify_img.attr("src",$verify_img.attr("src")+"&refresh="+Math.random()); 
-                        	}
-                        	
-                        	var $verify_input=form.find("[name='verify']");
-                        	$verify_input.val("");
-                        	
-                            $('<span class="tips_error">' + data.info + '</span>').appendTo(btn.parent()).fadeIn('fast');
-                            btn.removeProp('disabled').removeClass('disabled');
-                        }
-                        
-                        if (data.referer) {
-                            //返回带跳转地址
-                            if(window.parent.art){
-                                //iframe弹出页
-                                window.parent.location.href = data.referer;
-                            }else{
-                                window.location.href = data.referer;
-                            }
-                        } else {
-                        	if (data.state === 'success') {
-                        		if(window.parent.art){
-                                    reloadPage(window.parent);
-                                }else{
-                                    //刷新当前页
-                                    reloadPage(window);
+    					if ( event.which === 9 && this.elementValue( element ) === "" || $.inArray( event.keyCode, excludedKeys ) !== -1 ) {
+    						return;
+    					} else if ( element.name in this.submitted || element.name in this.invalid ) {
+    						this.element( element );
+    					}
+    				},
+    				//当鼠标掉级时验证
+    				onclick : false,
+    				//给未通过验证的元素加效果,闪烁等
+    				//highlight : false,
+                	showErrors:function(errorMap, errorArr){
+                		try {
+    						$(errorArr[0].element).focus();
+    						//alert(errorArr[0].message);
+    					} catch (err) {
+    					}
+                	},
+                	submitHandler:function(form){
+                		var $form=$(form);
+                		$form.ajaxSubmit({
+                            url: $btn.data('action') ? $btn.data('action') : $form.attr('action'), //按钮上是否自定义提交地址(多按钮情况)
+                            dataType: 'json',
+                            beforeSubmit: function (arr, $form, options) {
+                            	
+                            	$btn.data("loading",true);
+                                var text = $btn.text();
+
+                                //按钮文案、状态修改
+                                $btn.text(text + '中...').prop('disabled', true).addClass('disabled');
+                            },
+                            success: function (data, statusText, xhr, $form) {
+                                var text = $btn.text();
+
+                                //按钮文案、状态修改
+                                $btn.removeClass('disabled').prop('disabled', false).text(text.replace('中...', '')).parent().find('span').remove();
+                                if (data.state === 'success') {
+                                    $('<span class="tips_success">' + data.info + '</span>').appendTo($btn.parent()).fadeIn('slow').delay(1000).fadeOut(function () {
+                                    });
+                                } else if (data.state === 'fail') {
+                                	var $verify_img=$form.find(".verify_img");
+                                	if($verify_img.length){
+                                		$verify_img.attr("src",$verify_img.attr("src")+"&refresh="+Math.random()); 
+                                	}
+                                	
+                                	var $verify_input=$form.find("[name='verify']");
+                                	$verify_input.val("");
+                                	
+                                    $('<span class="tips_error">' + data.info + '</span>').appendTo($btn.parent()).fadeIn('fast');
+                                    $btn.removeProp('disabled').removeClass('disabled');
                                 }
-                        	}
-                        }
-                        
-                    },
-                    complete: function(){
-                    	btn.data("loading",false);
-                    }
+                                
+                                if (data.referer) {
+                                    //返回带跳转地址
+                                	window.location.href = data.referer;
+                                } else {
+                                	if (data.state === 'success') {
+                                		//刷新当前页
+                                        reloadPage(window);
+                                	}
+                                }
+                                
+                            },
+                            error:function(xhr,e,statusText){
+                            	alert(statusText);
+                            	//刷新当前页
+                                reloadPage(window);
+                            },
+                            complete: function(){
+                            	$btn.data("loading",false);
+                            }
+                        });
+                	}
                 });
             });
 
@@ -184,7 +221,7 @@
     }
 
     //dialog弹窗内的关闭方法
-    $('#js-dialog_close').on('click', function (e) {
+    $('#js-dialog-close').on('click', function (e) {
         e.preventDefault();
         try{
             art.dialog.close();
@@ -202,12 +239,13 @@
                 e.preventDefault();
                 var $_this = this,
                     $this = $($_this),
-                    href = $this.prop('href'),
+                    href = $this.data('href'),
                     msg = $this.data('msg');
+                href = href?href:$this.attr('href');
                 art.dialog({
                     title: false,
                     icon: 'question',
-                    content: '确定要删除吗？',
+                    content:msg?msg: '确定要删除吗？',
                     follow: $_this,
                     close: function () {
                         $_this.focus();; //关闭时让触发弹窗的元素获取焦点
@@ -252,8 +290,9 @@
                 e.preventDefault();
                 var $_this = this,
                     $this = $($_this),
-                    href = $this.prop('href'),
+                    href = $this.data('href'),
                     msg = $this.data('msg');
+                href = href?href:$this.attr('href');
                 if(!msg){
                 	msg="您确定要进行此操作吗？";
                 }
@@ -273,18 +312,26 @@
                                 if (data.referer) {
                                     location.href = data.referer;
                                 } else {
-                                    reloadPage(window);
+                                	art.dialog({   
+    									content: data.info,
+    									icon: 'succeed',
+    									ok: function () {   
+    										reloadPage(window);
+    										return true;
+    									},
+    									
+    								}); 
                                 }
                             } else if (data.state === 'fail') {
                                 //art.dialog.alert(data.info);
-				art.dialog({   
-					content: data.info,
-					icon: 'warning',
-					ok: function () {   
-						this.title(data.info);   
-						return true;   
-					}
-				}); 
+								art.dialog({   
+									content: data.info,
+									icon: 'warning',
+									ok: function () {   
+										this.title(data.info);   
+										return true;   
+									}
+								}); 
                             }
                         });
                     },
@@ -382,6 +429,18 @@
         });
     }
 
+    var yearInput = $("input.js-year");
+    if (yearInput.length) {
+        Wind.use('datePicker', function () {
+            yearInput.datePicker({
+                startView: 'decade',
+                minView: 'decade',
+                format: 'yyyy',
+                autoclose: true
+            });
+        });
+    }
+
     //tab
     var tabs_nav = $('ul.js-tabs-nav');
     if (tabs_nav.length) {
@@ -450,7 +509,8 @@ function open_iframe_dialog(url, title, options) {
 		title : title,
 		lock : true,
 		opacity : 0,
-		width : "95%"
+		width : "95%",
+		height:'90%'
 	};
 	params = options ? $.extend(params, options) : params;
 	Wind.use('artDialog', 'iframeTools', function() {
@@ -492,5 +552,142 @@ function open_map_dialog(url, title, options, callback) {
 	Wind.use('artDialog', 'iframeTools', function() {
 		art.dialog.open(url, params);
 	});
+}
+
+/**
+ * 打开文件上传对话框
+ * @param dialog_title 对话框标题
+ * @param callback 回调方法，参数有（当前dialog对象，选择的文件数组，你设置的extra_params）
+ * @param extra_params 额外参数，object
+ * @param multi 是否可以多选
+ * @param filetype 文件类型，image,video,audio,file
+ * @param app  应用名，对于 CMF 的应用名
+ */
+function open_upload_dialog(dialog_title,callback,extra_params,multi,filetype,app){
+	multi = multi?1:0;
+	filetype = filetype?filetype:'image';
+	app = app?app:GV.APP;
+    var params = '&multi='+multi+'&filetype='+filetype+'&app='+app ;
+    Wind.use("artDialog","iframeTools",function(){
+        art.dialog.open(GV.ROOT+'index.php?g=asset&m=asset&a=plupload'  + params, {
+	        title: dialog_title,
+	        id: new Date().getTime(),
+	        width: '650px',
+	        height: '420px',
+	        lock: true,
+	        fixed: true,
+	        background:"#CCCCCC",
+	        opacity:0,
+	        ok: function() {
+	            if (typeof callback =='function') {
+	            	var iframewindow = this.iframe.contentWindow;
+	            	var files=iframewindow.get_selected_files();
+	            	if(files){
+	            		callback.apply(this, [this, files,extra_params]);
+	            	}else{
+	            		return false;
+	            	}
+	            	
+	            }
+	        },
+	        cancel: true
+	    });
+    });
+}
+
+function upload_one(dialog_title,input_selector,filetype,extra_params,app){
+	open_upload_dialog(dialog_title,function(dialog,files){
+		$(input_selector).val(files[0].filepath);
+	},extra_params,0,filetype,app);
+}
+
+function upload_one_image(dialog_title,input_selector,extra_params,app){
+	open_upload_dialog(dialog_title,function(dialog,files){
+		$(input_selector).val(files[0].filepath);
+		$(input_selector+'-preview').attr('src',files[0].preview_url);
+		$(input_selector+'-name').val(files[0].name);
+	},extra_params,0,'image',app);
+}
+
+/**
+ * 多图上传
+ * @param dialog_title 上传对话框标题
+ * @param container_selector 图片容器
+ * @param item_tpl_wrapper_id 单个图片html模板容器id
+ */
+function upload_multi_image(dialog_title,container_selector,item_tpl_wrapper_id,extra_params,app){
+	open_upload_dialog(dialog_title,function(dialog,files){
+		var tpl=$('#'+item_tpl_wrapper_id).html();
+		var html='';
+		$.each(files,function(i,item){
+			var itemtpl= tpl;
+			itemtpl=itemtpl.replace(/\{id\}/g,item.id);
+			itemtpl=itemtpl.replace(/\{url\}/g,item.url);
+			itemtpl=itemtpl.replace(/\{preview_url\}/g,item.preview_url);
+			itemtpl=itemtpl.replace(/\{filepath\}/g,item.filepath);
+			itemtpl=itemtpl.replace(/\{name\}/g,item.name);
+			html+=itemtpl;
+		});
+		$(container_selector).append(html);
+		
+	},extra_params,1,'image',app);
+}
+
+/**
+ * 查看图片对话框
+ * @param img 图片地址
+ */
+function image_preview_dialog(img) {
+    Wind.use("artDialog",function(){
+        art.dialog({
+            title: '图片查看',
+            fixed: true,
+            width:"420px",
+            height: '420px',
+            id:"image_preview_"+img,
+            lock: true,
+            background:"#CCCCCC",
+            opacity:0,
+            content: '<img src="' + img + '" />'
+        });
+    });
+}
+
+function artdialog_alert(msg){
+	Wind.use("artDialog", function() {
+		art.dialog({
+			id : new Date().getTime(),
+			icon : "error",
+			fixed : true,
+			lock : true,
+			background : "#CCCCCC",
+			opacity : 0,
+			content : msg,
+			ok : function() {
+				return true;
+			}
+		});
+	});
 	
+}
+
+function open_iframe_layer(url,title,options){
+
+    var params = {
+        type: 2,
+        title: title,
+        shadeClose: true,
+        skin: 'layui-layer-nobg',
+        shade: [0.5, '#000000'],
+        area: ['90%', '90%'],
+        content:url
+    };
+    params = options ? $.extend(params, options) : params;
+
+    Wind.css('layer');
+
+    Wind.use("layer", function() {
+        layer.open(params);
+    });
+
 }

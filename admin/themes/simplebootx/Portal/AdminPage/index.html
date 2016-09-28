@@ -8,9 +8,9 @@
 		</ul>
 		<form class="well form-search" method="post" action="{:U('AdminPage/index')}">
 			{:L('POST_DATE')}
-			<input type="text" name="start_time" class="js-date" value="{$formget.start_time}" style="width: 80px;" autocomplete="off">-
-			<input autocomplete="off" type="text" class="js-date" name="end_time" value="{$formget.end_time}" style="width: 80px;"> {:L('KEYWORD')}
-			<input type="text" name="keyword" style="width: 200px;" value="{$formget.keyword}" placeholder="{:L('PLEASE_ENTER_KEYWORD')}">
+			<input type="text" name="start_time" class="js-datetime" value="{$formget.start_time|default=''}" style="width: 120px;" autocomplete="off">-
+			<input autocomplete="off" type="text" class="js-datetime" name="end_time" value="{$formget.end_time|default=''}" style="width: 120px;"> {:L('KEYWORD')}
+			<input type="text" name="keyword" style="width: 200px;" value="{$formget.keyword|default=''}" placeholder="{:L('PLEASE_ENTER_KEYWORD')}">
 			<button class="btn btn-primary">{:L('SEARCH')}</button>
 		</form>
 		<form class="js-ajax-form" method="post">
@@ -58,7 +58,7 @@
 			<div class="table-actions">
 				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('AdminPage/delete')}" data-subcheck="true" data-msg="你确定删除吗？">{:L('DELETE')}</button>
 			</div>
-			<div class="pagination">{$Page}</div>
+			<div class="pagination">{$page}</div>
 		</form>
 	</div>
 	<script src="__PUBLIC__/js/common.js"></script>

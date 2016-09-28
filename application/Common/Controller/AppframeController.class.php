@@ -8,8 +8,6 @@ class AppframeController extends Controller {
         $this->assign("waitSecond", 3);
        	$time=time();
         $this->assign("js_debug",APP_DEBUG?"?v=$time":"");
-        if(APP_DEBUG){
-        }
     }
 
     /**
@@ -21,8 +19,8 @@ class AppframeController extends Controller {
      */
     protected function ajaxReturn($data, $type = '',$json_option=0) {
         
-        $data['referer']=$data['url'] ? $data['url'] : "";
-        $data['state']=$data['status'] ? "success" : "fail";
+        $data['referer'] = $data['url'] ? $data['url'] : "";
+        $data['state']   = !empty($data['status']) ? "success" : "fail";
         
         if(empty($type)) $type  =   C('DEFAULT_AJAX_RETURN');
         switch (strtoupper($type)){
@@ -55,17 +53,24 @@ class AppframeController extends Controller {
     }
     
     //分页
-    protected function page($Total_Size = 1, $Page_Size = 0, $Current_Page = 1, $listRows = 6, $PageParam = '', $PageLink = '', $Static = FALSE) {
-    	import('Page');
-    	if ($Page_Size == 0) {
-    		$Page_Size = C("PAGE_LISTROWS");
+    protected function page($totalSize = 1, $pageSize = 0, $currentPage = 1, $listRows = 6, $pageParam = '', $pageLink = '', $static = FALSE) {
+    	if ($pageSize == 0) {
+    		$pageSize = C("PAGE_LISTROWS");
     	}
-    	if (empty($PageParam)) {
-    		$PageParam = C("VAR_PAGE");
+    	if (empty($pageParam)) {
+    		$pageParam = C("VAR_PAGE");
     	}
-    	$Page = new \Page($Total_Size, $Page_Size, $Current_Page, $listRows, $PageParam, $PageLink, $Static);
-    	$Page->SetPager('default', '{first}{prev}{liststart}{list}{listend}{next}{last}', array("listlong" => "9", "first" => "首页", "last" => "尾页", "prev" => "上一页", "next" => "下一页", "list" => "*", "disabledclass" => ""));
-    	return $Page;
+    	
+    	$page = new \Page($totalSize, $pageSize, $currentPage, $listRows, $pageParam, $pageLink, $static);
+    	
+    	$page->setLinkWraper("li");
+    	if(sp_is_mobile()){
+    	    $page->SetPager('default', '{prev}&nbsp;{list}&nbsp;{next}', array("listlong" => "4", "prev" => "上一页", "next" => "下一页", "list" => "*", "disabledclass" => ""));
+    	}else{
+    	    $page->SetPager('default', '{first}{prev}&nbsp;{liststart}{list}{listend}&nbsp;{next}{last}', array("listlong" => "4", "first" => "首页", "last" => "尾页", "prev" => "上一页", "next" => "下一页", "list" => "*", "disabledclass" => ""));
+    	}
+	    
+    	return $page;
     }
 
     //空操作
@@ -82,17 +87,29 @@ class AppframeController extends Controller {
     	$action=MODULE_NAME."-".CONTROLLER_NAME."-".ACTION_NAME;
     	$time=time();
     	
-    	if(!empty($_SESSION['last_action']['action']) && $action==$_SESSION['last_action']['action']){
-    		$mduration=$time-$_SESSION['last_action']['time'];
+    	$session_last_action=session('last_action');
+    	if(!empty($session_last_action['action']) && $action==$session_last_action['action']){
+    		$mduration=$time-$session_last_action['time'];
     		if($duration>$mduration){
     			$this->error("您的操作太过频繁，请稍后再试~~~");
     		}else{
-    			$_SESSION['last_action']['time']=$time;
+    			session('last_action.time',$time);
     		}
     	}else{
-    		$_SESSION['last_action']['action']=$action;
-    		$_SESSION['last_action']['time']=$time;
+    		session('last_action.action',$action);
+    		session('last_action.time',$time);
     	}
+    }
+    
+    /**
+     * 模板主题设置
+     * @access protected
+     * @param string $theme 模版主题
+     * @return Action
+     */
+    public function theme($theme){
+        $this->theme=$theme;
+        return $this;
     }
 
 }

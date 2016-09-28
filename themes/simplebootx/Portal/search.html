@@ -12,43 +12,43 @@
 	<div class="row">
 		<div class="span9">
 			<div class="main-title">
-						<php>
-							$result=sp_sql_posts_paged_bykeyword($keyword,"",20);
-						</php>
-						<h3>'{$keyword}' 搜索结果 </h3>
-						<p>{$result['count']}条结果</p>
-					</div>
-					
-					<volist name="result['posts']" id="vo">
-					<php>
-						$smeta=json_decode($vo['smeta'], true);
-					</php>
-					
-					<div class="list-boxes">
-						<h2><a href="{:leuu('article/index',array('id'=>$vo['tid']))}">{$vo.post_title}</a></h2>
-						<p>{$vo.post_excerpt}</p>
-						<div>
-							<div class="pull-left">
-								<div class="list-actions">
-								<a href="javascript:;"><i class="fa fa-eye"></i><span>{$vo.post_hits}</span></a>
-								<a href="{:U('article/do_like',array('id'=>$vo['object_id']))}" class="js-count-btn"><i class="fa fa-thumbs-up"></i><span class="count">{$vo.post_like}</span></a>
-								<a href="{:U('user/favorite/do_favorite',array('id'=>$vo['object_id']))}" class="js-favorite-btn" data-title="{$vo.post_title}" data-url="{:U('portal/article/index',array('id'=>$vo['tid']))}" data-key="{:sp_get_favorite_key('posts',$vo['object_id'])}">
-									<i class="fa fa-star-o"></i>
-								</a>
-								</div>
-							</div>
-							<a class="btn btn-warning pull-right" href="{:leuu('article/index',array('id'=>$vo['tid']))}">查看更多</a>
+				<php>
+					$result=sp_sql_posts_paged_bykeyword($keyword,"",20);
+				</php>
+				<h3>'{$keyword}' 搜索结果 </h3>
+				<p>{$result['count']}条结果</p>
+			</div>
+			
+			<volist name="result['posts']" id="vo">
+			<php>
+				$smeta=json_decode($vo['smeta'], true);
+			</php>
+			
+			<div class="list-boxes">
+				<h2><a href="{:leuu('article/index',array('id'=>$vo['object_id'],'cid'=>$vo['term_id']))}">{$vo.post_title}</a></h2>
+				<p>{$vo.post_excerpt}</p>
+				<div>
+					<div class="pull-left">
+						<div class="list-actions">
+						<a href="javascript:;"><i class="fa fa-eye"></i><span>{$vo.post_hits}</span></a>
+						<a href="{:U('article/do_like',array('id'=>$vo['object_id']))}" class="js-count-btn"><i class="fa fa-thumbs-up"></i><span class="count">{$vo.post_like}</span></a>
+						<a href="{:U('user/favorite/do_favorite',array('id'=>$vo['object_id']))}" class="js-favorite-btn" data-title="{$vo.post_title}" data-url="{:U('portal/article/index',array('id'=>$vo['object_id'],'cid'=>$vo['term_id']))}" data-key="{:sp_get_favorite_key('posts',$vo['object_id'])}">
+							<i class="fa fa-star-o"></i>
+						</a>
 						</div>
 					</div>
-					</volist>
-				
-					<div class="pagination">
-							<ul>
-								{$result['page']}
-							</ul>
-					</div>
-
+					<a class="btn btn-warning pull-right" href="{:leuu('article/index',array('id'=>$vo['object_id'],'cid'=>$vo['term_id']))}">查看更多</a>
 				</div>
+			</div>
+			</volist>
+		
+			<div class="pagination">
+					<ul>
+						{$result['page']}
+					</ul>
+			</div>
+
+		</div>
 		<div class="span3">
 			<div class="tc-box first-box">
 				<div class="headtitle">
@@ -64,12 +64,12 @@
 	        	</div>
 	        	<div class="ranking">
 	        		<php>
-						$hot_articles=sp_sql_posts("cid:$portal_index_lastnews;field:post_title,post_excerpt,tid,smeta;order:post_hits desc;limit:5;"); 
+						$hot_articles=sp_sql_posts("cid:$portal_index_lastnews;field:post_title,post_excerpt,object_id,term_id,smeta;order:post_hits desc;limit:5;"); 
 					</php>
 		        	<ul class="unstyled">
 		        		<foreach name="hot_articles" item="vo">
 		        			<php>$top=$key<3?"top3":"";</php>
-							<li class="{$top}"><i>{$key+1}</i><a title="{$vo.post_title}" href="{:leuu('article/index',array('id'=>$vo['tid']))}">{$vo.post_title}</a></li>
+							<li class="{$top}"><i>{$key+1}</i><a title="{$vo.post_title}" href="{:leuu('article/index',array('id'=>$vo['object_id'],'cid'=>$vo['term_id']))}">{$vo.post_title}</a></li>
 						</foreach>
 					</ul>
 				</div>

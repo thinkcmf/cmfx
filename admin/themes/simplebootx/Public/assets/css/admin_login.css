@@ -32,8 +32,12 @@ h1 a {
 	width: 250px;
 	margin:auto;
 	overflow: hidden;
-	text-indent: -2000em;
-	background: url(../images/logo.png) no-repeat center center;
+	color:#fff;
+	font-size: 45px;
+    font-weight: normal;
+    text-align: center;
+    text-decoration: none;
+    line-height: 50px;
 }
 
 .login ul,

@@ -29,6 +29,16 @@
 					</div>
 				</div>
 				<div class="control-group">
+					<label class="control-label">连接方式</label>
+					<div class="controls">
+						<select name="smtpsecure" id="js-smtpsecure">
+							<option value="">默认</option>
+							<option value="ssl">ssl</option>
+							<option value="tls">tls</option>
+						</select>
+					</div>
+				</div>
+				<div class="control-group">
 					<label class="control-label">SMTP服务器端口</label>
 					<div class="controls">
 						<input type="text" name="smtp_port" value="{$Think.config.SP_MAIL_SMTP_PORT}" placeholder="默认为25"/>
@@ -51,10 +61,16 @@
 				</div>
 				<div class="form-actions">
 					<button type="submit" class="btn btn-primary js-ajax-submit">{:L('SAVE')}</button>
+					<a class="btn btn-warning" href="javascript:parent.open_iframe_dialog('{:U('mailer/test')}','发送测试邮件',{})">测试邮件</a>
 				</div>
 			</fieldset>
 		</form>
 	</div>
 	<script src="__PUBLIC__/js/common.js"></script>
+	<script>
+		$(function(){
+			$('#js-smtpsecure').val('{$Think.config.SP_MAIL_SECURE}');
+		});
+	</script>
 </body>
 </html>

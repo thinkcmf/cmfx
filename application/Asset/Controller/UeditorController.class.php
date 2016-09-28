@@ -1,8 +1,9 @@
 <?php
 namespace Asset\Controller;
+
 use Think\Controller;
+
 class UeditorController extends Controller {
-	
 	
 	private $stateMap = array( //上传状态映射表，国际化用户需考虑此处数据的国际化
         "SUCCESS", //上传成功标记，在UEditor中内不可改变，否则flash判断会出错
@@ -26,56 +27,12 @@ class UeditorController extends Controller {
         "ERROR_HTTP_CONTENTTYPE" => "链接contentType不正确"
     );
 	
-	function _initialize() {
+	public function _initialize() {
 		$adminid=sp_get_current_admin_id();
 		$userid=sp_get_current_userid();
 		if(empty($adminid) && empty($userid)){
 			exit("非法上传！");
 		}
-	}
-	
-	/**
-	 * ueditor 1.3.6 upload img
-	 */
-	public function uploadimg(){
-		
-		
-		
-		//上传处理类
-		$config=array(
-				'rootPath' => './'. C("UPLOADPATH"),
-				'savePath' => "ueditor/",
-				'maxSize' => 11048576,
-				'saveName'   =>    array('uniqid',''),
-				'exts'       =>    array('jpg', 'gif', 'png', 'jpeg'),
-				'autoSub'    =>    false,
-		);
-		$upload = new \Think\Upload($config);// 
-		
-		$file = $title = $oriName = $state ='0';
-
-		$info=$upload->upload();
-		
-		//开始上传
-		if ($info) {
-			
-			
-			//上传成功
-			$title = $oriName = $info['upfile']['name'];
-			
-			$state = 'SUCCESS';
-			$file = C("TMPL_PARSE_STRING.__UPLOAD__")."ueditor/".$info['upfile']['savename'];
-			if(strpos($file, "https")===0 || strpos($file, "http")===0){
-				
-			}else{//local
-				$host=(is_ssl() ? 'https' : 'http')."://".$_SERVER['HTTP_HOST'];
-				$file=$host.$file;
-			}
-		} else {
-			$state = $upload->getError();
-		}
-		$response= "{'url':'" .$file . "','title':'" . $title . "','original':'" . $oriName . "','state':'" . $state . "'}";
-		exit($response);
 	}
 	
 	public function imageManager(){
@@ -93,149 +50,29 @@ class UeditorController extends Controller {
 		}
 	}
 	
-	//imageManager()用的到
-	private function getfiles(){
-		if (!is_dir($path)) return;
-		
-		$handle = opendir($path);
-		while (false !== ($file = readdir($handle))) {
-			if ($file != '.' && $file != '..') {
-				$path2 = $path . '/' . $file;
-				if (is_dir($path2)) {
-					getfiles($path2, $files);
-				} else {
-					if (preg_match("/\.(gif|jpeg|jpg|png|bmp)$/i", $file)) {
-						$files[] = $path2;
-					}
-				}
-			}
-		}return $files;
-	}
-	
-	/**
-	 * ueditor 1.3.6 get remote image
-	 */
-	public function get_remote_image(){
-		$uri = htmlspecialchars( $_POST[ 'upfile' ] );
-		$uri = str_replace( "&amp;" , "&" , $uri );
-		//远程抓取图片配置
-		$config = array(
-				"savePath" => './'. C("UPLOADPATH")."ueditor/",            //保存路径
-				"allowFiles" => array( ".gif" , ".png" , ".jpg" , ".jpeg" , ".bmp" ) , //文件允许格式
-				"maxSize" => 3000                    //文件大小限制，单位KB
-		);
-		//忽略抓取时间限制
-		set_time_limit( 0 );
-		//ue_separate_ue  ue用于传递数据分割符号
-		$imgUrls = explode( "ue_separate_ue" , $uri );
-		$tmpNames = array();
-		foreach ( $imgUrls as $imgUrl ) {
-			//http开头验证
-			if(strpos($imgUrl,"http")!==0){
-				array_push( $tmpNames , "error" );
-				continue;
-			}
-			//获取请求头
-			if(!sp_is_sae()){//SAE下无效
-				$heads = get_headers( $imgUrl );
-				//死链检测
-				if ( !( stristr( $heads[ 0 ] , "200" ) && stristr( $heads[ 0 ] , "OK" ) ) ) {
-					array_push( $tmpNames , "error" );
-					continue;
-				}
-			}
-			
-		
-			//格式验证(扩展名验证和Content-Type验证)
-			$fileType = strtolower( strrchr( $imgUrl , '.' ) );
-			if ( !in_array( $fileType , $config[ 'allowFiles' ] ) || stristr( $heads[ 'Content-Type' ] , "image" ) ) {
-				array_push( $tmpNames , "error" );
-				continue;
-			}
-		
-			//打开输出缓冲区并获取远程图片
-			ob_start();
-			$context = stream_context_create(
-					array (
-							'http' => array (
-									'follow_location' => false // don't follow redirects
-							)
-					)
-			);
-			//请确保php.ini中的fopen wrappers已经激活
-			readfile( $imgUrl,false,$context);
-			$img = ob_get_contents();
-			ob_end_clean();
-		
-			//大小验证
-			$uriSize = strlen( $img ); //得到图片大小
-			$allowSize = 1024 * $config[ 'maxSize' ];
-			if ( $uriSize > $allowSize ) {
-				array_push( $tmpNames , "error" );
-				continue;
-			}
-			//创建保存位置
-			$savePath = $config[ 'savePath' ];
-			if ( !file_exists( $savePath ) ) {
-				mkdir( "$savePath" , 0777 );
-			}
-			$file=date("Ymdhis").uniqid() . strrchr( $imgUrl , '.' );
-			//写入文件
-			$tmpName = $savePath .$file ;
-			$file = C("TMPL_PARSE_STRING.__UPLOAD__")."ueditor/".$file;
-			if(strpos($file, "https")===0 || strpos($file, "http")===0){
-			
-			}else{//local
-				$host=(is_ssl() ? 'https' : 'http')."://".$_SERVER['HTTP_HOST'];
-				$file=$host.$file;
-			}
-			if(sp_file_write($tmpName,$img)){
-				array_push( $tmpNames ,  $file );
-			}else{
-				array_push( $tmpNames , "error" );
-			}
-		}
-		/**
-		 * 返回数据格式
-		 * {
-		 *   'url'   : '新地址一ue_separate_ue新地址二ue_separate_ue新地址三',
-		 *   'srcUrl': '原始地址一ue_separate_ue原始地址二ue_separate_ue原始地址三'，
-		 *   'tip'   : '状态提示'
-		 * }
-		 */
-		$response= "{'url':'" . implode( "ue_separate_ue" , $tmpNames ) . "','tip':'远程图片抓取成功！','srcUrl':'" . $uri . "'}";
-		exit($response);
-	}
-	
-	
-	
-	
 	function upload(){
-		date_default_timezone_set("Asia/chongqing");
 		error_reporting(E_ERROR);
 		header("Content-Type: text/html; charset=utf-8");
 		
-		$CONFIG = json_decode(preg_replace("/\/\*[\s\S]+?\*\//", "", file_get_contents("./public/js/ueditor/config.json")), true);
 		$action = $_GET['action'];
 		
 		switch ($action) {
 			case 'config':
-				$result =  json_encode($CONFIG);
+				$result = $this->_ueditor_config();
 				break;
-		
 				/* 上传图片 */
 			case 'uploadimage':
 				/* 上传涂鸦 */
 			case 'uploadscrawl':
-				$result = $this->_ueditor_upload();
+				$result = $this->_ueditor_upload('image');
 				break;
 				/* 上传视频 */
 			case 'uploadvideo':
-				$result = $this->_ueditor_upload(array('maxSize' => 1073741824,/*1G*/'exts'  =>    array('mp4', 'avi', 'wmv','rm','rmvb','mkv')));
+				$result = $this->_ueditor_upload('video');
 				break;
 				/* 上传文件 */
 			case 'uploadfile':
-				$result = $this->_ueditor_upload(array('exts'  =>    array('jpg', 'gif', 'png', 'jpeg','txt','pdf','doc','docx','xls','xlsx','zip','rar','ppt','pptx',)));
+				$result = $this->_ueditor_upload('file');
 				break;
 		
 				/* 列出图片 */
@@ -271,8 +108,6 @@ class UeditorController extends Controller {
 		}
 	}
 	
-	
-	
 	private function _get_remote_image(){
 		$source=array();
 		if (isset($_POST['source'])) {
@@ -297,8 +132,18 @@ class UeditorController extends Controller {
 				"maxSize" => 3000                    //文件大小限制，单位KB
 		);
 		
+		$storage_setting=sp_get_cmf_settings('storage');
+		$qiniu_domain=$storage_setting['Qiniu']['domain'];
+		$no_need_domains=array($qiniu_domain);
+		
 		$list = array();
 		foreach ( $source as $imgUrl ) {
+		    $host=str_replace(array('http://','https://'), '', $imgUrl);
+		    $host=explode('/', $host);
+		    $host=$host[0];
+		    if(in_array($host, $no_need_domains)){
+		        continue;
+		    }
 			$return_img=$item;
 			$return_img['source']=$imgUrl;
 			$imgUrl = htmlspecialchars($imgUrl);
@@ -309,8 +154,9 @@ class UeditorController extends Controller {
 				array_push( $list , $return_img );
 				continue;
 			}
+			
 			//获取请求头
-			if(sp_is_sae()){//SAE下无效
+			if(!sp_is_sae()){//SAE下无效
 				$heads = get_headers( $imgUrl );
 				//死链检测
 				if ( !( stristr( $heads[ 0 ] , "200" ) && stristr( $heads[ 0 ] , "OK" ) ) ) {
@@ -319,7 +165,6 @@ class UeditorController extends Controller {
 					continue;
 				}
 			}
-				
 	
 			//格式验证(扩展名验证和Content-Type验证)
 			$fileType = strtolower( strrchr( $imgUrl , '.' ) );
@@ -352,31 +197,47 @@ class UeditorController extends Controller {
 				continue;
 			}
 
-			//创建保存位置
-			$savePath = $config[ 'savePath' ];
-			if ( !file_exists( $savePath ) ) {
-				mkdir( "$savePath" , 0777 );
-			}
 			$file=uniqid() . strrchr( $imgUrl , '.' );
-			//写入文件
+			$savePath = $config[ 'savePath' ];
 			$tmpName = $savePath .$file ;
-			$file = C("TMPL_PARSE_STRING.__UPLOAD__")."ueditor/$date/".$file;
-			if(strpos($file, "https")===0 || strpos($file, "http")===0){
-					
-			}else{//local
-				$host=(is_ssl() ? 'https' : 'http')."://".$_SERVER['HTTP_HOST'];
-				$file=$host.$file;
-			}
-
-			if(sp_file_write($tmpName,$img)){
-				$return_img['state']='SUCCESS';
-				$return_img['url']=$file;
-				array_push( $list ,  $return_img );
-			}else{
-				$return_img['state']=$this->stateMap['ERROR_WRITE_CONTENT'];
-				array_push( $list , $return_img );
+			
+			//创建保存位置
+			if ( !file_exists( $savePath ) ) {
+			    mkdir( "$savePath" , 0777 ,true);
 			}
 			
+			$file_write_result=sp_file_write($tmpName,$img);
+			
+			if($file_write_result){
+			    if(C('FILE_UPLOAD_TYPE')=='Qiniu'){
+			        $upload = new \Think\Upload();
+			        $savename="ueditor/$date/".$file;
+			        $uploader_file=array('savepath'=>'','savename'=>$savename,'tmp_name'=>$tmpName);
+			        $result=$upload->getUploader()->save($uploader_file);
+			        if($result){
+			            unlink($tmpName);
+			            $return_img['state']='SUCCESS';
+			            $return_img['url']=sp_get_image_preview_url($savename);
+			            array_push( $list ,  $return_img );
+			        }else{
+			            $return_img['state']=$this->stateMap['ERROR_WRITE_CONTENT'];
+			            array_push( $list , $return_img );
+			        }
+			         
+			    }
+			    	
+			    if(C('FILE_UPLOAD_TYPE')=='Local'){
+			         
+			        $file = C("TMPL_PARSE_STRING.__UPLOAD__")."ueditor/$date/".$file;
+			        
+			        $return_img['state']='SUCCESS';
+		            $return_img['url']=$file;
+		            array_push( $list ,  $return_img );
+			    }
+			}else{
+	            $return_img['state']=$this->stateMap['ERROR_WRITE_CONTENT'];
+	            array_push( $list , $return_img );
+	        }
 		}
 		
 		return json_encode(array(
@@ -385,24 +246,52 @@ class UeditorController extends Controller {
 		));
 	}
 	
-	private function _ueditor_upload($config=array()){
-		
+	private function _ueditor_config(){
+	    $config_text=preg_replace("/\/\*[\s\S]+?\*\//", "", file_get_contents("./public/js/ueditor/config.json"));
+	    $config = json_decode($config_text, true);
+	    $upload_setting=sp_get_upload_setting();
+	    
+	    $config['imageMaxSize']=$upload_setting['image']['upload_max_filesize']*1024;
+	    $config['imageAllowFiles']=array_map(array($this,'_ueditor_extension'), explode(",", $upload_setting['image']['extensions']));
+	    $config['scrawlMaxSize']=$upload_setting['image']['upload_max_filesize']*1024;
+	    
+	    $config['catcherMaxSize']=$upload_setting['image']['upload_max_filesize']*1024;
+	    $config['catcherAllowFiles']=array_map(array($this,'_ueditor_extension'), explode(",", $upload_setting['image']['extensions']));
+	    
+	    $config['videoMaxSize']=$upload_setting['video']['upload_max_filesize']*1024;
+	    $config['videoAllowFiles']=array_map(array($this,'_ueditor_extension'), explode(",", $upload_setting['video']['extensions']));
+	    
+	    $config['fileMaxSize']=$upload_setting['file']['upload_max_filesize']*1024;
+	    $config['fileAllowFiles']=array_map(array($this,'_ueditor_extension'), explode(",", $upload_setting['file']['extensions']));
+	    
+	    return json_encode($config);
+	}
+	
+	public function _ueditor_extension($str){
+	    
+	   return ".".trim($str,'.');
+	}
+	
+	private function _ueditor_upload($filetype='image'){
+	    $upload_setting=sp_get_upload_setting();
+	    
+	    $file_extension=sp_get_file_extension($_FILES['upfile']['name']);
+	    $upload_max_filesize=$upload_setting['upload_max_filesize'][$file_extension];
+	    $upload_max_filesize=empty($upload_max_filesize)?2097152:$upload_max_filesize;//默认2M
+	    
+	    $allowed_exts=explode(',', $upload_setting[$filetype]);
+	    
 		$date=date("Ymd");
 		//上传处理类
-		$mconfig=array(
+		$config=array(
 				'rootPath' => './'. C("UPLOADPATH"),
 				'savePath' => "ueditor/$date/",
-				'maxSize' => 10485760,//10M
+				'maxSize' => $upload_max_filesize,//10M
 				'saveName'   =>    array('uniqid',''),
-				'exts'       =>    array('jpg', 'gif', 'png', 'jpeg'),
+				'exts'       =>    $allowed_exts,
 				'autoSub'    =>    false,
 		);
 		
-		if(is_array($config)){
-			$config=array_merge($mconfig,$config);
-		}else{
-			$config=$mconfig;
-		}
 		$upload = new \Think\Upload($config);//
 		
 		$file = $title = $oriName = $state ='0';
@@ -412,21 +301,24 @@ class UeditorController extends Controller {
 		if ($info) {
 			//上传成功
 			$title = $oriName = $_FILES['upfile']['name'];
-			$size=$info['upfile']['size'];
+			$first=array_shift($info);
+			$size=$first['size'];
 		
 			$state = 'SUCCESS';
 			
-			if(!empty($info['upfile']['url'])){
-				$url=$info['upfile']['url'];
-			}else{
-				$url = C("TMPL_PARSE_STRING.__UPLOAD__")."ueditor/$date/".$info['upfile']['savename'];
-			}
-			if(strpos($url, "https")===0 || strpos($url, "http")===0){
-		
-			}else{//local
-				$host=(is_ssl() ? 'https' : 'http')."://".$_SERVER['HTTP_HOST'];
-				$url=$host.$url;
-			}
+			
+    	    if(!empty($first['url'])){
+    	        if($filetype=='image'){
+    	            $url=sp_get_image_preview_url($first['savepath'].$first['savename']);
+    	        }else{
+    	            $url=sp_get_file_download_url($first['savepath'].$first['savename'],3600*24*365*50);//过期时间设置为50年
+    	        }
+    	        
+    	    }else{
+    	        $url = C("TMPL_PARSE_STRING.__UPLOAD__").$first['savepath'].$first['savename'];
+    	    }
+			
+			
 		} else {
 			$state = $upload->getError();
 		}

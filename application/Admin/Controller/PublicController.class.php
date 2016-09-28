@@ -12,14 +12,15 @@ namespace Admin\Controller;
 use Common\Controller\AdminbaseController;
 class PublicController extends AdminbaseController {
 
-    function _initialize() {
+    public function _initialize() {
         C(S('sp_dynamic_config'));//加载动态配置
     }
     
     //后台登陆界面
     public function login() {
-    	if(isset($_SESSION['ADMIN_ID'])){//已经登录
-    		$this->success(L('LOGIN_SUCCESS'),U("Index/index"));
+        $admin_id=session('ADMIN_ID');
+    	if(!empty($admin_id)){//已经登录
+    		redirect(U("admin/index/index"));
     	}else{
     	    $site_admin_url_password =C("SP_SITE_ADMIN_URL_PASSWORD");
     	    $upw=session("__SP_UPW__");
@@ -79,12 +80,12 @@ class PublicController extends AdminbaseController {
     					$this->error(L('USE_DISABLED'));
     				}
     				//登入成功页面跳转
-    				$_SESSION["ADMIN_ID"]=$result["id"];
-    				$_SESSION['name']=$result["user_login"];
+    				session('ADMIN_ID',$result["id"]);
+    				session('name',$result["user_login"]);
     				$result['last_login_ip']=get_client_ip(0,true);
     				$result['last_login_time']=date("Y-m-d H:i:s");
     				$user->save($result);
-    				setcookie("admin_username",$name,time()+30*24*3600,"/");
+    				cookie("admin_username",$name,3600*24*30);
     				$this->success(L('LOGIN_SUCCESS'),U("Index/index"));
     			}else{
     				$this->error(L('PASSWORD_NOT_RIGHT'));

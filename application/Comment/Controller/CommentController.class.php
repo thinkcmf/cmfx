@@ -1,38 +1,39 @@
 <?php
 namespace Comment\Controller;
+
 use Common\Controller\MemberbaseController;
+
 class CommentController extends MemberbaseController{
 	
 	protected $comments_model;
 	
-	function _initialize() {
+	public function _initialize() {
 		parent::_initialize();
 		$this->comments_model=D("Common/Comments");
 	}
 	
-	function index(){
+	public function index(){
 		$uid=sp_get_current_userid();
 		$where=array("uid"=>$uid);
 		
 		$count=$this->comments_model->where($where)->count();
 		
 		$page=$this->page($count,20);
-		$page->setLinkWraper("li");
 		
 		$comments=$this->comments_model->where($where)
 		->order("createtime desc")
 		->limit($page->firstRow . ',' . $page->listRows)
 		->select();
 		
-		$this->assign("pager",$page->show("default"));
+		$this->assign("page",$page->show("default"));
 		$this->assign("comments",$comments);
 		$this->display(":index");
 	}
 	
-	function post(){
+	public function post(){
 		if (IS_POST){
 			
-			$post_table=sp_authcode($_POST['post_table']);
+			$post_table=sp_authcode(I('post.post_table'));
 			
 			$_POST['post_table']=$post_table;
 			
@@ -42,8 +43,9 @@ class CommentController extends MemberbaseController{
 
 			$_POST['url']=sp_get_relative_url($url);
 			
-			if(isset($_SESSION["user"])){//用户已登陆,且是本站会员
-				$uid=$_SESSION["user"]['id'];
+			$session_user=session('user');
+			if(!empty($session_user)){//用户已登陆,且是本站会员
+				$uid=session('user.id');
 				$_POST['uid']=$uid;
 				$users_model=M('Users');
 				$user=$users_model->field("user_login,user_email,user_nicename")->where("id=$uid")->find();
@@ -59,12 +61,12 @@ class CommentController extends MemberbaseController{
 			}else{
 				$_POST['status']=1;
 			}
-			
-			if ($this->comments_model->create()){
+			$data=$this->comments_model->create();
+			if ($data!==false){
 				$this->check_last_action(intval(C("COMMENT_TIME_INTERVAL")));
 				$result=$this->comments_model->add();
 				if ($result!==false){
-					
+				    hook("after_comment",array_merge($data,$_POST));
 					//评论计数
 					$post_table=ucwords(str_replace("_", " ", $post_table));
 					$post_table=str_replace(" ","",$post_table);

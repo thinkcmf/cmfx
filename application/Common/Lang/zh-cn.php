@@ -38,7 +38,10 @@ return array (
 	'SETTING' => '设置',
     "ADD_SUCCESS" => '添加成功！',
     "ADD_FAILED" => '添加失败！',
-    "NO_DATA" => '没有数据'
+    "EDIT_SUCCESS" => '保存成功！',
+    "EDIT_FAILED" => '保存失败！',
+    "NO_DATA" => '没有数据',
+    "MOBILE" => '手机'
     
 		
 );

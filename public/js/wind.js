@@ -677,7 +677,7 @@ Wind.ready(function() {
 *wind core
 */
 (function(win) {
-	var root = win.GV.DIMAUB+win.GV.JS_ROOT || location.origin + '/public/js/', //在wind.js加载之前定义GV.JS_ROOT
+	var root = win.GV.WEB_ROOT+win.GV.JS_ROOT || location.origin + '/public/js/', //在wind.js加载之前定义GV.JS_ROOT
 		ver = '',
 		//定义常用JS组件别名，使用别名加载
 		alias = {
@@ -694,18 +694,20 @@ Wind.ready(function() {
 			treeview          : 'treeview',
             treeTable         : 'treeTable/treeTable',
             draggable         : 'draggable',
-            validate          : 'validate',
+            validate          : 'jquery.validate/jquery.validate',
+            'validate-extends': 'jquery.validate/additional-methods',
             artDialog         : 'artDialog/artDialog',
             iframeTools       : 'artDialog/iframeTools',
             xd                : 'xd',//Iframe跨域通信
-            
+
             noty			  : 'noty/noty',
             jcrop             : 'jcrop/js/jcrop',
             ajaxfileupload    : 'ajaxfileupload',
 
-
-			//native js util plugs
-			swfupload         : 'swfupload/swfupload'
+            layer             : 'layer/layer',
+			plupload          : 'plupload/plupload.full.min',
+			
+			echarts           : 'echarts/echarts.min'
 		},
         //CSS路径
 		alias_css = {
@@ -713,7 +715,9 @@ Wind.ready(function() {
             artDialog   : 'artDialog/skins/default',
 			datePicker	: 'datePicker/style',
             treeTable   : 'treeTable/treeTable',
-            jcrop       : 'jcrop/css/jquery.Jcrop.min'
+            jcrop       : 'jcrop/css/jquery.Jcrop.min',
+
+            layer       : 'layer/skin/layer',
 		};
 
 	//add suffix and version
@@ -746,6 +750,26 @@ Wind.ready(function() {
         }
         document.getElementsByTagName('head')[0].appendChild(link);
 	};
+	
+	/**
+	 * 更新或者添加js别名,在 Wind.use()调用名使用
+	 * @param newalias ,要设置的别名对象
+	 */
+	Wind.alias = function (newalias){
+		for(var i in newalias) {
+			alias[i] =newalias[i];
+		}
+	}
+	
+	/**
+	 * 更新或者添加css别名,在 Wind.css()调用名使用
+	 * @param newalias ,要设置的别名对象
+	 */
+	Wind.aliasCss = function (newalias){
+		for(var i in newalias) {
+			alias_css[i] =newalias[i];
+		}
+	}
 
 	//Using the alias to load the script file
 	Wind.use = function() {

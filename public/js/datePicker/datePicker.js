@@ -247,11 +247,6 @@
 
 			$("body").append(root);
 
-			if($.browser.msie && $.browser.version < 7 ) {
-	            Wind.use('bgiframe',function() {
-	                root.bgiframe();
-	            });
-	        }
 		}
 
 		// trigger icon
@@ -270,13 +265,14 @@
 		//{{{ pick
 
 		function select(date, options, e) {
+			if(!date) return;
 			// current value
 			value = date;
 			currYear = date.getFullYear();
 			currMonth = date.getMonth();
 			currDay = date.getDate();
 
-			if (e.type == "click" && !$.browser.msie) {
+			if (e.type == "click" && $.browser && !$.browser.msie) {
 				input.focus();
 			}
 

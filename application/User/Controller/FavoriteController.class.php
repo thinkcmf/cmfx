@@ -12,7 +12,7 @@ class FavoriteController extends MemberbaseController{
 	}
 	
 	function do_favorite(){
-		$key=sp_authcode($_POST['key']);
+		$key=sp_authcode(I('post.key'));
 		if($key){
 			$authkey=C("AUTHCODE");
 			$key=explode(" ", $key);
@@ -46,7 +46,7 @@ class FavoriteController extends MemberbaseController{
 		}else{
 			$this->error("非法操作，无密钥！");
 		}
-		$this->error(sp_authcode($_POST['key']));
+		
 	}
 	
 	function delete_favorite(){

@@ -32,7 +32,7 @@
 						<foreach name="roles" item="vo">
 						<label class="checkbox inline">
 							<php>$role_id_checked=in_array($vo['id'],$role_ids)?"checked":"";</php>
-							<input value="{$vo.id}" type="checkbox" name="role_id[]" {$role_id_checked}>{$vo.name}
+							<input value="{$vo.id}" type="checkbox" name="role_id[]" {$role_id_checked} <if condition="sp_get_current_admin_id() neq 1 && $vo['id'] eq 1">disabled="true"</if>>{$vo.name}
 						</label>
 						</foreach>
 					</div>
@@ -41,7 +41,7 @@
 			<div class="form-actions">
 				<input type="hidden" name="id" value="{$id}" />
 				<button type="submit" class="btn btn-primary js-ajax-submit">{:L('SAVE')}</button>
-				<a class="btn" href="{:U('user/index')}">{:L('BACK')}</a>
+				<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
 			</div>
 		</form>
 	</div>

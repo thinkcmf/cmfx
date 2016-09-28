@@ -7,6 +7,11 @@ use Common\Controller\HomebaseController;
 class LoginController extends HomebaseController {
 	
 	function index(){
+	    $redirect=I('get.redirect','');
+	    if(!empty($redirect)){
+	        $redirect=base64_decode($redirect);
+	        $redirect ? session('login_http_referer',$redirect):'';
+	    }
 	    if(sp_is_user_login()){ //已经登录时直接跳到首页
 	        redirect(__ROOT__."/");
 	    }else{
@@ -68,6 +73,50 @@ class LoginController extends HomebaseController {
 		}
 	}
 	
+	function do_mobile_forgot_password(){
+	    if(IS_POST){
+	    
+    	    if(!sp_check_verify_code()){
+    	        $this->error("验证码错误！");
+    	    }
+    	     
+            $rules = array(
+                //array(验证字段,验证规则,错误提示,验证条件,附加规则,验证时间)
+                array('mobile', 'require', '手机号不能为空！', 1 ),
+                array('password','require','密码不能为空！',1),
+                array('password','5,20',"密码长度至少5位，最多20位！",1,'length',3),
+            );
+            	
+    	    $users_model=M("Users");
+    	     
+    	    if($users_model->validate($rules)->create()===false){
+    	        $this->error($users_model->getError());
+    	    }
+    	    
+    	    if(!sp_check_mobile_verify_code()){
+    	        $this->error("手机验证码错误！");
+            }
+    	     
+    	    $password=I('post.password');
+    	    $mobile=I('post.mobile');
+    	     
+    	    $where['mobile']=$mobile;
+    	     
+    	    $users_model=M("Users");
+    	    $result = $users_model->where($where)->count();
+    	    if($result){
+    	       $result=$users_model->where($where)->save(array('user_pass' => sp_password($password)));
+    	       if($result!==false){
+    	           $this->success("密码重置成功！");
+    	       }else{
+    	           $this->error("密码重置失败！");
+    	       }
+    	    }else{
+    	        $this->error('该手机号未注册！');
+    	    }
+    	}
+	}
+	
 	protected  function _send_to_resetpass($user){
 		$options=get_site_options();
 		//邮件标题
@@ -120,6 +169,7 @@ hello;
 				$rules = array(
 						//array(验证字段,验证规则,错误提示,验证条件,附加规则,验证时间)
 						array('password', 'require', '密码不能为空！', 1 ),
+						array('password','5,20',"密码长度至少5位，最多20位！",1,'length',3),
 						array('repassword', 'require', '重复密码不能为空！', 1 ),
 						array('repassword','password','确认密码不正确',0,'confirm'),
 						array('hash', 'require', '重复密码激活码不能空！', 1 ),
@@ -161,7 +211,7 @@ hello;
     		$this->error($users_model->getError());
     	}
     	
-    	$username=$_POST['username'];
+    	$username=I('post.username');
     	
     	if(preg_match('/^\d+$/', $username)){//手机号登录
     	    $this->_do_mobile_login();
@@ -175,21 +225,22 @@ hello;
 	
     private function _do_mobile_login(){
         $users_model=M('Users');
-        $where['mobile']=$_POST['username'];
-        $password=$_POST['password'];
+        $where['mobile']=I('post.username');
+        $password=I('post.password');
         $result = $users_model->where($where)->find();
         
         if(!empty($result)){
             if(sp_compare_password($password, $result['user_pass'])){
-                $_SESSION["user"]=$result;
+                session('user',$result);
                 //写入此次登录信息
                 $data = array(
                     'last_login_time' => date("Y-m-d H:i:s"),
                     'last_login_ip' => get_client_ip(0,true),
                 );
                 $users_model->where(array('id'=>$result["id"]))->save($data);
-                $redirect=empty($_SESSION['login_http_referer'])?__ROOT__."/":$_SESSION['login_http_referer'];
-                $_SESSION['login_http_referer']="";
+                $session_login_http_referer=session('login_http_referer');
+                $redirect=empty($session_login_http_referer)?__ROOT__."/":$session_login_http_referer;
+                session('login_http_referer','');
         
                 $this->success("登录验证成功！", $redirect);
             }else{
@@ -202,8 +253,8 @@ hello;
     
     private function _do_email_login(){
 
-        $username=$_POST['username'];
-        $password=$_POST['password'];
+        $username=I('post.username');
+        $password=I('post.password');
         
         if(strpos($username,"@")>0){//邮箱登陆
             $where['user_email']=$username;
@@ -218,7 +269,7 @@ hello;
          
         $ucenter_login_ok=false;
         if($ucenter_syn){
-            setcookie("thinkcmf_auth","");
+            cookie("thinkcmf_auth","");
             include UC_CLIENT_ROOT."client.php";
             list($uc_uid, $username, $password, $email)=uc_user_login($username, $password);
              
@@ -293,15 +344,16 @@ hello;
         //exit();
         if(!empty($result)){
             if(sp_compare_password($password, $result['user_pass'])|| $ucenter_login_ok){
-                $_SESSION["user"]=$result;
+                session('user',$result);
                 //写入此次登录信息
                 $data = array(
                     'last_login_time' => date("Y-m-d H:i:s"),
                     'last_login_ip' => get_client_ip(0,true),
                 );
                 $users_model->where("id=".$result["id"])->save($data);
-                $redirect=empty($_SESSION['login_http_referer'])?__ROOT__."/":$_SESSION['login_http_referer'];
-                $_SESSION['login_http_referer']="";
+                $session_login_http_referer=session('login_http_referer');
+                $redirect=empty($session_login_http_referer)?__ROOT__."/":$session_login_http_referer;
+                session('login_http_referer','');
                 $ucenter_old_user_login_msg="";
         
                 if($ucenter_old_user_login){

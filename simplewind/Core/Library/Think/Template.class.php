@@ -147,8 +147,8 @@ class  Template {
         if(empty($content)) return '';
         $begin      =   $this->config['taglib_begin'];
         $end        =   $this->config['taglib_end'];
-        // 检查tc_extend语法
-        $content    =   $this->parseTcExtend($content);//ThinkCMF NOTE
+        // 检查extend语法
+        $content    =   $this->parseExtend($content);//ThinkCMF NOTE
         // 检查include语法
         $content    =   $this->parseInclude($content);
         // 检查PHP语法
@@ -266,29 +266,6 @@ class  Template {
         return $content;
     }
     
-    // 解析模板中的tc_extend标签 ThinkCMF NOTE
-    protected function parseTcExtend($content) {
-        $begin      =   $this->config['taglib_begin'];
-        $end        =   $this->config['taglib_end'];
-        // 读取模板中的继承标签
-        $find       =   preg_match('/'.$begin.'tc_extend\s(.+?)\s*?\/'.$end.'/is',$content,$matches);
-        if($find) {
-            //替换extend标签
-            $content    =   str_replace($matches[0],'',$content);
-            // 记录页面中的block标签
-            preg_replace_callback('/'.$begin.'block\sname=[\'"](.+?)[\'"]\s*?'.$end.'(.*?)'.$begin.'\/block'.$end.'/is', array($this, 'parseBlock'),$content);
-            // 读取继承模板
-            $array      =   $this->parseXmlAttrs($matches[1]);
-            $content    =   $this->parseTcTemplateName($array['name']);
-            //$content    =   $this->parseTcInclude($content, false); // TODO 暂不支持继承模板中的tc_include
-            // 替换block标签
-            $content = $this->replaceBlock($content);
-        }else{
-            $content    =   preg_replace_callback('/'.$begin.'block\sname=[\'"](.+?)[\'"]\s*?'.$end.'(.*?)'.$begin.'\/block'.$end.'/is', function($match){return stripslashes($match[2]);}, $content);
-        }
-        return $content;
-    }
-
     /**
      * 分析XML属性
      * @access private

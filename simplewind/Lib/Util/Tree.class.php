@@ -17,7 +17,7 @@ class Tree {
      */
     public $icon = array('│', '├', '└');
     public $nbsp = "&nbsp;";
-
+    private $str ='';
     /**
      * @access private
      */
@@ -288,8 +288,7 @@ class Tree {
      */
     
     function get_treeview_menu($myid,$effected_id='example', $str="<span class='file'>\$name</span>", $str2="<span class='folder'>\$name</span>", $showlevel = 0,  $ul_class="" ,$li_class="" , $style='filetree ', $currentlevel = 1, $recursion=FALSE, $dropdown='hasChild') {
-    	
-    	$child = $this->get_child($myid);
+        $child = $this->get_child($myid);
     	if (!defined('EFFECTED_INIT')) {
     		$effected = ' id="' . $effected_id . '"';
     		define('EFFECTED_INIT', 1);
@@ -300,9 +299,9 @@ class Tree {
     	if (!$recursion){
     		$this->str .='<ul' . $effected . '  class="' . $style . '">';
     	}
-    		
+
     	foreach ($child as $id => $a) {
-    		
+
     		@extract($a);
     		if ($showlevel > 0 && is_array($this->get_child($a['id']))){
     			$floder_status = " class='$dropdown $li_class'";

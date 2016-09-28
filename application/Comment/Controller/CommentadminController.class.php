@@ -1,16 +1,18 @@
 <?php
 namespace Comment\Controller;
+
 use Common\Controller\AdminbaseController;
+
 class CommentadminController extends AdminbaseController{
 	
 	protected $comments_model;
 	
-	function _initialize(){
+	public function _initialize(){
 		parent::_initialize();
 		$this->comments_model=D("Common/Comments");
 	}
 
-	function index($table=""){
+	public function index($table=""){
 		$where=array();
 		if(!empty($table)){
 			$where['post_table']=$table;
@@ -28,11 +30,11 @@ class CommentadminController extends AdminbaseController{
 		->order("createtime DESC")
 		->select();
 		$this->assign("comments",$comments);
-		$this->assign("Page", $page->show('Admin'));
+		$this->assign("page", $page->show('Admin'));
 		$this->display(":index");
 	}
 	
-	function delete(){
+	public function delete(){
 		if(isset($_GET['id'])){
 			$id = intval(I("get.id"));
 			if ($this->comments_model->where("id=$id")->delete()!==false) {
@@ -51,7 +53,7 @@ class CommentadminController extends AdminbaseController{
 		}
 	}
 	
-	function check(){
+	public function check(){
 		if(isset($_POST['ids']) && $_GET["check"]){
 			$data["status"]=1;
 				

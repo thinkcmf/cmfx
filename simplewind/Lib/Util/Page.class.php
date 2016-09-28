@@ -65,7 +65,6 @@
   “jumpaction” - 跳转时要执行的javascript代码，用*代表页码，可用于Ajax分页
   “jumplong” - 当跳转方式为下拉菜单时最多同时显示的页码数量，0为全部显示，默认为50
  */
-
 class Page {
 
     private $Page_size; //每页显示的条目数
@@ -77,6 +76,13 @@ class Page {
     private $PageParam;
     private $PageLink;
     private $Static;
+    private $pList;
+    private $pListEnd;
+    private $pListStart;
+    private $pFirst;
+    private $pPrev;
+    private $pLast;
+    private $pNext;
     // 起始行数
     public  $firstRow;
     public  $listRows;
@@ -124,20 +130,25 @@ class Page {
     public function __get($Param) {
         return $this->$Param;
     }
+    
+    public function getTotalPages(){
+        return $this->Total_Pages;
+    }
+    
     public function setLinkWraper($wraper){
-    	if(empty($wraper)){
-    		
-    	}else{
-    	    $this->linkwraper=$wraper;
-    		$this->linkwraper_after="</$wraper>";
-    		$this->linkwraper_pre="<$wraper>";
-    	}
+        if(empty($wraper)){
+
+        }else{
+            $this->linkwraper=$wraper;
+            $this->linkwraper_after="</$wraper>";
+            $this->linkwraper_pre="<$wraper>";
+        }
     }
 
     private function UrlParameters($url = array()) {
-    	unset($url[C('VAR_MODULE')]);
-    	unset($url[C('VAR_CONTROLLER')]);
-    	unset($url[C('VAR_ACTION')]);
+        unset($url[C('VAR_MODULE')]);
+        unset($url[C('VAR_CONTROLLER')]);
+        unset($url[C('VAR_ACTION')]);
         foreach ($url as $key => $val) {
             if ($key != $this->PageParam && $key != "_URL_")
                 $arg [$key] = $val;
@@ -157,14 +168,14 @@ class Page {
                 return str_replace('{page}', '*', $this->PageLink);
             }
         } else {
-        	
-        	if($this->searching){
-        		$url=leuu(MODULE_NAME  . "/" . CONTROLLER_NAME . "/" . ACTION_NAME)."?".http_build_query ($arg);
-        	}else{
-        		$url=leuu(MODULE_NAME  . "/" . CONTROLLER_NAME . "/" . ACTION_NAME,$arg);
-        	}
-        	return str_replace("%2A", "*", $url);
-        	
+
+            if($this->searching){
+                $url=leuu(MODULE_NAME  . "/" . CONTROLLER_NAME . "/" . ACTION_NAME)."?".http_build_query ($arg);
+            }else{
+                $url=leuu(MODULE_NAME  . "/" . CONTROLLER_NAME . "/" . ACTION_NAME,$arg);
+            }
+            return str_replace("%2A", "*", $url);
+
         }
     }
 
@@ -185,15 +196,16 @@ class Page {
     }
 
     public function GetCurrentPage() {
-    	$p=isset($_GET [$this->PageParam])?intval($_GET [$this->PageParam]):1;
-    	$p=$p < 1 ? 1 : $p;
-    	$total_pages=intval($this->Total_Pages);
+        $p=isset($_GET [$this->PageParam])?intval($_GET [$this->PageParam]):1;
+        $p=$p < 1 ? 1 : $p;
+        $total_pages=intval($this->Total_Pages);
         $this->Current_page = ($p <=$total_pages? $p : $total_pages);
     }
 
     public function Pager($Page_tpl = '') {
         if (empty($Page_tpl))
             $Page_tpl = $this->Page_tpl ['default'];
+        $_GET=array_merge($_GET,$_POST);
         $cfg = array('recordcount' => intval($this->Total_Size), 'pageindex' => intval($this->Current_page), 'pagecount' => intval($this->Total_Pages), 'pagesize' => intval($this->Page_size), 'listlong' => intval($this->List_Page), 'listsidelong' => 2, 'list' => '*', 'currentclass' => 'current', 'link' => $this->UrlParameters($_GET), 'first' => '&laquo;', 'prev' => '&#8249;', 'next' => '&#8250;', 'last' => '&raquo;', 'more' => $this->linkwraper_pre.'<span>...</span>'.$this->linkwraper_after, 'disabledclass' => 'disabled', 'jump' => 'input', 'jumpplus' => '', 'jumpaction' => '', 'jumplong' => 50);
         if (!empty($Page_tpl ['Config'])) {
             foreach ($Page_tpl ['Config'] as $key => $val) {
@@ -201,11 +213,11 @@ class Page {
                     $cfg [$key] = $val;
             }
         }
-		//判断listlong是否为偶数
-		if( (int)$cfg ['listlong']%2 != 0  ){
-		   $cfg ['listlong'] = $cfg ['listlong']+1;
-		}
-		
+        //判断listlong是否为偶数
+        if( (int)$cfg ['listlong']%2 != 0  ){
+            $cfg ['listlong'] = $cfg ['listlong']+1;
+        }
+
         $tmpStr = $Page_tpl ['Tpl'];
         $pStart = $cfg ['pageindex'] - (($cfg ['listlong'] / 2) + ($cfg ['listlong'] % 2)) + 1;
         $pEnd = $cfg ['pageindex'] + $cfg ['listlong'] / 2;
@@ -217,60 +229,60 @@ class Page {
             $pStart = $cfg ['pagecount'] - $cfg ['listlong'] + 1;
             $pEnd = $cfg ['pagecount'];
         }
-		
+
         if ($pStart < 1)
             $pStart = 1;
         for ($i = $pStart; $i <= $pEnd; $i++) {
             if ($i == $cfg ['pageindex']) {
                 $wraper= empty($this->linkwraper)?'':'<'.$this->linkwraper.' class="active '.$cfg ['currentclass'].'">';
-                $pList .=$wraper.'<span class="' . $cfg ['currentclass'] . '" >' . str_replace('*', $i, $cfg ['list']) . '</span> '.$this->linkwraper_after;
+                $this->pList .=$wraper.'<span class="' . $cfg ['currentclass'] . '" >' . str_replace('*', $i, $cfg ['list']) . '</span> '.$this->linkwraper_after;
             } else {
                 //此处是为了照顾静态地址生成时，第一页不显示当前分页1，启用该方法，静态地址需要$this->PageLink传入的是array，并且包含两个 index,list。index是首页
                 //事例用法  new Page(50,5,2,6,"page",array("index"=>"http://www.a.com/192.html","list"=>"http://www.a.com/192-{page}.html",),true);
                 if ($this->Static && $i == 1) {
-                    $pList .= $this->linkwraper_pre.'<a href="' . $this->PageLink['index'] . '"> ' . str_replace('*', $i, $cfg ['list']) . '</a> '.$this->linkwraper_after;
+                    $this->pList .= $this->linkwraper_pre.'<a href="' . $this->PageLink['index'] . '"> ' . str_replace('*', $i, $cfg ['list']) . '</a> '.$this->linkwraper_after;
                 } else {
-                    $pList .= $this->linkwraper_pre.'<a href="' . str_replace('*', $i, $cfg ['link']) . '"> ' . str_replace('*', $i, $cfg ['list']) . '</a> '.$this->linkwraper_after;
+                    $this->pList .= $this->linkwraper_pre.'<a href="' . str_replace('*', $i, $cfg ['link']) . '"> ' . str_replace('*', $i, $cfg ['list']) . '</a> '.$this->linkwraper_after;
                 }
             }
         }
         if ($cfg ['listsidelong'] > 0) {
             if ($cfg ['listsidelong'] < $pStart) {
                 for ($i = 1; $i <= $cfg ['listsidelong']; $i++) {
-					if ($this->Static && $i == 1) {
-						$pListStart .= $this->linkwraper_pre.'<a href="' . $this->PageLink['index'] . '">' . str_replace('*', $i, $cfg ['list']) . '</a> '.$this->linkwraper_after;
-                     } else {
-                        $pListStart .= $this->linkwraper_pre.'<a href="' . str_replace('*', $i, $cfg ['link']) . '">' . str_replace('*', $i, $cfg ['list']) . '</a> '.$this->linkwraper_after;
+                    if ($this->Static && $i == 1) {
+                        $this->pListStart .= $this->linkwraper_pre.'<a href="' . $this->PageLink['index'] . '">' . str_replace('*', $i, $cfg ['list']) . '</a> '.$this->linkwraper_after;
+                    } else {
+                        $this->pListStart .= $this->linkwraper_pre.'<a href="' . str_replace('*', $i, $cfg ['link']) . '">' . str_replace('*', $i, $cfg ['list']) . '</a> '.$this->linkwraper_after;
                     }
                 }
-                $pListStart .= ($cfg ['listsidelong'] + 1) == $pStart ? '' : $cfg ['more'] . ' ';
+                $this->pListStart .= ($cfg ['listsidelong'] + 1) == $pStart ? '' : $cfg ['more'] . ' ';
             } else {
                 if ($cfg ['listsidelong'] >= $pStart && $pStart > 1) {
                     for ($i = 1; $i <= ($pStart - 1); $i++) {
                         if ($this->Static && $i == 1) {
-                            $pListStart .= $this->linkwraper_pre.'<a href="' . $this->PageLink['index'] . '"> ' . str_replace('*', $i, $cfg ['list']) . '</a> '.$this->linkwraper_after;
+                            $this->pListStart .= $this->linkwraper_pre.'<a href="' . $this->PageLink['index'] . '"> ' . str_replace('*', $i, $cfg ['list']) . '</a> '.$this->linkwraper_after;
                         } else {
-                            $pListStart .= $this->linkwraper_pre.'<a href="' . str_replace('*', $i, $cfg ['link']) . '"> ' . str_replace('*', $i, $cfg ['list']) . '</a> '.$this->linkwraper_after;
+                            $this->pListStart .= $this->linkwraper_pre.'<a href="' . str_replace('*', $i, $cfg ['link']) . '"> ' . str_replace('*', $i, $cfg ['list']) . '</a> '.$this->linkwraper_after;
                         }
                     }
                 }
             }
             if (($cfg ['pagecount'] - $cfg ['listsidelong']) > $pEnd) {
-                $pListEnd = ' ' . $cfg ['more'] . $pListEnd;
+                $this->pListEnd = ' ' . $cfg ['more'] . $this->pListEnd;
                 for ($i = (($cfg ['pagecount'] - $cfg ['listsidelong']) + 1); $i <= $cfg ['pagecount']; $i++) {
-					if ($this->Static && $i == 1) {
-						$pListEnd .= $this->linkwraper_pre.'<a href="' . $this->PageLink['index'] . '">' . str_replace('*', $i, $cfg ['list']) . '</a> '.$this->linkwraper_after;
-                     } else {
-                        $pListEnd .= $this->linkwraper_pre.'<a href="' . str_replace('*', $i, $cfg ['link']) . '"> ' . str_replace('*', $i, $cfg ['list']) . ' </a> '.$this->linkwraper_after;
+                    if ($this->Static && $i == 1) {
+                        $this->pListEnd .= $this->linkwraper_pre.'<a href="' . $this->PageLink['index'] . '">' . str_replace('*', $i, $cfg ['list']) . '</a> '.$this->linkwraper_after;
+                    } else {
+                        $this->pListEnd .= $this->linkwraper_pre.'<a href="' . str_replace('*', $i, $cfg ['link']) . '"> ' . str_replace('*', $i, $cfg ['list']) . ' </a> '.$this->linkwraper_after;
                     }
                 }
             } else {
                 if (($cfg ['pagecount'] - $cfg ['listsidelong']) <= $pEnd && $pEnd < $cfg ['pagecount']) {
                     for ($i = ($pEnd + 1); $i <= $cfg ['pagecount']; $i++) {
-						if ($this->Static && $i == 1) {
-						    $pListEnd .= '<a href="' . $this->PageLink['index'] . '">' . str_replace('*', $i, $cfg ['list']) . '</a> '.$this->linkwraper_after;
+                        if ($this->Static && $i == 1) {
+                            $this->pListEnd .= '<a href="' . $this->PageLink['index'] . '">' . str_replace('*', $i, $cfg ['list']) . '</a> '.$this->linkwraper_after;
                         } else {
-                            $pListEnd .= $this->linkwraper_pre.'<a href="' . str_replace('*', $i, $cfg ['link']) . '"> ' . str_replace('*', $i, $cfg ['list']) . ' </a> '.$this->linkwraper_after;
+                            $this->pListEnd .= $this->linkwraper_pre.'<a href="' . str_replace('*', $i, $cfg ['link']) . '"> ' . str_replace('*', $i, $cfg ['list']) . ' </a> '.$this->linkwraper_after;
                         }
                     }
                 }
@@ -279,20 +291,20 @@ class Page {
         //上一页 首页
         if ($cfg ['pageindex'] > 1) {
             if ($this->Static) {
-                $pFirst = $this->linkwraper_pre.'<a href="' . $this->PageLink['index'] . '">' . $cfg ['first'] . '</a> '.$this->linkwraper_after; //首页
+                $this->pFirst = $this->linkwraper_pre.'<a href="' . $this->PageLink['index'] . '">' . $cfg ['first'] . '</a> '.$this->linkwraper_after; //首页
             } else {
-                $pFirst = $this->linkwraper_pre.'<a href="' . str_replace('*', 1, $cfg ['link']) . '">' . $cfg ['first'] . '</a> '.$this->linkwraper_after; //首页
+                $this->pFirst = $this->linkwraper_pre.'<a href="' . str_replace('*', 1, $cfg ['link']) . '">' . $cfg ['first'] . '</a> '.$this->linkwraper_after; //首页
             }
             if ($this->Static && ($cfg ['pageindex'] - 1) == 1) {
-                $pPrev = $this->linkwraper_pre.'<a href="' . $this->PageLink['index'] . '">' . $cfg ['prev'] . '</a> '.$this->linkwraper_after; //上一页
+                $this->pPrev = $this->linkwraper_pre.'<a href="' . $this->PageLink['index'] . '">' . $cfg ['prev'] . '</a> '.$this->linkwraper_after; //上一页
             } else {
-                $pPrev = $this->linkwraper_pre.'<a href="' . str_replace('*', $cfg ['pageindex'] - 1, $cfg ['link']) . '">' . $cfg ['prev'] . '</a> '.$this->linkwraper_after;
+                $this->pPrev = $this->linkwraper_pre.'<a href="' . str_replace('*', $cfg ['pageindex'] - 1, $cfg ['link']) . '">' . $cfg ['prev'] . '</a> '.$this->linkwraper_after;
             }
         }
         //下一页，尾页
         if ($cfg ['pageindex'] < $cfg ['pagecount']) {
-            $pLast = $this->linkwraper_pre.'<a href="' . str_replace('*', $cfg ['pagecount'], $cfg ['link']) . '">' . $cfg ['last'] . '</a> '.$this->linkwraper_after;
-            $pNext = $this->linkwraper_pre.'<a href="' . str_replace('*', $cfg ['pageindex'] + 1, $cfg ['link']) . '">' . $cfg ['next'] . '</a> '.$this->linkwraper_after;
+            $this->pLast = $this->linkwraper_pre.'<a href="' . str_replace('*', $cfg ['pagecount'], $cfg ['link']) . '">' . $cfg ['last'] . '</a> '.$this->linkwraper_after;
+            $this->pNext = $this->linkwraper_pre.'<a href="' . str_replace('*', $cfg ['pageindex'] + 1, $cfg ['link']) . '">' . $cfg ['next'] . '</a> '.$this->linkwraper_after;
         }
 
         //快捷跳转方式
@@ -332,7 +344,7 @@ class Page {
                 break;
         }
         $patterns = array('/{recordcount}/', '/{pagecount}/', '/{pageindex}/', '/{pagesize}/', '/{list}/', '/{liststart}/', '/{listend}/', '/{first}/', '/{prev}/', '/{next}/', '/{last}/', '/{jump}/');
-        $replace = array($cfg ['recordcount'], $cfg ['pagecount'], $cfg ['pageindex'], $cfg ['pagesize'], $pList, $pListStart, $pListEnd, $pFirst, $pPrev, $pNext, $pLast, $pJump);
+        $replace = array($cfg ['recordcount'], $cfg ['pagecount'], $cfg ['pageindex'], $cfg ['pagesize'], $this->pList, $this->pListStart, $this->pListEnd, $this->pFirst, $this->pPrev, $this->pNext, $this->pLast, $pJump);
         $tmpStr = chr(13) . chr(10) . preg_replace($patterns, $replace, $tmpStr) . chr(13) . chr(10);
         unset($cfg);
         return $tmpStr;

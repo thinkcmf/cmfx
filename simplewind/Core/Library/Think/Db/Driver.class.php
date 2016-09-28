@@ -42,17 +42,17 @@ abstract class Driver {
         'database'          =>  '',          // 数据库名
         'username'          =>  '',      // 用户名
         'password'          =>  '',          // 密码
-        'hostport'          =>  '',        // 端口     
-        'dsn'               =>  '', //          
-        'params'            =>  array(), // 数据库连接参数        
-        'charset'           =>  'utf8',      // 数据库编码默认采用utf8  
+        'hostport'          =>  '',        // 端口
+        'dsn'               =>  '', //
+        'params'            =>  array(), // 数据库连接参数
+        'charset'           =>  'utf8',      // 数据库编码默认采用utf8
         'prefix'            =>  '',    // 数据库表前缀
         'debug'             =>  false, // 数据库调试模式
         'deploy'            =>  0, // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
         'rw_separate'       =>  false,       // 数据库读写是否分离 主从式有效
         'master_num'        =>  1, // 读写分离后 主服务器数量
         'slave_no'          =>  '', // 指定从服务器序号
-        'db_like_fields'    =>  '', 
+        'db_like_fields'    =>  '',
     );
     // 数据库表达式
     protected $exp = array('eq'=>'=','neq'=>'<>','gt'=>'>','egt'=>'>=','lt'=>'<','elt'=>'<=','notlike'=>'NOT LIKE','like'=>'LIKE','in'=>'IN','notin'=>'NOT IN','not in'=>'NOT IN','between'=>'BETWEEN','not between'=>'NOT BETWEEN','notbetween'=>'NOT BETWEEN');
@@ -96,7 +96,7 @@ abstract class Driver {
                 if(empty($config['dsn'])) {
                     $config['dsn']  =   $this->parseDsn($config);
                 }
-                if(version_compare(PHP_VERSION,'5.3.6','<=')){ 
+                if(version_compare(PHP_VERSION,'5.3.6','<=')){
                     // 禁用模拟预处理语句
                     $this->options[PDO::ATTR_EMULATE_PREPARES]  =   false;
                 }
@@ -407,7 +407,7 @@ abstract class Driver {
     protected function parseKey(&$key) {
         return $key;
     }
-    
+
     /**
      * value分析
      * @access protected
@@ -501,42 +501,44 @@ abstract class Driver {
                 // 默认进行 AND 运算
                 $operate    =   ' AND ';
             }
-            foreach ($where as $key=>$val){
-                if(is_numeric($key)){
-                    $key  = '_complex';
-                }
-                if(0===strpos($key,'_')) {
-                    // 解析特殊条件表达式
-                    $whereStr   .= $this->parseThinkWhere($key,$val);
-                }else{
-                    // 查询字段的安全过滤
-                    // if(!preg_match('/^[A-Z_\|\&\-.a-z0-9\(\)\,]+$/',trim($key))){
-                    //     E(L('_EXPRESS_ERROR_').':'.$key);
-                    // }
-                    // 多条件支持
-                    $multi  = is_array($val) &&  isset($val['_multi']);
-                    $key    = trim($key);
-                    if(strpos($key,'|')) { // 支持 name|title|nickname 方式定义查询字段
-                        $array =  explode('|',$key);
-                        $str   =  array();
-                        foreach ($array as $m=>$k){
-                            $v =  $multi?$val[$m]:$val;
-                            $str[]   = $this->parseWhereItem($this->parseKey($k),$v);
-                        }
-                        $whereStr .= '( '.implode(' OR ',$str).' )';
-                    }elseif(strpos($key,'&')){
-                        $array =  explode('&',$key);
-                        $str   =  array();
-                        foreach ($array as $m=>$k){
-                            $v =  $multi?$val[$m]:$val;
-                            $str[]   = '('.$this->parseWhereItem($this->parseKey($k),$v).')';
-                        }
-                        $whereStr .= '( '.implode(' AND ',$str).' )';
-                    }else{
-                        $whereStr .= $this->parseWhereItem($this->parseKey($key),$val);
+            if(is_array($where) && !empty($where)){
+                foreach ($where as $key=>$val){
+                    if(is_numeric($key)){
+                        $key  = '_complex';
                     }
+                    if(0===strpos($key,'_')) {
+                        // 解析特殊条件表达式
+                        $whereStr   .= $this->parseThinkWhere($key,$val);
+                    }else{
+                        // 查询字段的安全过滤
+                        // if(!preg_match('/^[A-Z_\|\&\-.a-z0-9\(\)\,]+$/',trim($key))){
+                        //     E(L('_EXPRESS_ERROR_').':'.$key);
+                        // }
+                        // 多条件支持
+                        $multi  = is_array($val) &&  isset($val['_multi']);
+                        $key    = trim($key);
+                        if(strpos($key,'|')) { // 支持 name|title|nickname 方式定义查询字段
+                            $array =  explode('|',$key);
+                            $str   =  array();
+                            foreach ($array as $m=>$k){
+                                $v =  $multi?$val[$m]:$val;
+                                $str[]   = $this->parseWhereItem($this->parseKey($k),$v);
+                            }
+                            $whereStr .= '( '.implode(' OR ',$str).' )';
+                        }elseif(strpos($key,'&')){
+                            $array =  explode('&',$key);
+                            $str   =  array();
+                            foreach ($array as $m=>$k){
+                                $v =  $multi?$val[$m]:$val;
+                                $str[]   = '('.$this->parseWhereItem($this->parseKey($k),$v).')';
+                            }
+                            $whereStr .= '( '.implode(' AND ',$str).' )';
+                        }else{
+                            $whereStr .= $this->parseWhereItem($this->parseKey($key),$val);
+                        }
+                    }
+                    $whereStr .= $operate;
                 }
-                $whereStr .= $operate;
             }
             $whereStr = substr($whereStr,0,-strlen($operate));
         }
@@ -548,7 +550,7 @@ abstract class Driver {
         $whereStr = '';
         if(is_array($val)) {
             if(is_string($val[0])) {
-				$exp	=	strtolower($val[0]);
+                $exp	=	strtolower($val[0]);
                 if(preg_match('/^(eq|neq|gt|egt|lt|elt)$/',$exp)) { // 比较运算
                     $whereStr .= $key.' '.$this->exp[$exp].' '.$this->parseValue($val[1]);
                 }elseif(preg_match('/^(notlike|like)$/',$exp)){// 模糊查找
@@ -559,7 +561,7 @@ abstract class Driver {
                             foreach ($val[1] as $item){
                                 $like[] = $key.' '.$this->exp[$exp].' '.$this->parseValue($item);
                             }
-                            $whereStr .= '('.implode(' '.$likeLogic.' ',$like).')';                          
+                            $whereStr .= '('.implode(' '.$likeLogic.' ',$like).')';
                         }
                     }else{
                         $whereStr .= $key.' '.$this->exp[$exp].' '.$this->parseValue($val[1]);
@@ -573,7 +575,7 @@ abstract class Driver {
                         $whereStr .= $key.' '.$this->exp[$exp].' '.$val[1];
                     }else{
                         if(is_string($val[1])) {
-                             $val[1] =  explode(',',$val[1]);
+                            $val[1] =  explode(',',$val[1]);
                         }
                         $zone      =   implode(',',$this->parseValue($val[1]));
                         $whereStr .= $key.' '.$this->exp[$exp].' ('.$zone.')';
@@ -586,7 +588,7 @@ abstract class Driver {
                 }
             }else {
                 $count = count($val);
-                $rule  = isset($val[$count-1]) ? (is_array($val[$count-1]) ? strtoupper($val[$count-1][0]) : strtoupper($val[$count-1]) ) : '' ; 
+                $rule  = isset($val[$count-1]) ? (is_array($val[$count-1]) ? strtoupper($val[$count-1][0]) : strtoupper($val[$count-1]) ) : '' ;
                 if(in_array($rule,array('AND','OR','XOR'))) {
                     $count  = $count -1;
                 }else{
@@ -780,7 +782,7 @@ abstract class Driver {
     /**
      * ON DUPLICATE KEY UPDATE 分析
      * @access protected
-     * @param mixed $duplicate 
+     * @param mixed $duplicate
      * @return string
      */
     protected function parseDuplicate($duplicate){
@@ -927,7 +929,7 @@ abstract class Driver {
         if(!strpos($table,',')){
             // 单表删除支持order和limit
             $sql .= $this->parseOrder(!empty($options['order'])?$options['order']:'')
-            .$this->parseLimit(!empty($options['limit'])?$options['limit']:'');
+                .$this->parseLimit(!empty($options['limit'])?$options['limit']:'');
         }
         $sql .=   $this->parseComment(!empty($options['comment'])?$options['comment']:'');
         return $this->execute($sql,!empty($options['fetch_sql']) ? true : false);
@@ -994,7 +996,7 @@ abstract class Driver {
     }
 
     /**
-     * 获取最近一次查询的sql语句 
+     * 获取最近一次查询的sql语句
      * @param string $model  模型名
      * @access public
      * @return string
@@ -1110,7 +1112,7 @@ abstract class Driver {
             // 读写操作不区分服务器
             $r = floor(mt_rand(0,count($_config['hostname'])-1));   // 每次随机连接的数据库
         }
-        
+
         if($m != $r ){
             $db_master  =   array(
                 'username'  =>  isset($_config['username'][$m])?$_config['username'][$m]:$_config['username'][0],
@@ -1134,7 +1136,7 @@ abstract class Driver {
         return $this->connect($db_config,$r,$r == $m ? false : $db_master);
     }
 
-   /**
+    /**
      * 析构方法
      * @access public
      */

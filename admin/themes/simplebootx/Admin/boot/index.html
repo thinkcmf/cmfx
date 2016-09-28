@@ -17,6 +17,7 @@
 	<link rel="stylesheet" href="__PUBLIC__/simpleboot/font-awesome/4.4.0/css/font-awesome-ie7.min.css">
 <![endif]-->
 <link rel="stylesheet" href="__PUBLIC__/simpleboot/themes/{:C('SP_ADMIN_STYLE')}/simplebootadminindex.min.css?">
+<link href="__PUBLIC__/js/artDialog/skins/default.css" rel="stylesheet" />
 <!--[if lte IE 8]>
 	<link rel="stylesheet" href="__PUBLIC__/simpleboot/css/simplebootadminindex-ie.css?" />
 <![endif]-->
@@ -39,9 +40,9 @@
 //全局变量
 var GV = {
 	HOST:"{$_SERVER['HTTP_HOST']}",
-    DIMAUB: "",
-    JS_ROOT: "__PUBLIC__/js/",
-    TOKEN: ""
+    ROOT: "__ROOT__/",
+    WEB_ROOT: "__WEB_ROOT__/",
+    JS_ROOT: "public/js/"
 };
 </script>
 <php>$submenus=$SUBMENU_CONFIG;</php>
@@ -152,9 +153,8 @@ right: initial !important;}
 	<div class="navbar">
 		<div class="navbar-inner">
 			<div class="container-fluid">
-				<a href="{:U('index/index')}" class="brand"> <small> 
-				<img src="__TMPL__Public/assets/images/logo-18.png">
-						ThinkCMF {:L('ADMIN_CENTER')}
+				<a href="{:U('admin/index/index')}" class="brand"> <small> 
+					ThinkCMF{:L('ADMIN_CENTER')}
 				</small>
 				</a>
 				<div class="pull-left nav_shortcuts" >
@@ -180,6 +180,12 @@ right: initial !important;}
 						<i class="fa fa-trash-o"></i>
 					</a>
 					</if>
+					
+					<if condition="$Think.APP_DEBUG">
+					<a class="btn btn-small" href="javascript:openapp('{:U('admin/menu/index')}','index_menu','{:L('ADMIN_MENU_INDEX')}');" title="{:L('ADMIN_MENU_INDEX')}">
+						<i class="fa fa-list"></i>
+					</a>
+					</if>
 				</div>
 				<ul class="nav simplewind-nav pull-right">
 					<li class="light-blue">
@@ -200,6 +206,9 @@ right: initial !important;}
 							</if>
 							<if condition="sp_auth_check(sp_get_current_admin_id(),'admin/user/userinfo')">
 								<li><a href="javascript:openapp('{:U('user/userinfo')}','index_userinfo','{:L('ADMIN_USER_USERINFO')}');"><i class="fa fa-user"></i> {:L('ADMIN_USER_USERINFO')}</a></li>
+							</if>
+							<if condition="sp_auth_check(sp_get_current_admin_id(),'admin/setting/password')">
+								<li><a href="javascript:openapp('{:U('setting/password')}','index_password','{:L('ADMIN_SETTING_PASSWORD')}');"><i class="fa fa-lock"></i> {:L('ADMIN_SETTING_PASSWORD')}</a></li>
 							</if>
 							<li><a href="{:U('Public/logout')}"><i class="fa fa-sign-out"></i> {:L('LOGOUT')}</a></li>
 						</ul>
@@ -243,6 +252,7 @@ right: initial !important;}
 	</div>
 	
 	<script src="__PUBLIC__/js/jquery.js"></script>
+	<script src="__PUBLIC__/js/wind.js"></script>
 	<script src="__PUBLIC__/simpleboot/bootstrap/js/bootstrap.min.js"></script>
 	<script>
 	var ismenumin = $("#sidebar").hasClass("menu-min");
@@ -279,6 +289,7 @@ right: initial !important;}
 		return false;
 	});
 	</script>
+	<script src="__PUBLIC__/js/common.js"></script>
 	<script src="__TMPL__Public/assets/js/index.js"></script>
 </body>
 </html>

@@ -33,14 +33,16 @@ class RegisterController extends HomebaseController {
 	}
 	
 	private function _do_mobile_register(){
+	    
+	    if(!sp_check_verify_code()){
+	        $this->error("验证码错误！");
+	    }
 	     
-	    if(!sp_check_mobile_verify_code()){
-	            $this->error("手机验证码错误！");
-        }
         $rules = array(
             //array(验证字段,验证规则,错误提示,验证条件,附加规则,验证时间)
             array('mobile', 'require', '手机号不能为空！', 1 ),
             array('password','require','密码不能为空！',1),
+            array('password','5,20',"密码长度至少5位，最多20位！",1,'length',3),
         );
         	
 	    $users_model=M("Users");
@@ -48,14 +50,13 @@ class RegisterController extends HomebaseController {
 	    if($users_model->validate($rules)->create()===false){
 	        $this->error($users_model->getError());
 	    }
+	    
+	    if(!sp_check_mobile_verify_code()){
+	        $this->error("手机验证码错误！");
+        }
 	     
-	    $password=$_POST['password'];
-	    $mobile=$_POST['mobile'];
-	     
-	    if(strlen($password) < 5 || strlen($password) > 20){
-	        $this->error("密码长度至少5位，最多20位！");
-	    }
-	     
+	    $password=I('post.password');
+	    $mobile=I('post.mobile');
 	    
 	    $where['mobile']=$mobile;
 	     
@@ -68,7 +69,7 @@ class RegisterController extends HomebaseController {
 	        $data=array(
 	            'user_login' => '',
 	            'user_email' => '',
-	            'mobile' =>$_POST['mobile'],
+	            'mobile' =>$mobile,
 	            'user_nicename' =>'',
 	            'user_pass' => sp_password($password),
 	            'last_login_ip' => get_client_ip(0,true),
@@ -79,9 +80,9 @@ class RegisterController extends HomebaseController {
 	        );
 	        $rst = $users_model->add($data);
 	        if($rst){
-	            //登入成功页面跳转
+	            //注册成功页面跳转
 	            $data['id']=$rst;
-	            $_SESSION['user']=$data;
+	            session('user',$data);
 	            $this->success("注册成功！",__ROOT__."/");
 	        
 	        }else{
@@ -101,6 +102,7 @@ class RegisterController extends HomebaseController {
             //array(验证字段,验证规则,错误提示,验证条件,附加规则,验证时间)
             array('email', 'require', '邮箱不能为空！', 1 ),
             array('password','require','密码不能为空！',1),
+	    array('password','5,20',"密码长度至少5位，最多20位！",1,'length',3),
             array('repassword', 'require', '重复密码不能为空！', 1 ),
             array('repassword','password','确认密码不正确',0,'confirm'),
             array('email','email','邮箱格式不正确！',1), // 验证email字段格式是否正确
@@ -114,8 +116,8 @@ class RegisterController extends HomebaseController {
 	        $this->error($users_model->getError());
 	    }
 	     
-	    $password=$_POST['password'];
-	    $email=$_POST['email'];
+	    $password=I('post.password');
+	    $email=I('post.email');
 	    $username=str_replace(array(".","@"), "_",$email);
 	    //用户名需过滤的字符的正则
 	    $stripChar = '?<*.>\'"';
@@ -128,10 +130,6 @@ class RegisterController extends HomebaseController {
 // 	    if(in_array($username, $banned_usernames)){
 // 	        $this->error("此用户名禁止使用！");
 // 	    }
-	     
-	    if(strlen($password) < 5 || strlen($password) > 20){
-	        $this->error("密码长度至少5位，最多20位！");
-	    }
 	    
 	    $where['user_login']=$username;
 	    $where['user_email']=$email;
@@ -175,14 +173,14 @@ class RegisterController extends HomebaseController {
 	            );
 	            $rst = $users_model->add($data);
 	            if($rst){
-	                //登入成功页面跳转
+	                //注册成功页面跳转
 	                $data['id']=$rst;
-	                $_SESSION['user']=$data;
+	                session('user',$data);
 	                	
 	                //发送激活邮件
 	                if($need_email_active){
 	                    $this->_send_to_active();
-	                    unset($_SESSION['user']);
+	                    session('user',null);
 	                    $this->success("注册成功，激活后才能使用！",U("user/login/index"));
 	                }else {
 	                    $this->success("注册成功！",__ROOT__."/");
@@ -213,7 +211,7 @@ class RegisterController extends HomebaseController {
 			
 			if($result){
 				$find_user['user_status']=1;
-				$_SESSION['user']=$find_user;
+				session('user',$find_user);
 				$this->success("用户激活成功，正在登录中...",__ROOT__."/");
 			}else{
 				$this->error("用户激活失败!",U("user/login/index"));

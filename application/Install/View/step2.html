@@ -30,9 +30,23 @@
 					</tr>
 					<tr>
 						<td>PHP版本</td>
-						<td>>5.3.x</td>
+						<td>>5.6.x</td>
 						<td><i class="fa fa-check correct"></i> {$phpversion}</td>
 						<td>5.3.0</td>
+					</tr>
+					<!-- 模块检测 -->
+					<tr>
+						<td class="td1" colspan="4">
+							 模块检测
+						</td>
+					</tr>
+					<tr>
+						<td>session</td>
+						<td>开启</td>
+						<td>
+							{$session}
+						</td>
+						<td>开启</td>
 					</tr>
 					<tr>
 						<td>
@@ -61,20 +75,44 @@
 						<td>开启</td>
 					</tr>
 					<tr>
+						<td>
+							CURL 
+							<a href="https://www.baidu.com/s?wd=开启PHP CURL扩展" target="_blank">
+								<i class="fa fa-question-circle question"></i>
+							</a>
+						</td>
+						<td>开启</td>
+						<td>
+							{$curl}
+						</td>
+						<td>开启</td>
+					</tr>
+					<tr>
+						<td>
+							GD 
+							<a href="https://www.baidu.com/s?wd=开启PHP GD扩展" target="_blank">
+								<i class="fa fa-question-circle question"></i>
+							</a>
+						</td>
+						<td>开启</td>
+						<td>
+							{$gd}
+						</td>
+						<td>开启</td>
+					</tr>
+					<!-- 大小限制检测 -->
+					<tr>
+						<td class="td1" colspan="4">
+							 大小限制检测
+						</td>
+					</tr>
+					<tr>
 						<td>附件上传</td>
 						<td>>2M</td>
 						<td>
 							{$upload_size}
 						</td>
 						<td>不限制</td>
-					</tr>
-					<tr>
-						<td>session</td>
-						<td>开启</td>
-						<td>
-							{$session}
-						</td>
-						<td>开启</td>
 					</tr>
 				</table>
 				<table width="100%">

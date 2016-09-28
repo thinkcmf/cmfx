@@ -9,7 +9,7 @@
         }
     });
 
-    if ($.browser.msie) {
+    if ($.browser && $.browser.msie) {
         //ie 都不缓存
         $.ajaxSetup({
             cache: false
@@ -63,24 +63,20 @@
     //所有的ajax form提交,由于大多业务逻辑都是一样的，故统一处理
     var ajaxForm_list = $('form.js-ajax-form');
     if (ajaxForm_list.length) {
-        Wind.use('ajaxForm', 'noty', function () {
-            if ($.browser.msie) {
-                //ie8及以下，表单中只有一个可见的input:text时，会整个页面会跳转提交
-                ajaxForm_list.on('submit', function (e) {
-                    //表单中只有一个可见的input:text时，enter提交无效
-                    e.preventDefault();
-                });
-            }
+        Wind.use('ajaxForm', 'noty','validate', function () {
+            
+            //var form = btn.parents('form.js-ajax-form');
+        	var $btn;
 
             $('button.js-ajax-submit').on('click', function (e) {
-                e.preventDefault();
+                //e.preventDefault();
                 /*var btn = $(this).find('button.js-ajax-submit'),
 					form = $(this);*/
-                var btn = $(this),
-                    form = btn.parents('form.js-ajax-form');
+                var btn = $(this),form = btn.parents('form.js-ajax-form');
+                $btn=btn;
 
                 if(btn.data("loading")){
-            		return;
+            		return false;
             	}
                 //批量操作 判断选项
                 if (btn.data('subcheck')) {
@@ -128,7 +124,7 @@
                 }
 
                 //ie处理placeholder提交问题
-                if ($.browser.msie) {
+                if ($.browser && $.browser.msie) {
                     form.find('[placeholder]').each(function () {
                         var input = $(this);
                         if (input.val() == input.attr('placeholder')) {
@@ -136,94 +132,139 @@
                         }
                     });
                 }
-
-                form.ajaxSubmit({
-                    url: btn.data('action') ? btn.data('action') : form.attr('action'), //按钮上是否自定义提交地址(多按钮情况)
-                    dataType: 'json',
-                    beforeSubmit: function (arr, $form, options) {
-                    	btn.data("loading",true);
-                        var text = btn.text();
-                        //按钮文案、状态修改
-                        btn.text(text + '中...').prop('disabled', true).addClass('disabled');
-                    },
-                    success: function (data, statusText, xhr, $form) {
-                        var text = btn.text();
-                        //按钮文案、状态修改
-                        btn.removeClass('disabled').text(text.replace('中...', '')).parent().find('span').remove();
-                        if (data.state === 'success') {
-                        	noty({text: data.info,
-                        		type:'success',
-                        		layout:'center'
-                        	});
-                        } else if (data.state === 'fail') {
-                        	var $verify_img=form.find(".verify_img");
-                        	if($verify_img.length){
-                        		$verify_img.attr("src",$verify_img.attr("src")+"&refresh="+Math.random()); 
-                        	}
-                        	
-                        	var $verify_input=form.find("[name='verify']");
-                        	$verify_input.val("");
-                        	
-                        	noty({text: data.info,
-                        		type:'error',
-                        		layout:'center'
-                        	});
-                            btn.removeProp('disabled').removeClass('disabled');
-                        }
-                        
-                        if (data.referer) {
-                            //返回带跳转地址
-                        	var wait=btn.data("wait");
-                        	if(!wait){
-                        		wait=1500;
-                        	}
-                            if(window.parent.art){
-                                //iframe弹出页
-                            	if(wait){
-                            		setTimeout(function(){
-                            			window.parent.location.href = data.referer;
-                            		},wait);
-                        		}else{
-                        			window.parent.location.href = data.referer;
-                        		}
-                                
-                            }else{
-                            	if(wait){
-                            		setTimeout(function(){
-                            			window.location.href = data.referer;
-                            		},wait);
-                        		}else{
-                        			window.location.href = data.referer;
-                        		}
-                            }
-                        } else {
-                        	if (data.state === 'success') {
-                        		var wait=btn.data("wait");
-                        		if(window.parent.art){
-                                    if(wait){
-                                		setTimeout(function(){
-                                			reloadPage(window.parent);
-                                		},wait);
-                            		}else{
-                            			reloadPage(window.parent);
-                            		}
-                                }else{
-                                    //刷新当前页
-                                	if(wait){
-                                		setTimeout(function(){
-                                			reloadPage(window);
-                                		},wait);
-                            		}else{
-                            			reloadPage(window);
-                            		}
-                                }
-                        	}
-                        }
-                        
-                    },
-                    complete: function(){
-                    	btn.data("loading",false);
-                    }
+                
+            });
+            
+            ajaxForm_list.each(function(){
+            	$(this).validate({
+                	//是否在获取焦点时验证
+    				onfocusout : false,
+    				//是否在敲击键盘时验证
+    				onkeyup : false,
+    				//当鼠标掉级时验证
+    				onclick : false,
+    				//给未通过验证的元素加效果,闪烁等
+    				highlight : false,
+    				//是否在获取焦点时验证
+    				onfocusout : false,
+                	showErrors:function(errorMap, errorArr){
+                		try {
+    						$(errorArr[0].element).focus();
+    					} catch (err) {
+    					}
+                	},
+                	submitHandler:function(form){
+                		var $form=$(form);
+                		$form.ajaxSubmit({
+    	                    url: $btn.data('action') ? $btn.data('action') : $form.attr('action'), //按钮上是否自定义提交地址(多按钮情况)
+    	                    dataType: 'json',
+    	                    beforeSubmit: function (arr, $form, options) {
+    	                    	$btn.data("loading",true);
+    	                        var text = $btn.text();
+    	                        //按钮文案、状态修改
+    	                        $btn.text(text + '中...').prop('disabled', true).addClass('disabled');
+    	                    },
+    	                    success: function (data, statusText, xhr, $form) {
+    	                        var text = $btn.text();
+    	                        //按钮文案、状态修改
+    	                        $btn.removeClass('disabled').prop('disabled', false).text(text.replace('中...', '')).parent().find('span').remove();
+    	                        if (data.state === 'success') {
+    	                        	if($btn.data('success')){
+    		                        	var successCallback=$btn.data('success');
+    		                        	window[successCallback](data, statusText, xhr, $form);
+    		                        	return;
+    		                        }
+    	                        	noty({text: data.info,
+    	                        		type:'success',
+    	                        		layout:'center',
+    	                        		modal:true
+    	                        	});
+    	                        } else if (data.state === 'fail') {
+    	                        	if($btn.data('error')){
+    		                        	var errorCallback=$btn.data('error');
+    		                        	window[errorCallback](data, statusText, xhr, $form);
+    		                        	return;
+    		                        }
+    	                        	var $verify_img=$form.find(".verify_img");
+    	                        	if($verify_img.length){
+    	                        		$verify_img.attr("src",$verify_img.attr("src")+"&refresh="+Math.random()); 
+    	                        	}
+    	                        	
+    	                        	var $verify_input=$form.find("[name='verify']");
+    	                        	$verify_input.val("");
+    	                        	
+    	                        	noty({text: data.info,
+    	                        		type:'error',
+    	                        		layout:'center'
+    	                        	});
+    	                        }
+    	                        
+    	                        
+    	                        
+    	                        if (data.referer) {
+    	                            //返回带跳转地址
+    	                        	var wait=$btn.data("wait");
+    	                        	if(!wait){
+    	                        		wait=1500;
+    	                        	}
+    	                            if(window.parent.art){
+    	                                //iframe弹出页
+    	                            	if(wait){
+    	                            		setTimeout(function(){
+    	                            			window.parent.location.href = data.referer;
+    	                            		},wait);
+    	                        		}else{
+    	                        			window.parent.location.href = data.referer;
+    	                        		}
+    	                                
+    	                            }else{
+    	                            	if(wait){
+    	                            		setTimeout(function(){
+    	                            			window.location.href = data.referer;
+    	                            		},wait);
+    	                        		}else{
+    	                        			window.location.href = data.referer;
+    	                        		}
+    	                            }
+    	                        } else {
+    	                        	if (data.state === 'success') {
+    	                        		var wait=$btn.data("wait");
+    	                        		if(window.parent.art){
+    	                                    if(wait){
+    	                                		setTimeout(function(){
+    	                                			reloadPage(window.parent);
+    	                                		},wait);
+    	                            		}else{
+    	                            			reloadPage(window.parent);
+    	                            		}
+    	                                }else{
+    	                                    //刷新当前页
+    	                                	if(wait){
+    	                                		setTimeout(function(){
+    	                                			reloadPage(window);
+    	                                		},wait);
+    	                            		}else{
+    	                            			reloadPage(window);
+    	                            		}
+    	                                }
+    	                        	}
+    	                        }
+    	                        
+    	                    },
+    	                    error:function(xhr,e,statusText){
+    	                    	alert(statusText);
+    	                    	if(window.parent.art){
+    	                            reloadPage(window.parent);
+    	                        }else{
+    	                            //刷新当前页
+    	                            reloadPage(window);
+    	                        }
+    	                    },
+    	                    complete: function(){
+    	                    	$btn.data("loading",false);
+    	                    }
+    	                });
+                	}
                 });
             });
 
@@ -249,11 +290,11 @@
                 e.preventDefault();
                 var $_this = this,
                     $this = $($_this),
-                    href = $this.prop('href'),
+                    href = $this.data('href'),
                     msg = $this.data('msg');
-                
+                href = href?href:$this.attr('href');
                 noty({
-   				 	text: msg,
+   				 	text: msg?msg: '确定要删除吗？',
    					type:'confirm',
    					layout:"center",
    					timeout: false,
@@ -272,16 +313,17 @@
 	                                    reloadPage(window);
 	                                }
 	                            } else if (data.state === 'fail') {
-	                                //art.dialog.alert(data.info);
-	                            	//alert(data.info);//暂时处理方案
-									art.dialog({   
-										content: data.info,
-										icon: 'warning',
-										ok: function () {   
-											this.title(data.info);   
-											return true;   
-										}
-									}); 
+	                            	noty({text: data.info,
+	                            		type:'error',
+	                            		layout:'center',
+	                            		callback:{
+	                            			onClose:function(){
+	                            				if (data.referer) {
+	        	                                    location.href = data.referer;
+	        	                                }
+	                            			}
+	                            		}
+	                            	});
 	                            }
 	                        });
    				   		}
@@ -308,9 +350,9 @@
                 e.preventDefault();
                 var $_this = this,
                     $this = $($_this),
-                    href = $this.prop('href'),
+                    href = $this.data('href'),
                     msg = $this.data('msg');
-                
+                href = href?href:$this.attr('href');
                 noty({
    				 	text: msg,
    					type:'confirm',
@@ -331,7 +373,17 @@
 	                                    reloadPage(window);
 	                                }
 	                            } else if (data.state === 'fail') {
-	                                art.dialog.alert(data.info);
+	                                noty({text: data.info,
+	                            		type:'error',
+	                            		layout:'center',
+	                            		callback:{
+	                            			onClose:function(){
+	                            				if (data.referer) {
+	        	                                    location.href = data.referer;
+	        	                                }
+	                            			}
+	                            		}
+	                            	});
 	                            }
 	                        });
    				   		}
@@ -350,9 +402,61 @@
 
         });
     }
+    
+    if ($('a.js-ajax-btn').length) {
+        Wind.use('noty', function () {
+            $('.js-ajax-btn').on('click', function (e) {
+                e.preventDefault();
+                var $_this = this,
+                    $this = $($_this),
+                    href = $this.data('href'),
+                    msg = $this.data('msg');
+                	refresh = $this.data('refresh');
+                href = href?href:$this.attr('href');
+                refresh = refresh==undefined?1:refresh;
+                
+                
+                $.getJSON(href).done(function (data) {
+                    if (data.state === 'success') {
+                        noty({
+                        	text:data.info,
+                        	type:'success',
+                        	layout:'center',
+                        	callback:{
+                        		onClose:function(){
+                        			if (data.referer) {
+                                        location.href = data.referer;
+                                        return;
+                                    }
+                        			
+                        			if(refresh || refresh==undefined){
+                                    	reloadPage(window);
+                                    }
+                        		}
+                        	}
+                        });
+                    } else if (data.state === 'fail') {
+                        noty({text: data.info,
+                    		type:'error',
+                    		layout:'center',
+                    		callback:{
+                    			onClose:function(){
+                    				if (data.referer) {
+	                                    location.href = data.referer;
+	                                }
+                    			}
+                    		}
+                    	});
+                    }
+                });
+                
+            });
+
+        });
+    }
 
     //所有的请求刷新操作
-    var ajax_refresh = $('a.J_ajax_refresh'),
+    var ajax_refresh = $('a.js-ajax-refresh'),
         refresh_lock = false;
     if (ajax_refresh.length) {
         ajax_refresh.on('click', function (e) {
@@ -376,6 +480,77 @@
                 }
             }, 'json');
         });
+    }
+    
+    //短信验证码
+    var $js_get_mobile_code=$('.js-get-mobile-code');
+    if($js_get_mobile_code.length>0){
+    	Wind.use('noty',function(){
+
+        	$js_get_mobile_code.on('click',function(){
+    			var $this=$(this);
+    			if($this.data('loading')) return;
+    			if($this.data('sending')) return;
+    			var $mobile_input=$($this.data('mobile-input'));
+    			var mobile = $mobile_input.val();
+    			if(mobile==''){
+    				$mobile_input.focus();
+    				return;
+    			}
+    			
+    			$this.data('loading',true);
+    			$this.data('sending',true);
+    			
+    			var url=$this.data('url');
+    			
+    			var init_secode_left=parseInt($this.data('init-second-left'));
+    			init_secode_left=init_secode_left>0?init_secode_left:60;
+    			var init_text=$this.text();
+    			$this.data('second-left',init_secode_left);
+    			var wait_msg=$this.data('wait-msg');
+    			$.ajax({
+    				url:url,
+    				type:'POST',
+    				dataType:'json',
+    				data:{mobile:mobile},
+    				success:function(data){
+    					if(data.status==1){
+    						noty({text: data.info,
+                        		type:'success',
+                        		layout:'center'
+                        	});
+    						
+    						$this.text(wait_msg.replace('[second]',init_secode_left));
+    						
+    						var mtimer=setInterval(function(){
+        						if(init_secode_left>0){
+        							init_secode_left--;
+        							$this.text(wait_msg.replace('[second]',init_secode_left));
+        						}else{
+        							clearInterval(mtimer);
+        							$this.text(init_text);
+        							$this.data('sending',false);
+        						}
+        						
+        					},1000);
+    					}else{
+    						noty({text: data.info,
+                        		type:'error',
+                        		layout:'center'
+                        	});
+    						$this.data('sending',false);
+    					}
+    				},
+    				error:function(){
+    					$this.data('sending',false);
+    				},
+    				complete:function(){
+    					$this.data('loading',false);
+    				}
+    			});
+    		});
+        
+    	});
     }
 
     //日期选择器
@@ -435,11 +610,74 @@
         });
     }
     
+    //地址联动
+    var $js_address_select=$('.js-address-select');
+	if($js_address_select.length>0){
+		$('.js-address-province-select,.js-address-city-select').change(function(){
+			var $this=$(this);
+			var id=$this.val();
+			var $child_area_select;
+			var $this_js_address_select=$this.parents('.js-address-select');
+			if($this.is('.js-address-province-select')){
+				$child_area_select=$this_js_address_select.find('.js-address-city-select');
+				$this_js_address_select.find('.js-address-district-select').hide();
+			}else{
+				$child_area_select=$this_js_address_select.find('.js-address-district-select');
+			}
+			
+			var empty_option='<option class="js-address-empty-option" value="">'+$child_area_select.find('.js-address-empty-option').text()+'</option>';
+			$child_area_select.html(empty_option);
+			
+			var child_area_html=$this.data('childarea'+id);
+			if(child_area_html){
+				$child_area_select.show();
+				$child_area_select.html(child_area_html);
+				return;
+			}
+			
+			$.ajax({
+				url:$this_js_address_select.data('url'),
+				type:'POST',
+				dataType:'JSON',
+				data:{id:id},
+				success:function(data){
+					if(data.status==1){
+						if(data.areas.length>0){
+							var html=[empty_option];
+							
+							$.each(data.areas,function(i,area){
+								var area_html='<option value="[id]">[name]</option>';
+								area_html=area_html.replace('[name]',area.name);
+								area_html=area_html.replace('[id]',area.id);
+								html.push(area_html);
+							});
+							html=html.join('',html);
+							$this.data('childarea'+id,html);
+							$child_area_select.html(html);
+							$child_area_select.show();
+						}else{
+							$child_area_select.hide();
+							
+						}
+					}
+				},
+				error:function(){
+					
+				},
+				complete:function(){
+					
+				}
+			});
+		});
+		
+	}
+	//地址联动end
+    
     //
-    var $J_action_btn=$('a.J_action_btn');
-    if ($J_action_btn.length) {
+    var $js_action_btn=$('a.js-action-btn');
+    if ($js_action_btn.length) {
         Wind.use('noty', function () {
-        	$J_action_btn.on('click', function (e) {
+        	$js_action_btn.on('click', function (e) {
                 e.preventDefault();
                 var $this = $(this),
                     href = $this.prop('href');
@@ -462,8 +700,6 @@
                     		layout:'center'
                     	});
                     }
-                	
-                	
                 },"json");
                 
             });
@@ -662,11 +898,7 @@ function comment_submit(obj){
 			
 		},'json');
 		
-		
 		$comment_reply_submit.hide();
-		
-		
-		
 	});
 	
 }
@@ -744,7 +976,7 @@ function popPos(wrap) {
         win_height = $(window).height(),
         wrap_height = wrap.outerHeight();
 
-    if ($.browser.msie && $.browser.version < 7) {
+    if ($.browser && $.browser.msie && $.browser.version < 7) {
         ie6 = true;
         pos = 'absolute';
     }
@@ -780,15 +1012,36 @@ function confirmurl(url, message) {
     });
 }
 
-function open_iframe_dialog(url,title,options){
-	var params={
-            title: title,
-            lock:true,
-            opacity:0,
-            width:"95%"
-        };
-	params=options?$.extend(params,options):params;
-	 Wind.use('artDialog','iframeTools', function () {
-	            art.dialog.open(url, params);
-	        });
+function open_iframe_dialog(url, title, options) {
+	var params = {
+		title : title,
+		lock : true,
+		opacity : 0,
+		width : "95%"
+	};
+	params = options ? $.extend(params, options) : params;
+	Wind.use('artDialog', 'iframeTools', function() {
+		art.dialog.open(url, params);
+	});
+}
+
+function open_iframe_layer(url,title,options){
+
+    var params = {
+        type: 2,
+        title: title,
+        shadeClose: true,
+        skin: 'layui-layer-nobg',
+        shade: [0.5, '#000000'],
+        area: ['90%', '90%'],
+        content:url
+    };
+    params = options ? $.extend(params, options) : params;
+
+    Wind.css('layer');
+
+    Wind.use("layer", function() {
+        layer.open(params);
+    });
+
 }

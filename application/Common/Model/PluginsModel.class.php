@@ -18,6 +18,9 @@ class PluginsModel extends CommonModel{
 			return false;
 		}
 		$plugins			=	array();
+		
+		if(empty($dirs)) return $plugins;
+		
 		$where['name']	=	array('in',$dirs);
 		$list			=	$this->where($where)->field(true)->select();
 		foreach($list as $plugin){

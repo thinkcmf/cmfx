@@ -7,15 +7,15 @@
 		</ul>
 		<form class="well form-search" method="post" action="{:U('AdminPage/recyclebin')}">
 			时间： 
-			<input type="text" name="start_time" class="input length_2 js-date" value="{$formget.start_time}" style="width: 80px;" autocomplete="off">-
-			<input autocomplete="off" type="text" class="input length_2 js-date" name="end_time" value="{$formget.end_time}" style="width: 80px;">
+			<input type="text" name="start_time" class="js-datetime" value="{$formget.start_time|default=''}" style="width:120px;" autocomplete="off">-
+			<input autocomplete="off" type="text" class="js-datetime" name="end_time" value="{$formget.end_time|default=''}" style="width: 120px;">
 			关键字：
-			<input type="text" class="input length_2" name="keyword" style="width: 200px;" value="{$formget.keyword}" placeholder="请输入关键字...">
+			<input type="text" class="input" name="keyword" style="width: 200px;" value="{$formget.keyword|default=''}" placeholder="请输入关键字...">
 			<button class="btn btn-primary">搜索</button>
 		</form>
 		<form class="js-ajax-form" method="post">
 			<div class="table-actions">
-				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('AdminPage/clean')}" data-subcheck="true" data-msg="你确定删除吗？">{:L('DELETE')}</button>
+				<button class="btn btn-danger btn-small js-ajax-submit" type="submit" data-action="{:U('AdminPage/clean')}" data-subcheck="true" data-msg="你确定删除吗？">{:L('DELETE')}</button>
 			</div>
 			<table class="table table-hover table-bordered table-list">
 				<thead>
@@ -56,9 +56,9 @@
 				</tfoot>
 			</table>
 			<div class="table-actions">
-				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('AdminPage/clean')}" data-subcheck="true" data-msg="你确定删除吗？">{:L('DELETE')}</button>
+				<button class="btn btn-danger btn-small js-ajax-submit" type="submit" data-action="{:U('AdminPage/clean')}" data-subcheck="true" data-msg="你确定删除吗？">{:L('DELETE')}</button>
 			</div>
-			<div class="pagination">{$Page}</div>
+			<div class="pagination">{$page}</div>
 		</form>
 	</div>
 	<script src="__PUBLIC__/js/common.js"></script>

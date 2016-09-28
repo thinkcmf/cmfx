@@ -17,7 +17,6 @@
     <link href="__PUBLIC__/js/artDialog/skins/default.css" rel="stylesheet" />
     <link href="__PUBLIC__/simpleboot/font-awesome/4.4.0/css/font-awesome.min.css"  rel="stylesheet" type="text/css">
     <style>
-		.length_3{width: 180px;}
 		form .input-order{margin-bottom: 0px;padding:3px;width:40px;}
 		.table-actions{margin-top: 5px; margin-bottom: 5px;padding:0px;}
 		.table-list{margin-bottom: 0px;}
@@ -25,25 +24,27 @@
 	<!--[if IE 7]>
 	<link rel="stylesheet" href="__PUBLIC__/simpleboot/font-awesome/4.4.0/css/font-awesome-ie7.min.css">
 	<![endif]-->
-<script type="text/javascript">
-//全局变量
-var GV = {
-    DIMAUB: "__ROOT__/",
-    JS_ROOT: "public/js/",
-    TOKEN: ""
-};
-</script>
-<!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
+	<script type="text/javascript">
+	//全局变量
+	var GV = {
+	    ROOT: "__ROOT__/",
+	    WEB_ROOT: "__WEB_ROOT__/",
+	    JS_ROOT: "public/js/",
+	    APP:'{$Think.MODULE_NAME}'/*当前应用名*/
+	};
+	</script>
     <script src="__PUBLIC__/js/jquery.js"></script>
     <script src="__PUBLIC__/js/wind.js"></script>
     <script src="__PUBLIC__/simpleboot/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+    	$(function(){
+    		$("[data-toggle='tooltip']").tooltip();
+    	});
+    </script>
 <if condition="APP_DEBUG">
 	<style>
 		#think_page_trace_open{
 			z-index:9999;
 		}
 	</style>
-
 </if>

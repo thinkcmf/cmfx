@@ -1,20 +1,19 @@
 <?php
-
-/**
- * 
- */
 namespace User\Controller;
+
 use Common\Controller\HomebaseController;
+
 class PublicController extends HomebaseController {
     
-	function avatar(){
-		
+    //用户头像
+	public function avatar(){
 		$users_model=M("Users");
 		$id=I("get.id",0,"intval");
 		
 		$find_user=$users_model->field('avatar')->where(array("id"=>$id))->find();
 		
 		$avatar=$find_user['avatar'];
+		$avatar=preg_replace("/^avatar\//", '', $avatar);//2.2以后头像路径统一以avatar/开头
 		$should_show_default=false;
 		
 		if(empty($avatar)){
@@ -28,9 +27,22 @@ class PublicController extends HomebaseController {
 				if(file_exists($avatar)){
 					$imageInfo = getimagesize($avatar);
 					if ($imageInfo !== false) {
+					    $fp=fopen($avatar,"r");
+					    $file_size=filesize($avatar);
 						$mime=$imageInfo['mime'];
 						header("Content-type: $mime");
-						echo file_get_contents($avatar);
+						header("Accept-Length:".$file_size);
+						$buffer=1024*64;
+						$file_count=0;
+						//向浏览器返回数据
+						while(!feof($fp) && $file_count<$file_size){
+						    $file_content=fread($fp,$buffer);
+						    $file_count+=$buffer;
+						    echo $file_content;
+						    flush();
+						    ob_flush();
+						}
+						fclose($fp);
 					}else{
 						$should_show_default=true;
 					}

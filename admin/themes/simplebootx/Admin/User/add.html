@@ -30,14 +30,14 @@
 					<label class="control-label">{:L('ROLE')}</label>
 					<div class="controls">
 						<foreach name="roles" item="vo">
-						<label class="checkbox inline"><input value="{$vo.id}" type="checkbox" name="role_id[]">{$vo.name}</label>
+						<label class="checkbox inline"><input value="{$vo.id}" type="checkbox" name="role_id[]" <if condition="sp_get_current_admin_id() neq 1 && $vo['id'] eq 1">disabled="true"</if>>{$vo.name}</label>
 						</foreach>
 					</div>
 				</div>
 			</fieldset>
 			<div class="form-actions">
 				<button type="submit" class="btn btn-primary js-ajax-submit">{:L('ADD')}</button>
-				<a class="btn" href="{:U('user/index')}">{:L('BACK')}</a>
+				<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
 			</div>
 		</form>
 	</div>

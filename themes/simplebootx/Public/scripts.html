@@ -37,9 +37,9 @@ var GV = {
 				$("#main-menu-user li.offline").show();
 			}
 			
-			$.post("{:U('user/notification/getLastNotifications')}",{},function(data){
+			/* $.post("{:U('user/notification/getLastNotifications')}",{},function(data){
 				$(".nav .notifactions .count").text(data.list.length);
-			});
+			}); */
 			
 		});	
 		;(function($){

@@ -43,13 +43,13 @@
 						<td>{$vo.last_login_ip}</td>
 						<td>{$user_statuses[$vo['user_status']]}</td>
 						<td align="center">
-							<noteq name="vo.id" value="1">
+							<neq name="vo.id" value="1">
 								<a href="{:U('indexadmin/ban',array('id'=>$vo['id']))}" class="js-ajax-dialog-btn" data-msg="{:L('BLOCK_USER_CONFIRM_MESSAGE')}">{:L('BLOCK_USER')}</a>|
 								<a href="{:U('indexadmin/cancelban',array('id'=>$vo['id']))}" class="js-ajax-dialog-btn" data-msg="{:L('ACTIVATE_USER_CONFIRM_MESSAGE')}">{:L('ACTIVATE_USER')}</a>
 							<else/>
 								<a style="color: #ccc;">{:L('BLOCK_USER')}</a>|
 								<a style="color: #ccc;">{:L('ACTIVATE_USER')}</a>
-							</noteq>
+							</neq>
 						</td>
 					</tr>
 					</foreach>

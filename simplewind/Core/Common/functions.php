@@ -207,7 +207,8 @@ function compile($filename) {
 }
 
 /**
- * 获取模版文件 格式 资源://模块@主题/控制器/操作
+ * ThinkCMF NOTE
+ * 获取模版文件 格式 资源://主题@模块/控制器/操作
  * @param string $template 模版资源地址
  * @param string $layer 视图层（目录）名称
  * @return string
@@ -220,10 +221,23 @@ function T($template='',$layer=''){
     }
     $info   =   parse_url($template);
     $file   =   $info['host'].(isset($info['path'])?$info['path']:'');
-    $module =   isset($info['user'])?$info['user'].'/':MODULE_NAME.'/';
+    // 获取主题
+    $theme =   isset($info['user'])?$info['user'].'/':C('DEFAULT_THEME').'/';
+    $theme = ltrim($theme,'/');
     $extend =   $info['scheme'];
     $layer  =   $layer?$layer:C('DEFAULT_V_LAYER');
 
+    //获取module
+    $file_arr= explode("/", $file);
+    
+    if(count($file_arr)<3){
+        $module=MODULE_NAME."/";
+    }else{
+        $module=array_shift($file_arr)."/";
+        $file=implode("/", $file_arr);
+    }
+    
+    $defined_tmpl_path=false;
     // 获取当前主题的模版路径
     $auto   =   C('AUTOLOAD_NAMESPACE');
     if($auto && isset($auto[$extend])){ // 扩展资源
@@ -233,25 +247,36 @@ function T($template='',$layer=''){
         $baseUrl    =   C('VIEW_PATH');
     }elseif(defined('TMPL_PATH')){ 
         // 指定全局视图目录
-        $baseUrl    =   TMPL_PATH.$module;
+        $baseUrl    =   TMPL_PATH;
+        $defined_tmpl_path=true;
     }else{
         $baseUrl    =   APP_PATH.$module.$layer.'/';
     }
 
-    // 获取主题
-    $theme  =   substr_count($file,'/')<2 ? C('DEFAULT_THEME') : '';
-
-    // 分析模板文件规则
-    $depr   =   C('TMPL_FILE_DEPR');
-    if('' == $file) {
-        // 如果模板文件名为空 按照默认规则定位
-        $file = CONTROLLER_NAME . $depr . ACTION_NAME;
-    }elseif(false === strpos($file, '/')){
-        $file = CONTROLLER_NAME . $depr . $file;
-    }elseif('/' != $depr){
-        $file   =   substr_count($file,'/')>1 ? substr_replace($file,$depr,strrpos($file,'/'),1) : str_replace('/', $depr, $file);
+    if($defined_tmpl_path){
+        // 分析模板文件规则
+        $depr   =   C('TMPL_FILE_DEPR');
+        if('' == $file) {
+            // 如果模板文件名为空 按照默认规则定位
+            $file = $module.CONTROLLER_NAME . $depr . ACTION_NAME;
+        }elseif('/' != $depr){
+            $file   =   substr_count($file,'/')>1 ? substr_replace($file,$depr,strrpos($file,'/'),1) : str_replace('/', $depr, $file);
+        }
+        $file=$baseUrl.$theme.$file.C('TMPL_TEMPLATE_SUFFIX');
+    }else{
+        // 分析模板文件规则
+        $depr   =   C('TMPL_FILE_DEPR');
+        if('' == $file) {
+            // 如果模板文件名为空 按照默认规则定位
+            $file = CONTROLLER_NAME . $depr . ACTION_NAME;
+        }elseif(false === strpos($file, '/')){
+            $file = CONTROLLER_NAME . $depr . $file;
+        }elseif('/' != $depr){
+            $file   =   substr_count($file,'/')>1 ? substr_replace($file,$depr,strrpos($file,'/'),1) : str_replace('/', $depr, $file);
+        }
+        $file=$baseUrl.$theme.$file.C('TMPL_TEMPLATE_SUFFIX');
     }
-    return $baseUrl.($theme?$theme.'/':'').$file.C('TMPL_TEMPLATE_SUFFIX');
+    return $file;
 }
 
 /**

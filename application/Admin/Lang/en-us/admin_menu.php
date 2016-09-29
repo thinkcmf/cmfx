@@ -115,6 +115,11 @@ return array (
   'ADMIN_USER_ADD' => 'Add Admin',
   'ADMIN_USER_DELETE' => '删除管理员',
   'ADMIN_USER_EDIT' => '管理员编辑',
-  'ADMIN_MENU_SPMY_IMPORT_MENU' =>"导入菜单"
-  
+  'ADMIN_MAILER_TEST' => '测试邮件',
+  'ADMIN_MENU_BACKUP_MENU' => '备份菜单',
+  'ADMIN_MENU_EXPORT_MENU_LANG' => '导出后台菜单多语言包',
+  'ADMIN_MENU_GETACTIONS' => '导入新菜单',
+  'ADMIN_MENU_RESTORE_MENU' => '还原菜单',
+  'ADMIN_SETTING_UPLOAD' => '上传设置',
+  'ADMIN_SETTING_UPLOAD_POST' => '上传设置提交',
 );

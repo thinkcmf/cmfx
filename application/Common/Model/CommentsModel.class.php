@@ -24,7 +24,8 @@ class CommentsModel extends CommonModel{
 	
 	function check_full_name($data){
 		if(empty($data)){
-			if(isset($_SESSION["user"])){
+		    $session_user=session('user');
+			if(!empty($session_user)){
 				return true;
 			}
 			return false;
@@ -35,7 +36,8 @@ class CommentsModel extends CommonModel{
 	
 	function check_full_email($data){
 		if(empty($data)){
-			if(isset($_SESSION["user"])){
+		    $session_user=session('user');
+			if(!empty($session_user)){
 				return true;
 			}
 			return false;

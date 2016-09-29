@@ -31,4 +31,5 @@ return array (
   'PORTAL_ADMINTERM_ADD' => 'Add Category',
   'PORTAL_ADMINTERM_DELETE' => '删除分类',
   'PORTAL_ADMINTERM_EDIT' => '编辑分类',
+  'PORTAL_ADMINPOST_COPY' => '文章批量复制',
 );

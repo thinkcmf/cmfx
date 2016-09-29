@@ -39,7 +39,8 @@ $configs= array(
         'LANG_SWITCH_ON'        =>  true,   // 开启语言包功能
         'DEFAULT_LANG'          =>  'zh-cn', // 默认语言
         'LANG_LIST'				=>  'zh-cn,en-us,zh-tw',
-        'LANG_AUTO_DETECT'		=>  false,
+        'LANG_AUTO_DETECT'		=>  true,
+        'ADMIN_LANG_SWITCH_ON'        =>  false,   // 后台开启语言包功能
         
         'VAR_MODULE'            =>  'g',     // 默认模块获取变量
         'VAR_CONTROLLER'        =>  'm',    // 默认控制器获取变量
@@ -89,9 +90,9 @@ $configs= array(
         'HTML_FILE_SUFFIX'      =>    '.html', // 设置静态缓存文件后缀
         
         'TMPL_PARSE_STRING'=>array(
-        	'/Public/upload'=>'/data/upload',
         	'__UPLOAD__' => __ROOT__.'/data/upload/',
         	'__STATICS__' => __ROOT__.'/statics/',
+            '__WEB_ROOT__'=>__ROOT__
         )
 );
 

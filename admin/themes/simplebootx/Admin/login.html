@@ -32,15 +32,15 @@
 	</head>
 <body>
 	<div class="wrap">
-		<h1><a href="__ROOT__">ThinkCMF {:L('ADMIN_CENTER')}</a></h1>
+		<h1><a>ThinkCMF</a></h1>
 		<form method="post" name="login" action="{:U('public/dologin')}" autoComplete="off" class="js-ajax-form">
 			<div class="login">
 				<ul>
 					<li>
-						<input class="input" id="js-admin-name" required name="username" type="text" placeholder="{:L('USERNAME_OR_EMAIL')}" title="{:L('USERNAME_OR_EMAIL')}" value="{$_COOKIE['admin_username']}"/>
+						<input class="input" id="js-admin-name" name="username" type="text" placeholder="{:L('USERNAME_OR_EMAIL')}" title="{:L('USERNAME_OR_EMAIL')}" value="{:cookie('admin_username')}" data-rule-required="true"  data-msg-required=""/>
 					</li>
 					<li>
-						<input class="input" id="admin_pwd" type="password" required name="password" placeholder="{:L('PASSWORD')}" title="{:L('PASSWORD')}" />
+						<input class="input" id="admin_pwd" type="password" name="password" placeholder="{:L('PASSWORD')}" title="{:L('PASSWORD')}" data-rule-required="true"  data-msg-required=""/>
 					</li>
 					<li class="verifycode-wrapper">
 						{:sp_verifycode_img('length=4&font_size=20&width=248&height=42&use_noise=1&use_curve=0','style="cursor: pointer;" title="点击获取"')}
@@ -58,9 +58,9 @@
 
 <script>
 var GV = {
-	DIMAUB: "",
-	JS_ROOT: "__PUBLIC__/js/",//js版本号
-	TOKEN : ''	//token ajax全局
+    ROOT: "__ROOT__/",
+    WEB_ROOT: "__WEB_ROOT__/",
+    JS_ROOT: "public/js/"
 };
 </script>
 <script src="__PUBLIC__/js/wind.js"></script>

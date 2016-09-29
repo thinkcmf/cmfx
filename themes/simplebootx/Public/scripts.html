@@ -1,9 +1,9 @@
 <script type="text/javascript">
 //全局变量
 var GV = {
-    DIMAUB: "__ROOT__/",
-    JS_ROOT: "public/js/",
-    TOKEN: ""
+    ROOT: "__ROOT__/",
+    WEB_ROOT: "__WEB_ROOT__/",
+    JS_ROOT: "public/js/"
 };
 </script>
 <!-- Le javascript
@@ -11,7 +11,7 @@ var GV = {
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="__PUBLIC__/js/jquery.js"></script>
     <script src="__PUBLIC__/js/wind.js"></script>
-    <script src="__TMPL__Public/simpleboot/bootstrap/js/bootstrap.min.js"></script>
+    <script src="__TMPL__Public/assets/simpleboot/bootstrap/js/bootstrap.min.js"></script>
     <script src="__PUBLIC__/js/frontend.js"></script>
 	<script>
 	$(function(){
@@ -26,7 +26,7 @@ var GV = {
 		$.post("{:U('user/index/is_login')}",{},function(data){
 			if(data.status==1){
 				if(data.user.avatar){
-					$("#main-menu-user .headicon").attr("src",data.user.avatar.indexOf("http")==0?data.user.avatar:"__UPLOAD__avatar/"+data.user.avatar);
+					$("#main-menu-user .headicon").attr("src",data.user.avatar.indexOf("http")==0?data.user.avatar:"{:sp_get_image_url('[AVATAR]','!avatar')}".replace('[AVATAR]',data.user.avatar));
 				}
 				
 				$("#main-menu-user .user-nicename").text(data.user.user_nicename!=""?data.user.user_nicename:data.user.user_login);
@@ -36,6 +36,10 @@ var GV = {
 			if(data.status==0){
 				$("#main-menu-user li.offline").show();
 			}
+			
+			$.post("{:U('user/notification/getLastNotifications')}",{},function(data){
+				$(".nav .notifactions .count").text(data.list.length);
+			});
 			
 		});	
 		;(function($){

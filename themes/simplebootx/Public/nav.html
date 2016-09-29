@@ -7,7 +7,7 @@
          <span class="icon-bar"></span>
          <span class="icon-bar"></span>
        </a>
-       <a class="brand" href="__ROOT__/"><img src="__TMPL__Public/images/logo.png"/></a>
+       <a class="brand" href="__ROOT__/"><img src="__TMPL__Public/assets/images/logo.png"/></a>
        <div class="nav-collapse collapse" id="main-menu">
        	<?php
 			$effected_id="main-menu";
@@ -22,9 +22,15 @@
 		?>
 		
 		<ul class="nav pull-right" id="main-menu-user">
+			<li class="login">
+	            <a class="dropdown-toggle notifactions" href="{:U('user/notification/index')}">
+	            <i class="fa fa-envelope"></i>
+	            <span class="count">0</span>
+	            </a>
+          	</li>
 			<li class="dropdown user login">
 	            <a class="dropdown-toggle user" data-toggle="dropdown" href="#">
-	            <img src="__TMPL__/Public/images/headicon.png" class="headicon"/>
+	            <img src="__TMPL__Public/assets/images/headicon.png" class="headicon"/>
 	            <span class="user-nicename"></span><b class="caret"></b></a>
 	            <ul class="dropdown-menu pull-right">
 	               <li><a href="{:U('user/center/index')}"><i class="fa fa-user"></i> &nbsp;个人中心</a></li>
@@ -34,7 +40,7 @@
           	</li>
           	<li class="dropdown user offline">
 	            <a class="dropdown-toggle user" data-toggle="dropdown" href="#">
-	           		<img src="__TMPL__/Public/images/headicon.png" class="headicon"/>登录<b class="caret"></b>
+	           		<img src="__TMPL__Public/assets/images/headicon.png" class="headicon"/>登录<b class="caret"></b>
 	            </a>
 	            <ul class="dropdown-menu pull-right">
 	               <li><a href="{:U('api/oauth/login',array('type'=>'sina'))}"><i class="fa fa-weibo"></i> &nbsp;微博登录</a></li>

@@ -140,16 +140,16 @@ class MenuModel extends CommonModel {
                 $model = ucwords($a['model']);
                 $action = $a['action'];
                 //附带参数
-              	$fu = "";
+              	$params = "";
                 if ($a['data']) {
-                    $fu = "?" . htmlspecialchars_decode($a['data']);
+                    $params = "?" . htmlspecialchars_decode($a['data']);
                 }
                 $array = array(
                     "icon" => $a['icon'],
                     "id" => $id . $name,
                     "name" => $a['name'],
                     "parent" => $parent,
-                    "url" => U("{$name}/{$model}/{$action}{$fu}", array("menuid" => $id)),
+                    "url" => U("{$name}/{$model}/{$action}{$params}"),
                     'lang'=> strtoupper($name.'_'.$model.'_'.$action)
                 ); 
                 

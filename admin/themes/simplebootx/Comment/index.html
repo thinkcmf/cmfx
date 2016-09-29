@@ -9,7 +9,7 @@
 			<div class="table-actions">
 				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('Commentadmin/check',array('check'=>1))}" data-subcheck="true">{:L('AUDIT')}</button>
 				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('Commentadmin/check',array('uncheck'=>1))}" data-subcheck="true">{:L('CANCEL_AUDIT')}</button>
-				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('Commentadmin/delete')}" data-subcheck="true" data-msg="{:L('DELETE_CONFIRM_MESSAGE')}">{:L('DELETE')}</button>
+				<button class="btn btn-danger btn-small js-ajax-submit" type="submit" data-action="{:U('Commentadmin/delete')}" data-subcheck="true" data-msg="{:L('DELETE_CONFIRM_MESSAGE')}">{:L('DELETE')}</button>
 			</div>
 			<table class="table table-hover table-bordered table-list">
 				<thead>
@@ -56,9 +56,9 @@
 			<div class="table-actions">
 				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('Commentadmin/check',array('check'=>1))}" data-subcheck="true">{:L('AUDIT')}</button>
 				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('Commentadmin/check',array('uncheck'=>1))}" data-subcheck="true">{:L('CANCEL_AUDIT')}</button>
-				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('Commentadmin/delete')}" data-subcheck="true" data-msg="{:L('DELETE_CONFIRM_MESSAGE')}">{:L('DELETE')}</button>
+				<button class="btn btn-danger btn-small js-ajax-submit" type="submit" data-action="{:U('Commentadmin/delete')}" data-subcheck="true" data-msg="{:L('DELETE_CONFIRM_MESSAGE')}">{:L('DELETE')}</button>
 			</div>
-			<div class="pagination">{$Page}</div>
+			<div class="pagination">{$page}</div>
 		</form>
 	</div>
 	<script src="__PUBLIC__/js/common.js"></script>

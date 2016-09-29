@@ -17,17 +17,17 @@
 				<if condition="!empty($nextapp)">
 					<script>
 						setTimeout(function() {
-							location.href = "{:U('admin/menu/spmy_getactions',array('app'=>$nextapp))}";
+							location.href = "{:U('admin/menu/getactions',array('app'=>$nextapp))}";
 						}, 1000);
 					</script>
 					<div class="error_return">
-						<a href="{:U('admin/menu/spmy_getactions',array('app'=>$nextapp))}" class="btn btn-primary">下一个应用</a>
-						<a href="{:U('admin/menu/lists')}" class="btn" style="margin-left: 10px;">返回</a>
+						<a href="{:U('admin/menu/getactions',array('app'=>$nextapp))}" class="btn btn-primary">下一个应用</a>
+						<a href="{:U('admin/menu/index')}" class="btn" style="margin-left: 10px;">返回</a>
 					</div>
 				<else />
 					<div>全部导入成功！</div>
 					<div class="error_return">
-						<a href="{:U('menu/lists')}" class="btn">返回</a>
+						<a href="{:U('menu/index')}" class="btn">返回</a>
 					</div>
 				</if>
 			</div>

@@ -5,16 +5,12 @@
 		<ul class="nav nav-tabs">
 			<li class="active"><a href="{:U('menu/index')}">{:L('ADMIN_MENU_INDEX')}</a></li>
 			<li><a href="{:U('menu/add')}">{:L('ADMIN_MENU_ADD')}</a></li>
-			<li><a href="{:U('menu/spmy_import_menu')}">{:L('ADMIN_MENU_SPMY_IMPORT_MENU')}</a></li>
-			<if condition="APP_DEBUG">
 			<li><a href="{:U('menu/lists')}">{:L('ADMIN_MENU_LISTS')}</a></li>
-			<li><a href="{:U('menu/spmy_export_menu')}">备份菜单</a></li>
-			<li><a href="{:U('menu/spmy_export_menu_lang')}">生成菜单多语言包</a></li>
-			</if>
 		</ul>
 		<form class="js-ajax-form" action="{:U('Menu/listorders')}" method="post">
 			<div class="table-actions">
 				<button class="btn btn-primary btn-small js-ajax-submit" type="submit">{:L('SORT')}</button>
+				<a class="btn btn-warning btn-small" href="{:U('menu/getactions')}">导入新菜单</a>
 			</div>
 			<table class="table table-hover table-bordered table-list" id="menus-table">
 				<thead>

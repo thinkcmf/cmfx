@@ -1,27 +1,30 @@
 <?php
 namespace Admin\Controller;
+
 use Common\Controller\AdminbaseController;
+
 class AdController extends AdminbaseController{
+    
 	protected $ad_model;
 	
-	function _initialize() {
+	public function _initialize() {
 		parent::_initialize();
 		$this->ad_model = D("Common/Ad");
 	}
 	
-	function index(){
+	public function index(){
 		$ads=$this->ad_model->select();
 		$this->assign("ads",$ads);
 		$this->display();
 	}
 	
-	function add(){
+	public function add(){
 		$this->display();
 	}
 	
-	function add_post(){
+	public function add_post(){
 		if(IS_POST){
-			if ($this->ad_model->create()){
+			if ($this->ad_model->create()!==false){
 				if ($this->ad_model->add()!==false) {
 					$this->success(L('ADD_SUCCESS'), U("ad/index"));
 				} else {
@@ -34,16 +37,16 @@ class AdController extends AdminbaseController{
 		}
 	}
 	
-	function edit(){
-		$id=I("get.id");
-		$ad=$this->ad_model->where("ad_id=$id")->find();
+	public function edit(){
+		$id=I("get.id",0,'intval');
+		$ad=$this->ad_model->where(array('ad_id'=>$id))->find();
 		$this->assign($ad);
 		$this->display();
 	}
 	
-	function edit_post(){
+	public function edit_post(){
 		if (IS_POST) {
-			if ($this->ad_model->create()) {
+			if ($this->ad_model->create()!==false) {
 				if ($this->ad_model->save()!==false) {
 					$this->success("保存成功！", U("ad/index"));
 				} else {
@@ -58,7 +61,7 @@ class AdController extends AdminbaseController{
 	/**
 	 *  删除
 	 */
-	function delete(){
+	public function delete(){
 		$id = I("get.id",0,"intval");
 		if ($this->ad_model->delete($id)!==false) {
 			$this->success("删除成功！");
@@ -67,29 +70,24 @@ class AdController extends AdminbaseController{
 		}
 	}
 	
-	function toggle(){
-		if(isset($_POST['ids']) && $_GET["display"]){
-			$ids = implode(",", $_POST['ids']);
-			$data['status']=1;
-			if ($this->ad_model->where("ad_id in ($ids)")->save($data)!==false) {
+	public function toggle(){
+		if(!empty($_POST['ids']) && isset($_GET["display"])){
+			$ids = I('post.ids/a');
+			if ($this->ad_model->where(array('ad_id'=>array('in',$ids)))->save(array('status'=>1))!==false) {
 				$this->success("显示成功！");
 			} else {
 				$this->error("显示失败！");
 			}
 		}
-		if(isset($_POST['ids']) && $_GET["hide"]){
-			$ids = implode(",", $_POST['ids']);
-			$data['status']=0;
-			if ($this->ad_model->where("ad_id in ($ids)")->save($data)!==false) {
+		
+		if(isset($_POST['ids']) && isset($_GET["hide"])){
+			$ids = I('post.ids/a');
+			if ($this->ad_model->where(array('ad_id'=>array('in',$ids)))->save(array('status'=>0))!==false) {
 				$this->success("隐藏成功！");
 			} else {
 				$this->error("隐藏失败！");
 			}
 		}
 	}
-	
-	
-	
-	
 	
 }

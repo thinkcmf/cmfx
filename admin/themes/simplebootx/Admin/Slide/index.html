@@ -7,11 +7,11 @@
 			<li><a href="{:U('slide/add')}">{:L('ADMIN_SLIDE_ADD')}</a></li>
 		</ul>
 		<form class="well form-search" method="post" id="cid-form">
-			<select class="select_2" name="cid" style="width: 100px;" id="selected-cid">
+			<select name="cid" style="width: 100px;" id="selected-cid">
 				<option value=''>{:L('ALL')}</option>
 				<foreach name="categorys" item="vo">
-				<php>$cid_select=$vo['cid']===$slide_cid?"selected":"";</php>
-				<option value="{$vo.cid}"{$cid_select}>{$vo.cat_name}</option>
+				<php>$cid_select=$vo['cid']==$slide_cid?"selected":"";</php>
+				<option value="{$vo.cid}" {$cid_select}>{$vo.cat_name}</option>
 				</foreach>
 			</select>
 		</form>
@@ -20,7 +20,7 @@
 				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('slide/listorders')}">{:L('SORT')}</button>
 				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('slide/toggle',array('display'=>1))}" data-subcheck="true">{:L('DISPLAY')}</button>
 				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('slide/toggle',array('hide'=>1))}" data-subcheck="true">{:L('HIDDEN')}</button>
-				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('slide/delete')}" data-subcheck="true">{:L('DELETE')}</button>
+				<button class="btn btn-danger btn-small js-ajax-submit" type="submit" data-action="{:U('slide/delete')}" data-subcheck="true" data-msg="你确定删除吗？">{:L('DELETE')}</button>
 			</div>
 			<php> $status=array("1"=>L('DISPLAY'),"0"=>L('HIDDEN')); </php>
 			<table class="table table-hover table-bordered table-list">
@@ -47,7 +47,7 @@
 					<td>{$vo.slide_url}</td>
 					<td>
 						<if condition="!empty($vo['slide_pic'])">
-							<a href="{:sp_get_asset_upload_path($vo['slide_pic'])}" target="_blank">{:L('VIEW')}</a>
+							<a href="{:sp_get_image_preview_url($vo['slide_pic'])}" target="_blank">{:L('VIEW')}</a>
 						</if>
 					</td>
 					<td>{$status[$vo['slide_status']]}</td>
@@ -80,7 +80,7 @@
 				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('slide/listorders')}">{:L('SORT')}</button>
 				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('slide/toggle',array('display'=>1))}" data-subcheck="true">{:L('DISPLAY')}</button>
 				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('slide/toggle',array('hide'=>1))}" data-subcheck="true">{:L('HIDDEN')}</button>
-				<button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('slide/delete')}" data-subcheck="true">{:L('DELETE')}</button>
+				<button class="btn btn-danger btn-small js-ajax-submit" type="submit" data-action="{:U('slide/delete')}" data-subcheck="true" data-msg="你确定删除吗？">{:L('DELETE')}</button>
 			</div>
 		</form>
 	</div>

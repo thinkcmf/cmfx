@@ -66,14 +66,14 @@
 							<td>
 								<div style="text-align: center;">
 									<input type='hidden' name='smeta[thumb]' id='thumb' value="{$smeta.thumb|default=''}">
-									<a href='javascript:void(0);' onclick="flashupload('thumb_images', '附件上传','thumb',thumb_images,'1,jpg|jpeg|gif|png|bmp,1,,,1','','','');return false;">
+									<a href="javascript:upload_one_image('图片上传','#thumb');">
 										<if condition="empty($smeta['thumb'])">
-											<img src="__TMPL__Public/assets/images/default-thumbnail.png" id='thumb_preview' width='135' height='113' style='cursor: hand' />
+											<img src="__TMPL__Public/assets/images/default-thumbnail.png" id='thumb-preview' width='135' height='113' style='cursor: hand' />
 										<else />
-											<img src="{:sp_get_asset_upload_path($smeta['thumb'])}" id='thumb_preview' width='135' height='113' style='cursor: hand' />
+											<img src="{:sp_get_image_preview_url($smeta['thumb'])}" id='thumb-preview' width='135' height='113' style='cursor: hand' />
 										</if>
 									</a>
-									<input type="button" class="btn btn-small" onclick="$('#thumb_preview').attr('src','__TMPL__Public/assets/images/default-thumbnail.png');$('#thumb').val('');return false;" value="取消图片">
+									<input type="button" class="btn btn-small" onclick="$('#thumb-preview').attr('src','__TMPL__Public/assets/images/default-thumbnail.png');$('#thumb').val('');return false;" value="取消图片">
 								</div>
 							</td>
 						</tr>
@@ -101,15 +101,14 @@
 			</div>
 			<div class="form-actions">
 				<button class="btn btn-primary js-ajax-submit" type="submit">{:L('SAVE')}</button>
-				<a class="btn" href="{:U('AdminPage/index')}">{:L('BACK')}</a>
+				<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
 			</div>
 		</form>
 	</div>
 	<script type="text/javascript" src="__PUBLIC__/js/common.js"></script>
-	<script type="text/javascript" src="__PUBLIC__/js/content_addtop.js"></script>
 	<script type="text/javascript">
 		//编辑器路径定义
-		var editorURL = GV.DIMAUB;
+		var editorURL = GV.WEB_ROOT;
 	</script>
 	<script type="text/javascript" src="__PUBLIC__/js/ueditor/ueditor.config.js"></script>
 	<script type="text/javascript" src="__PUBLIC__/js/ueditor/ueditor.all.min.js"></script>
@@ -157,7 +156,7 @@
 				});
 				var form = $('form.js-ajax-forms');
 				//ie处理placeholder提交问题
-				if ($.browser.msie) {
+				if ($.browser && $.browser.msie) {
 					form.find('[placeholder]').each(function() {
 						var input = $(this);
 						if (input.val() == input.attr('placeholder')) {
@@ -249,7 +248,7 @@
 										});
 									});
 								} else {
-									isalert(data.info);
+									artdialog_alert(data.info);
 								}
 							}
 						});

@@ -39,7 +39,10 @@ return array (
 	'SETTING' => 'Setting',
     "ADD_SUCCESS" => 'Add success!',
     "ADD_FAILED" => 'Add failed!',
-    "NO_DATA" => 'No data!'
+    "EDIT_SUCCESS" => 'Save success！',
+    "EDIT_FAILED" => 'Save failed！',
+    "NO_DATA" => 'No data!',
+    "MOBILE" => 'Mobile'
 		
 	
 );

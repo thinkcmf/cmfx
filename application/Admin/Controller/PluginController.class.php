@@ -1,26 +1,27 @@
 <?php
 namespace Admin\Controller;
 use Common\Controller\AdminbaseController;
+
 class PluginController extends AdminbaseController{
+    
 	protected $plugins_model;
 	
-	function _initialize() {
+	public function _initialize() {
 		parent::_initialize();
 		$this->plugins_model = D("Common/Plugins");
 	}
-	function index(){
+	
+	public function index(){
 		$plugins=$this->plugins_model->getList();
 		$this->assign("plugins",$plugins);
 		$this->display();
 	}
 	
-	
-	function toggle(){
+	public function toggle(){
 		if(isset($_GET['id'])){
 			if($_GET["enable"]){
-				$id = intval($_GET['id']);
-				$data['status']=1;
-				if ($this->plugins_model->where("id =$id")->save($data)!==false) {
+				$id = I('get.id',0,'intval');
+				if ($this->plugins_model->where(array('id'=>$id))->save(array('status'=>1))!==false) {
 					S('hooks',null);
 					$this->success("启用成功！");
 				} else {
@@ -28,9 +29,8 @@ class PluginController extends AdminbaseController{
 				}
 			}
 			if($_GET["disable"]){
-				$id = intval($_GET['id']);
-				$data['status']=0;
-				if ($this->plugins_model->where("id =$id")->save($data)!==false) {
+				$id = I('get.id',0,'intval');
+				if ($this->plugins_model->where(array('id'=>$id))->save(array('status'=>0))!==false) {
 					S('hooks',null);
 					$this->success("禁用成功！");
 				} else {
@@ -40,8 +40,8 @@ class PluginController extends AdminbaseController{
 		}
 	}
 	
-	function setting(){
-		$id     =   intval(I('get.id'));
+	public function setting(){
+		$id     =   I('get.id',0,'intval');
 		$plugin  =   $this->plugins_model->find($id);
 		if(!$plugin)
 			$this->error('插件未安装');
@@ -78,12 +78,11 @@ class PluginController extends AdminbaseController{
 		
 	}
 	
-	
-	function setting_post(){
+	public function setting_post(){
 		if(IS_POST){
-			$id     =   intval(I('post.id'));
-			$config =   I('post.config');
-			$result = $this->plugins_model->where("id=$id")->setField('config',json_encode($config));
+			$id     =   I('post.id',0,'intval');
+			$config =   I('post.config/a');
+			$result = $this->plugins_model->where(array('id'=>$id))->setField('config',json_encode($config));
 			if($result !== false){
 				$this->success('保存成功');
 			}else{
@@ -92,7 +91,7 @@ class PluginController extends AdminbaseController{
 		}
 	}
 	
-	function install(){
+	public function install(){
 		$plugin_name     =   trim(I('name'));
 		$class          =   sp_get_plugin_class($plugin_name);
 		if(!class_exists($class))
@@ -160,7 +159,8 @@ class PluginController extends AdminbaseController{
 			$info['has_admin'] = 0;
 		}
 		
-		$info['config']=json_encode($plugin->getConfig());
+		$config=$plugin->getConfig();
+		$info['config']=$config?json_encode($config):"";
 		
 		$data           =   $this->plugins_model->create($info);
 		
@@ -179,7 +179,7 @@ class PluginController extends AdminbaseController{
 	 * 卸载插件
 	 */
 	public function uninstall(){
-		$id             =   intval(I('get.id'));
+		$id             =  I('get.id',0,'intval');
 		$find_plugin      =   $this->plugins_model->find($id);
 		$class          =   sp_get_plugin_class($find_plugin['name']);
 		

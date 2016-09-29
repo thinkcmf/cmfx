@@ -6,31 +6,29 @@
 // +----------------------------------------------------------------------
 // | Author: Tuolaji <479923197@qq.com>
 // +----------------------------------------------------------------------
-/**
- * 参    数：
- * 作    者：lht
- * 功    能：OAth2.0协议下第三方登录数据报表
- * 修改日期：2013-12-13
- */
 namespace Api\Controller;
+
 use Common\Controller\AdminbaseController;
+
 class OauthadminController extends AdminbaseController {
 	
 	//设置
-	function setting(){
+	public function setting(){
 		$host=sp_get_host();
 		$callback_uri_root = $host.__ROOT__.'/index.php?g=api&m=oauth&a=callback&type=';
 		$this->assign("callback_uri_root",$callback_uri_root);
 		$this->display();
 	}
 	
-	//设置
-	function setting_post(){
-		if($_POST){
-			$qq_key=$_POST['qq_key'];
-			$qq_sec=$_POST['qq_sec'];
-			$sina_key=$_POST['sina_key'];
-			$sina_sec=$_POST['sina_sec'];
+	//设置提交
+	public function setting_post(){
+		if(IS_POST){
+			$qq_key = I('post.qq_key');
+			$qq_sec = I('post.qq_sec');
+			$sina_key = I('post.sina_key');
+			$sina_sec = I('post.sina_sec');
+			$wx_key=$_POST['wx_key'];
+			$wx_sec=$_POST['wx_sec'];
 			
 			$host=sp_get_host();
 			
@@ -45,6 +43,12 @@ class OauthadminController extends AdminbaseController {
 							'APP_KEY'    => $sina_key,
 							'APP_SECRET' => $sina_sec,
 							'CALLBACK'   => $call_back . 'sina',
+					),
+			
+					'THINK_SDK_WEIXIN' => array(
+							'APP_KEY'    => $wx_key,
+							'APP_SECRET' => $wx_sec,
+							'CALLBACK'   => $call_back . 'weixin',
 					),
 			);
 			

@@ -37,16 +37,15 @@
 				<div class="control-group">
 					<label class="control-label">{:L('HREF')}</label>
 					<div class="controls">
-						<input type="radio" name="nav" id="outlink">
+						<input type="radio" name="nav" id="outlink_radio">
 						<input type="text" name="href" id="outlink_input" value="http://">
-						<input type="radio" name="nav" id="selecturl">
+						<input type="radio" name="nav" id="selecturl_radio">
 						<select name="href" id="selecthref">
-							<option value="home">{:L('HOME')}</option>
+							<option value="{:base64_encode('home')}">{:L('HOME')}</option>
 							<foreach name="navs" item="vo">
-							<option disabled>{$vo.name}</option>
-							<foreach name="vo['items']" item="voo">
-							<option value='{$voo.rule}'>{$voo.label}</option>
-							</foreach>
+								<optgroup label="{$vo.name}">
+								{$vo.html}
+								</optgroup>
 							</foreach>
 						</select>
 					</div>
@@ -78,7 +77,7 @@
 			</fieldset>
 			<div class="form-actions">
 				<button type="submit" class="btn btn-primary js-ajax-submit">{:L('ADD')}</button>
-				<a class="btn" href="{:U('nav/index')}">{:L('BACK')}</a>
+				<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
 			</div>
 		</form>
 	</div>
@@ -93,35 +92,20 @@
 				}
 			});
 
-			$("#selecthref").click(function() {
+			$("#selecthref,#selecturl_radio").click(function() {
 				$('#outlink_input').removeAttr('name');
-				$('#selecturl').attr({
-					'checked' : 'checked',
-					'name' : 'href'
+				$(this).attr('name','href');
+				$('#selecturl_radio').attr({
+					'checked' : 'checked'
 				});
 			});
-			$("input[name='href']").click(function() {
+			$("#outlink_input,#outlink_radio").click(function() {
 				$('#selecthref').removeAttr('name');
-				$('#outlink').attr({
-					'checked' : 'checked',
-					'name' : 'href'
+				$('#outlink_input').attr('name','external_href');
+				$('#outlink_radio').attr({
+					'checked' : 'checked'
 				});
 			});
-			/*
-			Wind.use('ajaxForm','artDialog','iframeTools', function () {
-			 	$("#href_input").click(function(){
-			 		art.dialog.open("{:U('nav/select')}", {
-			            title: "选择链接地址",
-			            close: function () {
-			    			var checked_v = art.dialog.data('checked_v');
-			    			if (checked_v !== undefined) $('#href_input').val(checked_v);
-			    			var checked_u = art.dialog.data('checked_u');
-			    			if (checked_u !== undefined) $('#u_input').val(checked_u);
-			    		}
-			        },false);
-				});
-			});
-			 */
 		});
 	</script>
 

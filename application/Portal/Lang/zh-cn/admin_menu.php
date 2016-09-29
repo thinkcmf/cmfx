@@ -4,6 +4,7 @@ return array (
   'PORTAL_ADMINPAGE_EDIT_POST' => '提交编辑',
   'PORTAL_ADMINPAGE_LISTORDERS' => '页面排序',
   'PORTAL_ADMINPOST_ADD_POST' => '提交添加',
+  'PORTAL_ADMINPOST_COPY' => '文章批量复制',
   'PORTAL_ADMINPOST_EDIT_POST' => '提交编辑',
   'PORTAL_ADMINPOST_LISTORDERS' => '文章排序',
   'PORTAL_ADMINPOST_RECOMMEND' => '文章推荐',

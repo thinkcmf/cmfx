@@ -1,16 +1,17 @@
 <?php
-
 /**
  * Menu(菜单管理)
  */
 namespace Admin\Controller;
+
 use Common\Controller\AdminbaseController;
+
 class MenuController extends AdminbaseController {
 
     protected $menu_model;
     protected $auth_rule_model;
 
-    function _initialize() {
+    public function _initialize() {
         parent::_initialize();
         $this->menu_model = D("Common/Menu");
         $this->auth_rule_model = D("Common/AuthRule");
@@ -20,9 +21,8 @@ class MenuController extends AdminbaseController {
      *  显示菜单
      */
     public function index() {
-    	$_SESSION['admin_menu_index']="Menu/index";
+    	session('admin_menu_index','Menu/index');
         $result = $this->menu_model->order(array("listorder" => "ASC"))->select();
-        import("Tree");
         $tree = new \Tree();
         $tree->icon = array('&nbsp;&nbsp;&nbsp;│ ', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ ');
         $tree->nbsp = '&nbsp;&nbsp;&nbsp;';
@@ -76,7 +76,7 @@ class MenuController extends AdminbaseController {
     }
     
     public function lists(){
-    	$_SESSION['admin_menu_index']="Menu/lists";
+    	session('admin_menu_index','Menu/lists');
     	$result = $this->menu_model->order(array("app" => "ASC","model" => "ASC","action" => "ASC"))->select();
     	$this->assign("menus",$result);
     	$this->display();
@@ -86,9 +86,8 @@ class MenuController extends AdminbaseController {
      *  添加
      */
     public function add() {
-    	import("Tree");
     	$tree = new \Tree();
-    	$parentid = intval(I("get.parentid"));
+    	$parentid = I("get.parentid",0,'intval');
     	$result = $this->menu_model->order(array("listorder" => "ASC"))->select();
     	foreach ($result as $r) {
     		$r['selected'] = $r['id'] == $parentid ? 'selected' : '';
@@ -106,7 +105,7 @@ class MenuController extends AdminbaseController {
      */
     public function add_post() {
     	if (IS_POST) {
-    		if ($this->menu_model->create()) {
+    		if ($this->menu_model->create()!==false) {
     			if ($this->menu_model->add()!==false) {
     				$app=I("post.app");
     				$model=I("post.model");
@@ -115,11 +114,13 @@ class MenuController extends AdminbaseController {
     				$menu_name=I("post.name");
     				$mwhere=array("name"=>$name);
     				
-    				$find_rule=$this->auth_rule_model->where($mwhere)->find();
-    				if(!$find_rule){
+    				$find_rule_count=$this->auth_rule_model->where($mwhere)->count();
+    				if($find_rule_count===0){
     					$this->auth_rule_model->add(array("name"=>$name,"module"=>$app,"type"=>"admin_url","title"=>$menu_name));//type 1-admin rule;2-user rule
     				}
-    				$to=empty($_SESSION['admin_menu_index'])?"Menu/index":$_SESSION['admin_menu_index'];
+    				$session_admin_menu_index=session('admin_menu_index');
+    				$to=empty($session_admin_menu_index)?"Menu/index":$session_admin_menu_index;
+    				$this->_export_app_menu_default_lang($app);
     				$this->success("添加成功！", U($to));
     			} else {
     				$this->error("添加失败！");
@@ -134,7 +135,7 @@ class MenuController extends AdminbaseController {
      *  删除
      */
     public function delete() {
-        $id = intval(I("get.id"));
+        $id = I("get.id",0,'intval');
         $count = $this->menu_model->where(array("parentid" => $id))->count();
         if ($count > 0) {
             $this->error("该菜单下还有子菜单，无法删除！");
@@ -150,9 +151,8 @@ class MenuController extends AdminbaseController {
      *  编辑
      */
     public function edit() {
-        import("Tree");
         $tree = new \Tree();
-        $id = intval(I("get.id"));
+        $id = I("get.id",0,'intval');
         $rs = $this->menu_model->where(array("id" => $id))->find();
         $result = $this->menu_model->order(array("listorder" => "ASC"))->select();
         foreach ($result as $r) {
@@ -172,7 +172,7 @@ class MenuController extends AdminbaseController {
      */
     public function edit_post() {
     	if (IS_POST) {
-    		if ($this->menu_model->create()) {
+    		if ($this->menu_model->create()!==false) {
     			if ($this->menu_model->save() !== false) {
     				$app=I("post.app");
     				$model=I("post.model");
@@ -181,13 +181,13 @@ class MenuController extends AdminbaseController {
     				$menu_name=I("post.name");
     				$mwhere=array("name"=>$name);
     				
-    				$find_rule=$this->auth_rule_model->where($mwhere)->find();
-    				if(!$find_rule){
+    				$find_rule_count=$this->auth_rule_model->where($mwhere)->count();
+    				if($find_rule_count===0){
     					$this->auth_rule_model->add(array("name"=>$name,"module"=>$app,"type"=>"admin_url","title"=>$menu_name));//type 1-admin rule;2-user rule
     				}else{
     					$this->auth_rule_model->where($mwhere)->save(array("name"=>$name,"module"=>$app,"type"=>"admin_url","title"=>$menu_name));//type 1-admin rule;2-user rule
     				}
-    				
+    				$this->_export_app_menu_default_lang($app);
     				$this->success("更新成功！");
     			} else {
     				$this->error("更新失败！");
@@ -208,7 +208,7 @@ class MenuController extends AdminbaseController {
         }
     }
     
-    public function spmy_export_menu(){
+    public function backup_menu(){
     	$menus=$this->menu_model->get_menu_tree(0);
     	
     	$menus_str= var_export($menus,true);
@@ -228,41 +228,90 @@ class MenuController extends AdminbaseController {
     		file_put_contents($menudir."/admin_$model.php", "<?php\nreturn $menus_str;");
     		
     	}
-    	$this->display("export_menu");
+    	$this->success('菜单备份成功！');
     }
     
-    public function spmy_export_menu_lang(){
+    private function _export_app_menu_default_lang($app){
+        $menus = $this->menu_model->where(array("app"=>$app))->order(array("listorder"=>"ASC","app" => "ASC","model" => "ASC","action" => "ASC"))->select();
+        $lang_dir=C('DEFAULT_LANG');
+        $admin_menu_lang_file_default=SITE_PATH."data/lang/$app/Lang/".$lang_dir."/admin_menu.php";
+        	
+        if(!empty($admin_menu_lang_file_default) && !file_exists_case(dirname($admin_menu_lang_file_default))){
+            mkdir(dirname($admin_menu_lang_file_default),0777,true);
+        }
+        
+        $lang=array();
+        
+        foreach ($menus as $menu){
+            $lang_key=strtoupper($menu['app'].'_'.$menu['model'].'_'.$menu['action']);
+            $lang[$lang_key]=$menu['name'];
+        }
+        
+        $lang_str= var_export($lang,true);
+        $lang_str=preg_replace("/\s+\d+\s=>\s(\n|\r)/", "\n", $lang_str);
+        
+        if(!empty($admin_menu_lang_file_default)){
+            file_put_contents($admin_menu_lang_file_default, "<?php\nreturn $lang_str;");
+        }
+    }
+    
+    public function export_menu_lang(){
     	$apps=sp_scan_dir(SPAPP."*",GLOB_ONLYDIR);
+    	$default_lang=C('DEFAULT_LANG');
     	foreach ($apps as $app){
     		if(is_dir(SPAPP.$app)){
     			$lang_dirs=sp_scan_dir(SPAPP."$app/Lang/*",GLOB_ONLYDIR);
     			
+    			if(empty($lang_dirs)) continue;
+    			
     			$menus = $this->menu_model->where(array("app"=>$app))->order(array("listorder"=>"ASC","app" => "ASC","model" => "ASC","action" => "ASC"))->select();
+    			
     			foreach ($lang_dirs as $lang_dir){
-    				$admin_menu_lang_file=SPAPP.$app."/Lang/".$lang_dir."/admin_menu.php";
+    			    $admin_menu_lang_file=SPAPP.$app."/Lang/".$lang_dir."/admin_menu.php";
+    			    $admin_menu_lang_file_default='';
+    			    if($default_lang==$lang_dir){
+    			        $admin_menu_lang_file_default=SITE_PATH."data/lang/$app/Lang/".$lang_dir."/admin_menu.php";
+    			    }
+    			    
+    			    if(!file_exists_case(dirname($admin_menu_lang_file))){
+    			        mkdir(dirname($admin_menu_lang_file),0777,true);
+    			    }
+    			    
+    			    if(!empty($admin_menu_lang_file_default) && !file_exists_case(dirname($admin_menu_lang_file_default))){
+    			        mkdir(dirname($admin_menu_lang_file_default),0777,true);
+    			    }
+    				
     				$lang=array();
-    				if(is_file($admin_menu_lang_file)){
-    					$lang=include $admin_menu_lang_file;
+    				
+    				if($lang_dir!=$default_lang && is_file($admin_menu_lang_file)){
+    				     $lang=include $admin_menu_lang_file;
     				}
     				
     				foreach ($menus as $menu){
     					$lang_key=strtoupper($menu['app'].'_'.$menu['model'].'_'.$menu['action']);
-    					if(!isset($lang[$lang_key])){
+    					
+    					if($lang_dir==$default_lang){
     						$lang[$lang_key]=$menu['name'];
+    					}else if(!isset($lang[$lang_key])){
+    					    $lang[$lang_key]=$menu['name'];
     					}
     				}
     				
     				$lang_str= var_export($lang,true);
     				$lang_str=preg_replace("/\s+\d+\s=>\s(\n|\r)/", "\n", $lang_str);
-    		
+    		      
     				file_put_contents($admin_menu_lang_file, "<?php\nreturn $lang_str;");
+    				if(!empty($admin_menu_lang_file_default)){
+    				    file_put_contents($admin_menu_lang_file_default, "<?php\nreturn $lang_str;");
+    				}
     			}
     			
     		}
+    		
     	}
-    	
-    	echo "success!";
+    	$this->success('生成菜单语言包已经完成！');
     }
+    
     /* public function dev_import_menu(){
     	$menus=F("Menu");
     	if(!empty($menus)){
@@ -327,7 +376,7 @@ class MenuController extends AdminbaseController {
     	
     }
     
-    public function spmy_import_menu(){
+    public function restore_menu(){
     	
     	$apps=sp_scan_dir(SPAPP."*",GLOB_ONLYDIR);
     	$error_menus=array();
@@ -352,8 +401,11 @@ class MenuController extends AdminbaseController {
     			 
     		}
     	}
-		$this->assign("errormenus",$error_menus);
-    	$this->display("import_menu");
+    	if (empty($error_menus)){
+    	    $this->success('菜单恢复成功！');
+    	}else{
+    	    $this->error('菜单恢复失败：'.implode(',', $error_menus));
+    	}
     }
     
     private function _import_submenu($submenus,$parentid){
@@ -391,7 +443,7 @@ class MenuController extends AdminbaseController {
     }
     
     
-    public function spmy_getactions(){
+    public function getactions(){
     	$apps_r=array("Comment");
     	$groups=C("MODULE_ALLOW_LIST");
     	$group_count=count($groups);

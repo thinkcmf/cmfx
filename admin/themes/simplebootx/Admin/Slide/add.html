@@ -51,10 +51,10 @@
 							<td>
 								<div style="text-align: center;">
 									<input type="hidden" name="slide_pic" id="thumb" value="">
-									<a href="javascript:void(0);" onclick="flashupload('thumb_images', '附件上传','thumb',thumb_images,'1,jpg|jpeg|gif|png|bmp,1,,,1','','','');return false;">
-										<img src="__TMPL__Public/assets/images/default-thumbnail.png" id="thumb_preview" width="135" style="cursor: hand" />
+									<a href="javascript:upload_one_image('图片上传','#thumb');">
+										<img src="__TMPL__Public/assets/images/default-thumbnail.png" id="thumb-preview" width="135" style="cursor: hand" />
 									</a>
-									<input type="button" class="btn btn-small" onclick="$('#thumb_preview').attr('src','__TMPL__Public/assets/images/default-thumbnail.png');$('#thumb').val('');return false;" value="取消图片">
+									<input type="button" class="btn btn-small" onclick="$('#thumb-preview').attr('src','__TMPL__Public/assets/images/default-thumbnail.png');$('#thumb').val('');return false;" value="取消图片">
 								</div>
 							</td>
 						</tr>
@@ -63,12 +63,11 @@
 			</div>
 			<div class="form-actions">
 				<button class="btn btn-primary js-ajax-submit" type="submit">{:L("ADD")}</button>
-				<a class="btn" href="{:U('slide/index')}">{:L('BACK')}</a>
+				<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
 			</div>
 		</form>
 	</div>
 	<script type="text/javascript" src="__PUBLIC__/js/common.js"></script>
-	<script type="text/javascript" src="__PUBLIC__/js/content_addtop.js"></script>
 	<script type="text/javascript">
 		$(function() {
 			$(".js-ajax-close-btn").on('click', function(e) {
@@ -96,7 +95,7 @@
 	
 				var form = $('form.js-ajax-forms');
 				//ie处理placeholder提交问题
-				if ($.browser.msie) {
+				if ($.browser && $.browser.msie) {
 					form.find('[placeholder]').each(function() {
 						var input = $(this);
 						if (input.val() == input.attr('placeholder')) {
@@ -193,7 +192,7 @@
 										});
 									});
 								} else {
-									isalert(data.info);
+									artdialog_alert(data.info);
 								}
 							}
 						});

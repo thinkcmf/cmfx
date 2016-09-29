@@ -34,16 +34,15 @@
 					<div class="control-group">
 						<label class="control-label">{:L('HREF')}</label>
 						<div class="controls">
-							<input type="radio" name="nav" id="outlink">
+							<input type="radio" name="nav" id="outlink_radio">
 							<input type="text" name="href" id="outlink_input" value="http://">
-							<input type="radio" name="nav" id="selecturl">
+							<input type="radio" name="nav" id="selecturl_radio">
 							<select name="href" id="selecthref">
-								<option value="home">{:L('HOME')}</option>
+								<option value="{:base64_encode('home')}">{:L('HOME')}</option>
 								<foreach name="navs" item="vo">
-								<option disabled>{$vo.name}</option>
-									<foreach name="vo['items']" item="voo">
-									<option value='{$voo.rule}'>{$voo.label}</option>
-									</foreach>
+									<optgroup label="{$vo.name}">
+									{$vo.html}
+									</optgroup>
 								</foreach>
 							</select>
 						</div>
@@ -77,7 +76,7 @@
 				<div class="form-actions">
 					<input type="hidden" name="id" value="{$id}">
 					<button type="submit" class="btn btn-primary js-ajax-submit">{:L('SAVE')}</button>
-					<a class="btn" href="{:U('nav/index')}">{:L('BACK')}</a>
+					<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
 				</div>
 			</form>
 		</div>
@@ -93,14 +92,14 @@
 				}
 			});
 
-			$("#selecthref").click(function() {
+			$("#selecthref,#selecturl_radio").click(function() {
 				checkChange(2);
 			});
-			$("input[name='href']").click(function() {
+			$("#outlink_input,#outlink_radio").click(function() {
 				checkChange(1);
 			});
 
-			var opt = $("#selecthref option[value='" + '{$hrefold}' + "']");
+			var opt = $("#selecthref option[value='" + '{$href}' + "']");
 			if (opt.length > 0) {
 				opt.attr('selected', 'selected');
 				checkChange(2);
@@ -112,19 +111,17 @@
 			function checkChange(i) {
 				if (i == 1) {
 					//自动输入url
-					$('#outlink_input').attr('name', 'href');
+					$('#outlink_input').attr('name', 'external_href');
 					$('#selecthref').removeAttr('name');
-					$('#outlink').attr({
-						'checked' : 'checked',
-						'name' : 'nav'
+					$('#outlink_radio').attr({
+						'checked' : 'checked'
 					});
 				} else {
 					//选择链接url
 					$('#selecthref').attr('name', 'href');
 					$('#outlink_input').removeAttr('name');
-					$('#selecturl').attr({
-						'checked' : 'checked',
-						'name' : 'nav'
+					$('#selecturl_radio').attr({
+						'checked' : 'checked'
 					});
 				}
 			}

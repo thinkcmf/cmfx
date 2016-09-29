@@ -6,8 +6,8 @@
 return array(
     // 邮件
     'PHPMailer' => SPAPP_PATH . 'Lib/Util/class.phpmailer.php',
-    // Pclzip
-    'Pclzip' => SPAPP_PATH . 'Lib/Util/Pclzip.class.php',
+    // PclZip
+    'PclZip' => SPAPP_PATH . 'Lib/Util/Pclzip.class.php',
     // 文件操作类 Dir
     "Dir" => SPAPP_PATH . 'Lib/Util/Dir.class.php',
     // 树
@@ -25,5 +25,5 @@ return array(
     "ThinkOauth" => SPAPP_PATH . 'Lib/Extend/ThinkSDK/ThinkOauth.class.php',
     
     // PHPZip
-    "phpzip" => SPAPP_PATH . 'Lib/Util/phpzip.php'
+    "PHPZip" => SPAPP_PATH . 'Lib/Util/phpzip.php'
 );

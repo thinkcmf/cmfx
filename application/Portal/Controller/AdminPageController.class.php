@@ -65,7 +65,7 @@ class AdminPageController extends AdminbaseController {
 		}
 		$this->assign("users",$users);
 		
-		$this->assign("Page", $page->show('Admin'));
+		$this->assign("page", $page->show('Admin'));
 		$this->assign("formget",$_GET);
 		$this->assign("posts",$posts);
 		$this->display();
@@ -121,7 +121,7 @@ class AdminPageController extends AdminbaseController {
 		}
 		$this->assign("users",$users);
 		
-		$this->assign("Page", $page->show('Admin'));
+		$this->assign("page", $page->show('Admin'));
 		$this->assign("formget",$_GET);
 		$this->assign("posts",$posts);
 		$this->display();

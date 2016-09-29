@@ -4,9 +4,12 @@
 	width:212px;
 	background-color:#fff;
 	font-size:12px;
-	z-index:15;
+	z-index:999999;
 	border-radius:3px;
 	box-shadow: 0 0 5px rgba(66,67,65,0.6);	
+	-webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
 }
 #calbody{
 	border:1px solid #ccc;
@@ -31,6 +34,9 @@
 	height:23px;
 	border-top-right-radius:3px;
 	border-top-left-radius:3px;
+	-webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
 } 
 #calhead select{
 	padding:0;

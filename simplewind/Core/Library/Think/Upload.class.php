@@ -216,6 +216,13 @@ class Upload {
         }
         return empty($info) ? false : $info;
     }
+    
+    /**
+     * 获取上传驱动
+     */
+    public function getUploader(){
+        return $this->uploader;
+    }
 
     /**
      * 转换上传文件数组变量为正确的方式

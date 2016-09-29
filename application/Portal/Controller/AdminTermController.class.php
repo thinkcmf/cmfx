@@ -73,7 +73,7 @@ class AdminTermController extends AdminbaseController {
 	
 	function add_post(){
 		if (IS_POST) {
-			if ($this->terms_model->create()) {
+			if ($this->terms_model->create()!==false) {
 				if ($this->terms_model->add()!==false) {
 				    F('all_terms',null);
 					$this->success("添加成功！",U("AdminTerm/index"));
@@ -113,7 +113,7 @@ class AdminTermController extends AdminbaseController {
 	
 	function edit_post(){
 		if (IS_POST) {
-			if ($this->terms_model->create()) {
+			if ($this->terms_model->create()!==false) {
 				if ($this->terms_model->save()!==false) {
 				    F('all_terms',null);
 					$this->success("修改成功！");

@@ -157,22 +157,26 @@ abstract class Plugin{
         }
         
         $config=M('Plugins')->where(array("name"=>$name))->getField("config");
-        if($config){
+
+        if(!empty($config) && $config!="null"){
             $config   =   json_decode($config, true);
         }else{
-        	
+            $config=array();
             $temp_arr = include $this->config_file;
-            foreach ($temp_arr as $key => $value) {
-                if($value['type'] == 'group'){
-                    foreach ($value['options'] as $gkey => $gvalue) {
-                        foreach ($gvalue['options'] as $ikey => $ivalue) {
-                            $config[$ikey] = $ivalue['value'];
+            if(!empty($temp_arr)){
+                foreach ($temp_arr as $key => $value) {
+                    if($value['type'] == 'group'){
+                        foreach ($value['options'] as $gkey => $gvalue) {
+                            foreach ($gvalue['options'] as $ikey => $ivalue) {
+                                $config[$ikey] = $ivalue['value'];
+                            }
                         }
+                    }else{
+                        $config[$key] = $temp_arr[$key]['value'];
                     }
-                }else{
-                    $config[$key] = $temp_arr[$key]['value'];
                 }
             }
+            
         }
         $_config[$name]     =   $config;
         return $config;

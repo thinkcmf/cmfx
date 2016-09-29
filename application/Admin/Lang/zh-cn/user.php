@@ -5,6 +5,7 @@ return array(
 		"BIRTHDAY" => '生日',
 		"WEBSITE" => '个人网址',
 		"SIGNATURE" => '个性签名',
+		"SCORE" => '积分',
 		"SAVE" => '保存',
 		"FEMALE" => "女",
 		"MALE" => "男",
@@ -24,5 +25,5 @@ return array(
 		"ACTIVATE_USER" =>'启用',
 		"ACTIVATE_USER_CONFIRM_MESSAGE" =>'您确定要启用此用户吗？',
 		"USER_HAVENOT_LOGIN" => '该用户还没登陆过'
-		
+
 );

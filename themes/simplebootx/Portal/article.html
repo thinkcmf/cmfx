@@ -24,7 +24,7 @@
 		    		<span>
 		    			<a href="javascript:;"><i class="fa fa-eye"></i><span>{$post_hits}</span></a>
 						<a href="{:U('article/do_like',array('id'=>$object_id))}" class="js-count-btn"><i class="fa fa-thumbs-up"></i><span class="count">{$post_like}</span></a>
-						<a href="{:U('user/favorite/do_favorite',array('id'=>$object_id))}" class="js-favorite-btn" data-title="{$post_title}" data-url="{:leuu('article/index',array('id'=>$tid,'cid'=>$term_id))}" data-key="{:sp_get_favorite_key('posts',$object_id)}">
+						<a href="{:U('user/favorite/do_favorite',array('id'=>$object_id))}" class="js-favorite-btn" data-title="{$post_title}" data-url="{:leuu('article/index',array('id'=>$object_id,'cid'=>$term_id))}" data-key="{:sp_get_favorite_key('posts',$object_id)}">
 							<i class="fa fa-star-o"></i>
 						</a>
 					</span>
@@ -40,12 +40,12 @@
     			</if>
 		    	<div>
 					<if condition="!empty($prev)">
-					<a href="{:leuu('article/index',array('id'=>$prev['tid'],'cid'=>$prev['term_id']))}" class="btn btn-primary pull-left">上一篇</a>
+					<a href="{:leuu('article/index',array('id'=>$prev['object_id'],'cid'=>$prev['term_id']))}" class="btn btn-primary pull-left">上一篇</a>
 					</if>
 					<if condition="!empty($next)">
-					<a href="{:leuu('article/index',array('id'=>$next['tid'],'cid'=>$next['term_id']))}" class="btn btn-warning pull-right">下一篇</a>
+					<a href="{:leuu('article/index',array('id'=>$next['object_id'],'cid'=>$next['term_id']))}" class="btn btn-warning pull-right">下一篇</a>
 					</if>
-    	            <script type="text/javascript" src="__TMPL__Public/js/qrcode.min.js"></script>
+    	            <script type="text/javascript" src="__TMPL__Public/assets/js/qrcode.min.js"></script>
                     <div id="qrcode" style="width: 100px;margin:0 auto"></div>
     					<script type="text/javascript">
                         var qrcode = new QRCode(document.getElementById("qrcode"), {
@@ -96,12 +96,12 @@
 	        	</div>
 	        	<div class="ranking">
 	        		<php>
-						$hot_articles=sp_sql_posts("cid:$portal_hot_articles;field:post_title,post_excerpt,tid,smeta,term_id;order:post_hits desc;limit:5;"); 
+						$hot_articles=sp_sql_posts("cid:$portal_hot_articles;field:post_title,post_excerpt,object_id,smeta,term_id;order:post_hits desc;limit:5;"); 
 					</php>
 		        	<ul class="unstyled">
 		        		<foreach name="hot_articles" item="vo">
 		        			<php>$top=$key<3?"top3":"";</php>
-							<li class="{$top}"><i>{$key+1}</i><a title="{$vo.post_title}" href="{:leuu('article/index',array('id'=>$vo['tid'],'cid'=>$vo['term_id']))}">{$vo.post_title}</a></li>
+							<li class="{$top}"><i>{$key+1}</i><a title="{$vo.post_title}" href="{:leuu('article/index',array('id'=>$vo['object_id'],'cid'=>$vo['term_id']))}">{$vo.post_title}</a></li>
 						</foreach>
 					</ul>
 				</div>

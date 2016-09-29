@@ -5,6 +5,7 @@
 		<ul class="nav nav-tabs">
 			<li class="active"><a href="#A" data-toggle="tab">{:L('QQ_CONNECT')}</a></li>
 			<li><a href="#B" data-toggle="tab">{:L('WEIBO_CONNECT')}</a></li>
+			<!-- <li><a href="#C" data-toggle="tab">微信登录设置</a></li> -->
 		</ul>
 		<form method="post" class="js-ajax-form" action="{:U('oauthadmin/setting_post')}">
 			<div class="tabbable">
@@ -51,6 +52,31 @@
 								</tr>
 								<tr>
 									<td colspan="2"><a href="http://open.weibo.com/" target="_blank">{:L('CLICK_HERE')}</a> {:L('GET_WEIBO_APPKEY_AND_APPSECRET')}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="tab-pane" id="C">
+						<table width="100%">
+							<tbody>
+								<tr>
+									<td width="140">APPkey</td>
+									<td><input type="text" name="wx_key" value="{$Think.config.THINK_SDK_WEIXIN.APP_KEY}" /></td>
+								</tr>
+								<tr>
+									<td>APPsecret</td>
+									<td><input type="text" name="wx_sec" value="{$Think.config.THINK_SDK_WEIXIN.APP_SECRET}" /></td>
+								</tr>
+								<tr>
+									<td>{:L('CALLBACK_URL')}</td>
+									<td>{$callback_uri_root}weixin</td>
+								</tr>
+								<tr>
+									<td>{:L('CANCEL_CALLBACK_URL')}</td>
+									<td>{:sp_get_host()}</td>
+								</tr>
+								<tr>
+									<td colspan="2"><a href="https://open.weixin.qq.com" target="_blank">{:L('CLICK_HERE')}</a> 获取微信登录APPKey及APPsecret</td>
 								</tr>
 							</tbody>
 						</table>

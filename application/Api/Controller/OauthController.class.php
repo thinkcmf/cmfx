@@ -10,18 +10,20 @@
  * 功    能：结合ThinkSDK完成腾讯,新浪微博,人人等用户的第三方登录
  * 修改日期：2013-12-11
  */
+
 namespace Api\Controller;
+
 use Common\Controller\HomebaseController;
+
 class OauthController extends HomebaseController {
 	
-	function _initialize() {}
+	public function _initialize() {}
 	
 	//登录地址
 	public function login($type = null){
 		empty($type) && $this->error('参数错误');
-		$_SESSION['login_http_referer']=$_SERVER["HTTP_REFERER"];
+		session('login_http_referer',$_SERVER["HTTP_REFERER"]);
 		//加载ThinkOauth类并实例化一个对象
-		import("ThinkOauth");
 		$sns  = \ThinkOauth::getInstance($type);
 		//跳转到授权页面
 		redirect($sns->getRequestCodeURL());
@@ -37,7 +39,6 @@ class OauthController extends HomebaseController {
 		}
 	
 		//加载ThinkOauth类并实例化一个对象
-		import("ThinkOauth");
 		$sns  = \ThinkOauth::getInstance($type);
 	
 		//腾讯微博需传递的额外参数
@@ -52,7 +53,8 @@ class OauthController extends HomebaseController {
 		//获取当前登录用户信息
 		if(is_array($token)){
 			$user_info = A('Type', 'Event')->$type($token);
-			if(!empty($_SESSION['oauth_bang'])){
+			$session_oauth_bang=session('oauth_bang');
+			if(!empty($session_oauth_bang)){
 				$this->_bang_handle($user_info, $type, $token);
 			}else{
 				$this->_login_handle($user_info, $type, $token);
@@ -71,7 +73,7 @@ class OauthController extends HomebaseController {
 			import("ThinkOauth");
 			$sns  = \ThinkOauth::getInstance($type);
 			//跳转到授权页面
-			$_SESSION['oauth_bang']=1;
+			session('oauth_bang',1);
 			redirect($sns->getRequestCodeURL());
 		}else{
 			$this->error("您还没有登录！");
@@ -81,7 +83,8 @@ class OauthController extends HomebaseController {
 	}
 	
 	private function _get_login_redirect(){
-		return empty($_SESSION['login_http_referer'])?__ROOT__."/":$_SESSION['login_http_referer'];
+	    $session_login_http_referer=session('login_http_referer');
+		return empty($session_login_http_referer)?__ROOT__."/":$session_login_http_referer;
 	}
 	
 	//绑定第三方账号
@@ -124,7 +127,6 @@ class OauthController extends HomebaseController {
 				if($new_oauth_user_id){
 					$this->success("绑定成功！",U('user/profile/bang'));
 				}else{
-					$users_model->where(array("id"=>$new_user_id))->delete();
 					$this->error("绑定失败！",U('user/profile/bang'));
 				}
 			}else{
@@ -150,7 +152,7 @@ class OauthController extends HomebaseController {
 				if($find_user['user_status'] == '0'){
 					$this->error('您可能已经被列入黑名单，请联系网站管理员！');exit;
 				}else{
-					$_SESSION["user"]=$find_user;
+					session('user',$find_user);
 					redirect($this->_get_login_redirect());
 				}
 			}else{
@@ -191,7 +193,7 @@ class OauthController extends HomebaseController {
 				$new_oauth_user_id=$oauth_user_model->add($new_oauth_user_data);
 				if($new_oauth_user_id){
 					$new_user_data['id']=$new_user_id;
-					$_SESSION["user"]=$new_user_data;
+					session('user',$new_user_data);
 					redirect($this->_get_login_redirect());
 				}else{
 					$users_model->where(array("id"=>$new_user_id))->delete();

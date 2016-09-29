@@ -49,7 +49,7 @@ class iAuth{
         
         $role_user_model=M("RoleUser");
         
-        $role_user_join = C('DB_PREFIX').'role as b on a.role_id =b.id';
+        $role_user_join = '__ROLE__ as b on a.role_id =b.id';
         
         $groups=$role_user_model->alias("a")->join($role_user_join)->where(array("user_id"=>$uid,"status"=>1))->getField("role_id",true);
         
@@ -63,7 +63,7 @@ class iAuth{
         
         $auth_access_model=M("AuthAccess");
         
-        $join = C('DB_PREFIX').'auth_rule as b on a.rule_name =b.name';
+        $join = '__AUTH_RULE__ as b on a.rule_name =b.name';
         
         $rules=$auth_access_model->alias("a")->join($join)->where(array("a.role_id"=>array("in",$groups),"b.name"=>array("in",$name)))->select();
         

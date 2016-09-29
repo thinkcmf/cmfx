@@ -5,21 +5,20 @@
 		<ul class="nav nav-tabs">
 			<li><a href="{:U('menu/index')}">后台菜单</a></li>
 			<li><a href="{:U('menu/add')}">添加菜单</a></li>
-			<if condition="APP_DEBUG">
-			<li><a href="{:U('menu/spmy_import_menu')}">导入菜单</a></li>
 			<li class="active"><a href="{:U('menu/lists')}">所有菜单</a></li>
-			<li><a href="{:U('menu/spmy_export_menu')}">备份菜单</a></li>
-			</if>
 		</ul>
 		<form class="form-horizontal js-ajax-form" action="{:U('Menu/listorders')}" method="post">
 			<div class="table-actions">
-				<button class="btn btn-primary btn-small js-ajax-submit" type="submit">排序</button>
-				<a class="btn btn-primary btn-small" type="submit" href="{:U('menu/spmy_getactions')}">导入新菜单</a>
+				<a class="btn btn-primary btn-small js-ajax-dialog-btn" href="{:U('menu/restore_menu')}" data-msg="您确定恢复已备份菜单吗？它将覆盖您已经更新的菜单！">恢复菜单</a>
+				<a class="btn btn-primary btn-small js-ajax-dialog-btn" href="{:U('menu/backup_menu')}" data-msg="您确定备份菜单吗？">备份菜单</a>
+				<a class="btn btn-primary btn-small js-ajax-dialog-btn" href="{:U('menu/export_menu_lang')}" data-msg="您确定生成菜单多语言包吗？请确保应用目录下Lang目录可写！">生成菜单多语言包</a>
+			</div>
+			<div class="alert alert-warning" style="margin: 0 0 5px 0;">
+				 请在开发人员指导下进行以上操作！
 			</div>
 			<table class="table table-hover table-bordered table-list">
 				<thead>
 					<tr>
-						<th width="50">排序</th>
 						<th width="50">ID</th>
 						<th>菜单英文名称</th>
 						<th width="40">状态</th>
@@ -28,7 +27,6 @@
 				</thead>
 				<foreach name="menus" item="vo">
 				<tr>
-					<td><input name="listorders[{$vo.id}]" type="text" size="3" value="{$vo.listorder}" class="input input-order"></td>
 					<td>{$vo.id}</td>
 					<td>{$vo.name}:{$vo.app}/{$vo.model}/{$vo.action}</td>
 					<td>
@@ -46,7 +44,6 @@
 				</foreach>
 				<tfoot>
 					<tr>
-						<th width="50">排序</th>
 						<th width="50">ID</th>
 						<th>菜单英文名称</th>
 						<th width="40">状态</th>
@@ -54,9 +51,6 @@
 					</tr>
 				</tfoot>
 			</table>
-			<div class="table-actions">
-				<button class="btn btn-primary btn-small js-ajax-submit" type="submit">排序</button>
-			</div>
 		</form>
 	</div>
 	<script src="__PUBLIC__/js/common.js"></script>

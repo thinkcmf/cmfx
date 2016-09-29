@@ -5,6 +5,7 @@ return array(
 		"BIRTHDAY" => 'Birthday',
 		"WEBSITE" => 'Web Site',
 		"SIGNATURE" => 'Signature',
+		"SCORE" => 'Score',
 		"FEMALE" => "Female",
 		"MALE" => "Male",
 		"GENDER_SECRECY" => 'Secrecy',
@@ -23,5 +24,5 @@ return array(
 		"ACTIVATE_USER" =>'Activate',
 		"ACTIVATE_USER_CONFIRM_MESSAGE" =>'Are you sure you want to enable this user?',
 		"USER_HAVENOT_LOGIN" => 'This user haven\'t login!'
-		
+
 );

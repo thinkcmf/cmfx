@@ -10,17 +10,19 @@
  * 搜索结果页面
  */
 namespace Portal\Controller;
+
 use Common\Controller\HomebaseController;
+
 class SearchController extends HomebaseController {
     //文章内页
     public function index() {
-    	$_GET = array_merge($_GET, $_POST);
-		$k = I("get.keyword");
+		$keyword = I("request.keyword");
 		
-		if (empty($k)) {
+		if (empty($keyword)) {
 			$this -> error("关键词不能为空！请重新输入！");
 		}
-		$this -> assign("keyword", $k);
+		
+		$this -> assign("keyword", $keyword);
 		$this -> display(":search");
     }
     

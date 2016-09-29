@@ -262,9 +262,7 @@ ThinkCMF全体贡献者祝大家2015年大吉大利，开心幸福！《给你�
 
 
 ## INSTALL
-安装请执行http://yourdomain/install/index.php
-
-安装完成后请删除或改名install/index.php
+安装请执行http://yourdomain/
 
 ## ThinkCMF 免责声明
   1、利用 ThinkCMF 构建的网站的任何信息内容以及导致的任何版权纠纷和法律争议及后果，ThinkCMF 官方不承担任何责任。

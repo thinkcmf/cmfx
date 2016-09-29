@@ -4,7 +4,7 @@ ThinkCMF是一款基于PHP+MYSQL开发的中文内容管理框架。ThinkCMF提�
 文档:http://www.thinkcmf.com/document
 
 ## UPDATE
-### X2.2.0 Beta2
+### X2.2.0
 [Core]
 * 增加wind.js可以自定义重写js，css的版本
 * 增加$_GET统一urldecode

@@ -1,13 +1,11 @@
 <?php
-
-/**
- * 会员
- */
 namespace User\Controller;
+
 use Common\Controller\AdminbaseController;
+
 class IndexadminController extends AdminbaseController {
-    function index(){
-        
+    
+    public function index(){
         $where=array();
         $request=I('request.');
         
@@ -42,25 +40,25 @@ class IndexadminController extends AdminbaseController {
     	$this->display(":index");
     }
     
-    function ban(){
-    	$id=intval($_GET['id']);
+    public function ban(){
+    	$id= I('get.id',0,'intval');
     	if ($id) {
-    		$rst = M("Users")->where(array("id"=>$id,"user_type"=>2))->setField('user_status','0');
-    		if ($rst) {
+    		$result = M("Users")->where(array("id"=>$id,"user_type"=>2))->setField('user_status',0);
+    		if ($result) {
     			$this->success("会员拉黑成功！", U("indexadmin/index"));
     		} else {
-    			$this->error('会员拉黑失败！');
+    			$this->error('会员拉黑失败,会员不存在,或者是管理员！');
     		}
     	} else {
     		$this->error('数据传入失败！');
     	}
     }
     
-    function cancelban(){
-    	$id=intval($_GET['id']);
+    public function cancelban(){
+    	$id= I('get.id',0,'intval');
     	if ($id) {
-    		$rst = M("Users")->where(array("id"=>$id,"user_type"=>2))->setField('user_status','1');
-    		if ($rst) {
+    		$result = M("Users")->where(array("id"=>$id,"user_type"=>2))->setField('user_status',1);
+    		if ($result) {
     			$this->success("会员启用成功！", U("indexadmin/index"));
     		} else {
     			$this->error('会员启用失败！');

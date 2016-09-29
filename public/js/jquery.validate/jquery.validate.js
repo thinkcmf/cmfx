@@ -1349,6 +1349,7 @@ $.extend( $.validator, {
 
 		// http://jqueryvalidation.org/date-method/
 		date: function( value, element ) {
+			value = value.replace(/-/g,'/');//for safari only support date 2016/05/20
 			return this.optional( element ) || !/Invalid|NaN/.test( new Date( value ).toString() );
 		},
 

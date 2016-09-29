@@ -59,6 +59,7 @@
 								<div class="control-group">
 									<label class="control-label">{:L('WEBSITE_ADMIN_THEME')}</label>
 									<div class="controls">
+										<php>$site_adminstyle=empty($site_adminstyle)?'flat':$site_adminstyle;</php>
 										<select name="options[site_adminstyle]">
 											<foreach name="adminstyles" item="vo">
 											<php>$adminstyle_selected=$site_adminstyle==$vo?"selected":"";</php>

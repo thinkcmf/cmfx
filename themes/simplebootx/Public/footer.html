@@ -8,6 +8,9 @@
 	<div class="links">
 		<php>$links=sp_getlinks();</php>
 		<foreach name="links" item="vo">
+			<notempty name="vo.link_image">
+				<!-- <img src="{:sp_get_image_url($vo['link_image'])}"> --><!-- 如果想加个友链图片可以取消注释 -->
+			</notempty>
 			<a href="{$vo.link_url}" target="{$vo.link_target}">{$vo.link_name}</a>
 		</foreach>
 	</div>

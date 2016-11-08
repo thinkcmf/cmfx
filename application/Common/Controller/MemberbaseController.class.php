@@ -1,10 +1,14 @@
 <?php
 namespace Common\Controller;
+
 use Common\Controller\HomebaseController;
+
 class MemberbaseController extends HomebaseController{
+    
 	protected $user_model;
 	protected $user;
 	protected $userid;
+	
 	function _initialize() {
 		parent::_initialize();
 		

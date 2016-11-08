@@ -17,16 +17,16 @@
 				<h2 class="text-center">用户登录</h2>
 				<form class="form-horizontal js-ajax-form" action="{:U('user/login/dologin')}" method="post">
 					<div class="control-group">
-						<input type="text" id="input_username" name="username" placeholder="手机号/邮箱/用户名" class="span4">
+						<input type="text" id="input_username" name="username" placeholder="手机号/邮箱/用户名" class="span4" required>
 					</div>
 
 					<div class="control-group">
-						<input type="password" id="input_password" name="password" placeholder="密码" class="span4">
+						<input type="password" id="input_password" name="password" placeholder="密码" class="span4" required>
 					</div>
 
 					<div class="control-group">
 						<div class="span4" style="margin-left: 0px;">
-							<input type="text" id="input_verify" name="verify"  placeholder="验证码" style="width:252px;">
+							<input type="text" id="input_verify" name="verify"  placeholder="验证码" style="width:252px;" required>
 							{:sp_verifycode_img('length=4&font_size=14&width=100&height=34&charset=2345678&use_noise=1&use_curve=0')}
 						</div>
 						

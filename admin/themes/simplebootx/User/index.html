@@ -34,7 +34,7 @@
 					<foreach name="list" item="vo">
 					<tr>
 						<td align="center">{$vo.id}</td>
-						<td>{$vo['user_login']?$vo['user_login']:L('THIRD_PARTY_USER')}</td>
+						<td>{$vo['user_login']?$vo['user_login']:($vo['mobile']?$vo['mobile']:L('THIRD_PARTY_USER'))}</td>
 						<td>{$vo['user_nicename']?$vo['user_nicename']:L('NOT_FILLED')}</td>
 						<td><img width="25" height="25" src="{:U('user/public/avatar',array('id'=>$vo['id']))}" /></td>
 						<td>{$vo.user_email}</td>

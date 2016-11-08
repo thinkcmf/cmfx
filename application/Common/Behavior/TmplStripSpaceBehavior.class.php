@@ -9,6 +9,7 @@
 // | Author: Dean <zxxjjforever@163.com>
 // +---------------------------------------------------------------------
 namespace Common\Behavior;
+
 use Think\Behavior;
 
 // 初始化钩子信息

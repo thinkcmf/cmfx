@@ -50,7 +50,8 @@ class UeditorController extends Controller {
 		}
 	}
 	
-	function upload(){
+	// 百度编辑器文件上传
+	public function upload(){
 		error_reporting(E_ERROR);
 		header("Content-Type: text/html; charset=utf-8");
 		
@@ -108,6 +109,9 @@ class UeditorController extends Controller {
 		}
 	}
 	
+	/**
+	 * 获取远程图片
+	 */
 	private function _get_remote_image(){
 		$source=array();
 		if (isset($_POST['source'])) {
@@ -246,6 +250,9 @@ class UeditorController extends Controller {
 		));
 	}
 	
+	/**
+	 * 获取百度编辑器配置
+	 */
 	private function _ueditor_config(){
 	    $config_text=preg_replace("/\/\*[\s\S]+?\*\//", "", file_get_contents("./public/js/ueditor/config.json"));
 	    $config = json_decode($config_text, true);
@@ -267,11 +274,19 @@ class UeditorController extends Controller {
 	    return json_encode($config);
 	}
 	
+	/**
+	 * 获取文件后缀名
+	 * @param string $str
+	 */
 	public function _ueditor_extension($str){
 	    
 	   return ".".trim($str,'.');
 	}
 	
+	/**
+	 * 处理文件上传
+	 * @param string $filetype 文件类型,如image,vedio,audio,file
+	 */
 	private function _ueditor_upload($filetype='image'){
 	    $upload_setting=sp_get_upload_setting();
 	    

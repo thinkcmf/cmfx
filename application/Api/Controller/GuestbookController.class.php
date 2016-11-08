@@ -12,6 +12,7 @@ class GuestbookController extends AppframeController{
 		$this->guestbook_model=D("Common/Guestbook");
 	}
 	
+	// 留言提交
 	public function addmsg(){
 		if(!sp_check_verify_code()){
 			$this->error("验证码错误！");

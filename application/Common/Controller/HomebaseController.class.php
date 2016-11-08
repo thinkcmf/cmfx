@@ -1,6 +1,8 @@
 <?php
 namespace Common\Controller;
+
 use Common\Controller\AppframeController;
+
 class HomebaseController extends AppframeController {
 	
 	public function __construct() {

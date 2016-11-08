@@ -1,7 +1,4 @@
 <?php
-/**
- * Navcat(菜单分类管理)
- */
 namespace Admin\Controller;
 
 use Common\Controller\AdminbaseController;
@@ -15,25 +12,19 @@ class NavcatController extends AdminbaseController {
 		$this->navcat_model =D("Common/NavCat");
 	}
 	
-	/**
-	 *  显示
-	 */
+	// 导航分类显示
 	public function index() {
 		$cats=$this->navcat_model->select();
 		$this->assign("navcats",$cats);
 		$this->display();
 	}
 	
-	/**
-	 *  添加
-	 */
+	// 导航分类添加
 	public function add() {
 		$this->display();
 	}
 	
-	/**
-	 *  添加保存
-	 */
+	// 导航分类添加提交
 	public function add_post() {
 		if (IS_POST) {
 			if(empty($_POST['active'])){
@@ -53,9 +44,7 @@ class NavcatController extends AdminbaseController {
 		}
 	}
 	
-	/**
-	 * 编辑
-	 */
+	// 导航分类编辑
 	public function edit(){
 		$id= I("get.id",0,'intval');
 		$navcat=$this->navcat_model->where(array('navcid'=>$id))->find();
@@ -63,9 +52,7 @@ class NavcatController extends AdminbaseController {
 		$this->display();
 	}
 	
-	/**
-	 * 编辑
-	 */
+	// 导航分类编辑提交
 	public function edit_post(){
 		if (IS_POST) {
 			if(empty($_POST['active'])){
@@ -85,6 +72,7 @@ class NavcatController extends AdminbaseController {
 		}
 	}
 	
+	// 删除导航分类
 	public function delete(){
 		$id = I("get.id",0,'intval');
 		if ($this->navcat_model->where(array('navcid'=>$id))->delete()!==false) {

@@ -253,6 +253,7 @@ function sp_admin_get_tpl_file_list(){
 /**
  *  获取面包屑数据
  * @param int $term_id 当前文章所在分类,或者当前分类的id
+ * @param boolean $with_current 是否获取当前分类
  * @return array 面包屑数据
  */
 function sp_get_breadcrumb($term_id){

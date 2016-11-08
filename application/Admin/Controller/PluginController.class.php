@@ -11,12 +11,14 @@ class PluginController extends AdminbaseController{
 		$this->plugins_model = D("Common/Plugins");
 	}
 	
+	// 后台插件列表
 	public function index(){
 		$plugins=$this->plugins_model->getList();
 		$this->assign("plugins",$plugins);
 		$this->display();
 	}
 	
+	// 插件启用/禁用
 	public function toggle(){
 		if(isset($_GET['id'])){
 			if($_GET["enable"]){
@@ -40,6 +42,7 @@ class PluginController extends AdminbaseController{
 		}
 	}
 	
+	// 插件设置
 	public function setting(){
 		$id     =   I('get.id',0,'intval');
 		$plugin  =   $this->plugins_model->find($id);
@@ -78,6 +81,7 @@ class PluginController extends AdminbaseController{
 		
 	}
 	
+	// 插件设置提交
 	public function setting_post(){
 		if(IS_POST){
 			$id     =   I('post.id',0,'intval');
@@ -91,6 +95,7 @@ class PluginController extends AdminbaseController{
 		}
 	}
 	
+	// 插件安装
 	public function install(){
 		$plugin_name     =   trim(I('name'));
 		$class          =   sp_get_plugin_class($plugin_name);
@@ -135,6 +140,7 @@ class PluginController extends AdminbaseController{
 		}
 	}
 	
+	// 插件更新
 	public function update(){
 		$plugin_name     =   trim(I('name'));
 		$class          =   sp_get_plugin_class($plugin_name);
@@ -175,9 +181,7 @@ class PluginController extends AdminbaseController{
 		}
 	}
 	
-	/**
-	 * 卸载插件
-	 */
+	// 卸载插件
 	public function uninstall(){
 		$id             =  I('get.id',0,'intval');
 		$find_plugin      =   $this->plugins_model->find($id);
@@ -195,8 +199,6 @@ class PluginController extends AdminbaseController{
 			$this->success('卸载成功');
 		}
 	}
-	
-	
 	
 	
 	

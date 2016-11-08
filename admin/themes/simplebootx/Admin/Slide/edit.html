@@ -2,6 +2,11 @@
 </head>
 <body>
 	<div class="wrap js-check-wrap">
+		<ul class="nav nav-tabs">
+			<li><a href="{:U('slide/index')}">{:L('ADMIN_SLIDE_INDEX')}</a></li>
+			<li><a href="{:U('slide/add')}">{:L('ADMIN_SLIDE_ADD')}</a></li>
+			<li class="active"><a>编辑幻灯片</a></li>
+		</ul>
 		<form action="{:U('slide/edit_post')}" method="post" class="form-horizontal js-ajax-forms" enctype="multipart/form-data">
 			<div class="row-fluid">
 				<div class="span9">

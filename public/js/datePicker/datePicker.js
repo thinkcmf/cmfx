@@ -436,7 +436,7 @@
 			//{{{  show
 
 			show : function(e) {
-				if(input.attr("readonly") || input.attr("disabled") || opened) {
+				if(input.prop("readonly") || input.prop("disabled") || opened) {
 					return;
 				}
 				// onBeforeShow

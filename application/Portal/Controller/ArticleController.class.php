@@ -10,6 +10,7 @@ namespace Portal\Controller;
 use Common\Controller\HomebaseController;
 
 class ArticleController extends HomebaseController {
+    
     //文章内页
     public function index() {
     	$article_id=I('get.id',0,'intval');
@@ -38,7 +39,7 @@ class ArticleController extends HomebaseController {
     	$terms_model= M("Terms");
     	$term=$terms_model->where(array('term_id'=>$term_id))->find();
     	
-    	$posts_model->save(array("id"=>$article_id,"post_hits"=>array("exp","post_hits+1")));
+    	$posts_model->where(array('id'=>$article_id))->setInc('post_hits');
     	
     	$article_date=$article['post_date'];
     	
@@ -50,15 +51,15 @@ class ArticleController extends HomebaseController {
     	$next=$term_relationships_model
     	->alias("a")
     	->join($join)->join($join2)
-    	->where(array("post_date"=>array("egt",$article_date), "object_id"=>array('neq',$article_id), "a.status"=>1,'a.term_id'=>$term_id,'post_status'=>1))
-    	->order("post_date asc")
+    	->where(array('b.id'=>array('gt',$article_id),"post_date"=>array("egt",$article_date),"a.status"=>1,'a.term_id'=>$term_id,'post_status'=>1))
+    	->order("post_date asc,b.id asc")
     	->find();
     	
     	$prev=$term_relationships_model
     	->alias("a")
     	->join($join)->join($join2)
-    	->where(array("post_date"=>array("elt",$article_date), "object_id"=>array('neq',$article_id), "a.status"=>1,'a.term_id'=>$term_id,'post_status'=>1))
-    	->order("post_date desc")
+    	->where(array('b.id'=>array('lt',$article_id),"post_date"=>array("elt",$article_date),"a.status"=>1,'a.term_id'=>$term_id,'post_status'=>1))
+    	->order("post_date desc,b.id desc")
     	->find();
     	
     	$this->assign("next",$next);
@@ -81,10 +82,11 @@ class ArticleController extends HomebaseController {
     	$this->display(":$tplname");
     }
     
+    // 文章点赞
     public function do_like(){
     	$this->check_login();
     	
-    	$id=intval($_GET['id']);//posts表中id
+    	$id = I('get.id',0,'intval');//posts表中id
     	
     	$posts_model=M("Posts");
     	
@@ -98,15 +100,14 @@ class ArticleController extends HomebaseController {
     	}
     }
     
+    // 前台用户添加文章
     public function add(){
         $this->check_login();
         $this->_getTermTree();
         $this->display();
     }
     
-    /**
-     * 提交话题
-     */
+    // 前台用户添加文章提交
     public function add_post(){
         if(IS_POST){
             $this->check_login();
@@ -148,6 +149,7 @@ class ArticleController extends HomebaseController {
     
     }
     
+    // 前台用户文章编辑
     public function edit(){
         $this->check_login();
         $id=I("get.id",0,'intval');
@@ -167,7 +169,7 @@ class ArticleController extends HomebaseController {
         
     }
     
-    
+    // 前台用户文章编辑提交
     public function edit_post(){
         if(IS_POST){
             $this->check_login();
@@ -194,6 +196,7 @@ class ArticleController extends HomebaseController {
         }
     }
     
+    // 获取文章分类树结构
     private function _getTermTree($term=array()){
         $result =M('Terms')->order(array("listorder"=>"asc"))->select();
     

@@ -13,6 +13,7 @@ class UserController extends AdminbaseController{
 		$this->role_model = D("Common/Role");
 	}
 
+	// 管理员列表
 	public function index(){
 		$where = array("user_type"=>1);
 		/**搜索条件**/
@@ -45,12 +46,14 @@ class UserController extends AdminbaseController{
 		$this->display();
 	}
 
+	// 管理员添加
 	public function add(){
 		$roles=$this->role_model->where(array('status' => 1))->order("id DESC")->select();
 		$this->assign("roles",$roles);
 		$this->display();
 	}
 
+	// 管理员添加提交
 	public function add_post(){
 		if(IS_POST){
 			if(!empty($_POST['role_id']) && is_array($_POST['role_id'])){
@@ -80,6 +83,7 @@ class UserController extends AdminbaseController{
 		}
 	}
 
+	// 管理员编辑
 	public function edit(){
 	    $id = I('get.id',0,'intval');
 		$roles=$this->role_model->where(array('status' => 1))->order("id DESC")->select();
@@ -93,6 +97,7 @@ class UserController extends AdminbaseController{
 		$this->display();
 	}
 
+	// 管理员编辑提交
 	public function edit_post(){
 		if (IS_POST) {
 			if(!empty($_POST['role_id']) && is_array($_POST['role_id'])){
@@ -127,9 +132,7 @@ class UserController extends AdminbaseController{
 		}
 	}
 
-	/**
-	 *  删除
-	 */
+	// 管理员删除
 	public function delete(){
 	    $id = I('get.id',0,'intval');
 		if($id==1){
@@ -144,6 +147,7 @@ class UserController extends AdminbaseController{
 		}
 	}
 
+	// 管理员个人信息修改
 	public function userinfo(){
 		$id=sp_get_current_admin_id();
 		$user=$this->users_model->where(array("id"=>$id))->find();
@@ -151,6 +155,7 @@ class UserController extends AdminbaseController{
 		$this->display();
 	}
 
+	// 管理员个人信息修改提交
 	public function userinfo_post(){
 		if (IS_POST) {
 			$_POST['id']=sp_get_current_admin_id();
@@ -169,6 +174,7 @@ class UserController extends AdminbaseController{
 		}
 	}
 
+	// 停用管理员
     public function ban(){
         $id = I('get.id',0,'intval');
     	if (!empty($id)) {
@@ -183,6 +189,7 @@ class UserController extends AdminbaseController{
     	}
     }
 
+    // 启用管理员
     public function cancelban(){
     	$id = I('get.id',0,'intval');
     	if (!empty($id)) {

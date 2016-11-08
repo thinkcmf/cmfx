@@ -1,10 +1,11 @@
 <?php
-
 /**
  * 验证码处理
  */
 namespace Api\Controller;
+
 use Think\Controller;
+
 class CheckcodeController extends Controller {
 
     public function index() {
@@ -49,10 +50,6 @@ class CheckcodeController extends Controller {
     		$height = intval($_GET['height']);
     	}
     	
-    	/* $background="";
-    	if (isset($_GET['background']) && trim(urldecode($_GET['background'])) && preg_match('/(^#[a-z0-9]{6}$)/im', trim(urldecode($_GET['background'])))){
-    		$background=trim(urldecode($_GET['background']));
-    	} */
     	$background=array(243, 251, 254);
     	if (isset($_GET['background'])){
     	    $mbackground=array_map('intval', explode(',', $_GET['background']));
@@ -60,8 +57,7 @@ class CheckcodeController extends Controller {
     	        $background=array( $mbackground[0],$mbackground[1],$mbackground[2] );
     	    }
     	}
-    	//TODO ADD Backgroud param!
-    	
+
     	$config = array(
 	        'codeSet'   =>  !empty($code_set)?$code_set:"2345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY",             // 验证码字符集合
 	        'expire'    =>  1800,            // 验证码过期时间（s）

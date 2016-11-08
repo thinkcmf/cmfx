@@ -57,9 +57,13 @@ li {
 		</div>
 	</div>
 	<script src="__PUBLIC__/js/common.js"></script>
+	<php>
+		$lang_set=defined('LANG_SET')?LANG_SET:'';
+		$thinkcmf_version=defined('THINKCMF_VERSION')?THINKCMF_VERSION:'';
+	</php>
 	<script>
 		//获取官方通知
-		$.getJSON("http://www.thinkcmf.com/service/sms_jsonp.php?lang={$Think.LANG_SET}&v={$Think.THINKCMF_VERSION}&callback=?",
+		$.getJSON("http://www.thinkcmf.com/service/sms_jsonp.php?lang={$lang_set}&v={$thinkcmf_version}&callback=?",
 		function(data) {
 			var tpl = '<li><em class="title"></em><span class="content"></span></li>';
 			var $thinkcmf_notices = $("#thinkcmf_notices");

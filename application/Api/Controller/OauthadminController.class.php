@@ -12,7 +12,7 @@ use Common\Controller\AdminbaseController;
 
 class OauthadminController extends AdminbaseController {
 	
-	//设置
+	// 第三方登录设置界面
 	public function setting(){
 		$host=sp_get_host();
 		$callback_uri_root = $host.__ROOT__.'/index.php?g=api&m=oauth&a=callback&type=';
@@ -20,15 +20,15 @@ class OauthadminController extends AdminbaseController {
 		$this->display();
 	}
 	
-	//设置提交
+	// 第三方登录设置提交
 	public function setting_post(){
 		if(IS_POST){
-			$qq_key = I('post.qq_key');
-			$qq_sec = I('post.qq_sec');
+			$qq_key   = I('post.qq_key');
+			$qq_sec   = I('post.qq_sec');
 			$sina_key = I('post.sina_key');
 			$sina_sec = I('post.sina_sec');
-			$wx_key=$_POST['wx_key'];
-			$wx_sec=$_POST['wx_sec'];
+			$wx_key   = I('post.wx_key');
+			$wx_sec   = I('post.wx_sec');
 			
 			$host=sp_get_host();
 			

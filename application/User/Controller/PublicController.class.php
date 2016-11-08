@@ -5,7 +5,7 @@ use Common\Controller\HomebaseController;
 
 class PublicController extends HomebaseController {
     
-    //用户头像
+    // 用户头像api
 	public function avatar(){
 		$users_model=M("Users");
 		$id=I("get.id",0,"intval");

@@ -1,7 +1,4 @@
 <?php
-/**
- * Menu(菜单管理)
- */
 namespace Admin\Controller;
 
 use Common\Controller\AdminbaseController;
@@ -17,9 +14,7 @@ class NavController extends AdminbaseController {
 		$this->navcat_model =D("Common/NavCat");
 	}
 	
-	/**
-	 *  显示菜单
-	 */
+	// 导航菜单列表
 	public function index() {
 		$cid=I('request.cid',0,'intval');
 		if(empty($cid)){
@@ -55,9 +50,7 @@ class NavController extends AdminbaseController {
 		$this->display();
 	}
 	
-	/**
-	 *  添加
-	 */
+	// 导航菜单添加
 	public function add() {
 		$cid=I('request.cid',0,'intval');
 		$result = $this->nav_model->where(array('cid'=>$cid))->order(array("listorder" => "ASC"))->select();
@@ -95,9 +88,7 @@ class NavController extends AdminbaseController {
 		$this->display();
 	}
 	
-	/**
-	 *  添加
-	 */
+	// 导航菜单添加提交
 	public function add_post() {
 		if (IS_POST) {
 			$data=I("post.");
@@ -132,9 +123,7 @@ class NavController extends AdminbaseController {
 		}
 	}
 	
-	/**
-	 *  编辑
-	 */
+	// 导航菜单编辑
 	public function edit() {
 		$cid=I('request.cid',0,'intval');;
 		$id=I("get.id",0,'intval');
@@ -180,9 +169,7 @@ class NavController extends AdminbaseController {
 		$this->display();
 	}
 	
-	/**
-	 *  编辑
-	 */
+	// 导航菜单编辑提交
 	public function edit_post() {
 		
 		if (IS_POST) {
@@ -216,9 +203,7 @@ class NavController extends AdminbaseController {
 		}
 	}
 	
-	/**
-	 * 排序
-	 */
+	// 导航菜单排序
 	public function listorders() {
 		$status = parent::_listorders($this->nav_model);
 		if ($status) {
@@ -228,9 +213,7 @@ class NavController extends AdminbaseController {
 		}
 	}
 	
-	/**
-	 *  删除
-	 */
+	// 导航菜单删除
 	public function delete() {
 		$id = I("get.id",0,'intval');
 		$count = $this->nav_model->where(array("parentid" => $id))->count();
@@ -246,7 +229,7 @@ class NavController extends AdminbaseController {
 	}
 	
 	/**
-	 * select nav
+	 * 获取所有应用可用的导航菜单
 	 */
 	private function _select(){
 		$apps=sp_scan_dir(SPAPP."*");

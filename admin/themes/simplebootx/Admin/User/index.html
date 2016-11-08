@@ -52,12 +52,12 @@
 							</if>
 						<else />
 							<a href='{:U("user/edit",array("id"=>$vo["id"]))}'>{:L('EDIT')}</a> |
-							<a class="js-ajax-delete" href="{:U('user/delete',array('id'=>$vo['id']))}">{:L('DELETE')}</a> |
 							<if condition="$vo['user_status'] eq 1">
-								<a href="{:U('user/ban',array('id'=>$vo['id']))}" class="js-ajax-dialog-btn" data-msg="{:L('BLOCK_USER_CONFIRM_MESSAGE')}">{:L('BLOCK_USER')}</a>
+								<a href="{:U('user/ban',array('id'=>$vo['id']))}" class="js-ajax-dialog-btn" data-msg="{:L('BLOCK_USER_CONFIRM_MESSAGE')}">{:L('BLOCK_USER')}</a> | 
 							<else />
-								<a href="{:U('user/cancelban',array('id'=>$vo['id']))}" class="js-ajax-dialog-btn" data-msg="{:L('ACTIVATE_USER_CONFIRM_MESSAGE')}">{:L('ACTIVATE_USER')}</a>
+								<a href="{:U('user/cancelban',array('id'=>$vo['id']))}" class="js-ajax-dialog-btn" data-msg="{:L('ACTIVATE_USER_CONFIRM_MESSAGE')}">{:L('ACTIVATE_USER')}</a> | 
 							</if>
+							<a class="js-ajax-delete" href="{:U('user/delete',array('id'=>$vo['id']))}">{:L('DELETE')}</a>
 						</if>
 					</td>
 				</tr>

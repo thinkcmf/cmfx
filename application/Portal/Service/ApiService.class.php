@@ -24,8 +24,9 @@ class ApiService {
      * 格式:
      * array(
      *     "posts"=>array(),//文章列表,array
-     * 	   "page"=>""//生成的分页html,不分页则没有此项
-     *     "count"=>100 //符合条件的文章总数,不分页则没有此项
+     * 	   "page"=>"",//生成的分页html,不分页则没有此项
+     *     "count"=>100, //符合条件的文章总数,不分页则没有此项
+     *     "total_pages"=>5 // 总页数
      * )</pre>
      */
     public static function posts($tag,$where=array(),$pagesize=0,$pagetpl=''){
@@ -87,7 +88,11 @@ class ApiService {
     	    $page = new \Page($totalsize,$pagesize);
     	    $page->setLinkWraper("li");
     	    $page->__set("PageParam", $page_param);
-    	    $pagesetting=array("listlong" => "9", "first" => "首页", "last" => "尾页", "prev" => "上一页", "next" => "下一页", "list" => "*", "disabledclass" => "");
+            if(sp_is_mobile()){
+                $pagesetting= array("listlong" => "2", "prev" => "上一页", "next" => "下一页", "list" => "*", "disabledclass" => "");
+            }else{
+                $pagesetting=array("listlong" => "4", "first" => "首页", "last" => "尾页", "prev" => "上一页", "next" => "下一页", "list" => "*", "disabledclass" => "");
+            }
     	    $page->SetPager('default', $pagetpl,$pagesetting);
     	    
     	    $posts=$term_relationships_model
@@ -101,6 +106,7 @@ class ApiService {
     	    ->select();
     	    
     	    $content['page']=$page->show('default');
+    	    $content['total_pages']=$page->getTotalPages(); // 总页数
     	    $content['count']=$totalsize;
     	}
     	
@@ -332,6 +338,7 @@ class ApiService {
         $where=array();
         $where['id'] = array('eq',$id);
         $where['post_type'] = array('eq',2);
+        $where['post_status'] = array('eq',1);
         
         $posts_model = M("Posts");
         $post = $posts_model->where($where)->find();
@@ -430,17 +437,21 @@ class ApiService {
     }
     
     /**
-     *  获取面包屑数据
+     * 获取面包屑数据
      * @param int $term_id 当前文章所在分类,或者当前分类的id
+     * @param boolean $with_current 是否获取当前分类
      * @return array 面包屑数据
      */
-    public static function breadcrumb($term_id){
+    public static function breadcrumb($term_id,$with_current=false){
         $terms_model= M("Terms");
         $data=array();
         $path=$terms_model->where(array('term_id'=>$term_id))->getField('path');
         if(!empty($path)){
             $parents=explode('-', $path);
-            array_pop($parents);
+            if(!$with_current){
+                array_pop($parents);
+            }
+            
             if(!empty($parents)){
                 $data=$terms_model->where(array('term_id'=>array('in',$parents)))->order('path ASC')->select();
             }

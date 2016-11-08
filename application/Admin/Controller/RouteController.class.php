@@ -12,6 +12,7 @@ class RouteController extends AdminbaseController{
 		$this->route_model = D("Common/Route");
 	}
 	
+	// url规则列表
 	public function index(){
 		$routes=$this->route_model->order("listorder asc")->select();
 		sp_get_routes(true);
@@ -19,10 +20,12 @@ class RouteController extends AdminbaseController{
 		$this->display();
 	}
 	
+	// url规则添加
 	public function add(){
 		$this->display();
 	}
 	
+	// url规则添加提交
 	public function add_post(){
 		if(IS_POST){
 			if ($this->route_model->create()!==false){
@@ -38,6 +41,7 @@ class RouteController extends AdminbaseController{
 		}
 	}
 	
+	// url规则编辑
 	public function edit(){
 		$id=I("get.id",0,'intval');
 		$route=$this->route_model->where(array('id'=>$id))->find();
@@ -45,6 +49,7 @@ class RouteController extends AdminbaseController{
 		$this->display();
 	}
 	
+	// url规则编辑提交
 	public function edit_post(){
 		if (IS_POST) {
 			if ($this->route_model->create()!==false) {
@@ -59,9 +64,7 @@ class RouteController extends AdminbaseController{
 		}
 	}
 	
-	/**
-	 *  删除
-	 */
+	// url规则删除
 	public function delete(){
 		$id = I("get.id",0,"intval");
 		if ($this->route_model->delete($id)!==false) {
@@ -71,10 +74,7 @@ class RouteController extends AdminbaseController{
 		}
 	}
 	
-	
-	/**
-	 *  禁用
-	 */
+	//  url规则禁用
 	public function ban(){
 		$id = I("get.id",0,"intval");
 		$data=array();
@@ -87,9 +87,7 @@ class RouteController extends AdminbaseController{
 		}
 	}
 	
-	/**
-	 *  启用
-	 */
+	//  url规则启用
 	public function open(){
 		$id = I("get.id",0,"intval");
 		$data=array();
@@ -102,9 +100,7 @@ class RouteController extends AdminbaseController{
 		}
 	}
 	
-	/**
-	 * 排序
-	 */
+	//  url规则排序
 	public function listorders() {
 		$status = parent::_listorders($this->route_model);
 		if ($status) {
@@ -113,6 +109,5 @@ class RouteController extends AdminbaseController{
 			$this->error("排序更新失败！");
 		}
 	}
-	
 	
 }

@@ -1,22 +1,21 @@
 <?php
-
-/**
- * 会员中心
- */
 namespace User\Controller;
+
 use Common\Controller\MemberbaseController;
+
 class ProfileController extends MemberbaseController {
 	
 	function _initialize(){
 		parent::_initialize();
 	}
 	
-    //编辑用户资料
+    // 编辑用户资料
 	public function edit() {
 		$this->assign($this->user);
     	$this->display();
     }
     
+    // 编辑用户资料提交
     public function edit_post() {
     	if(IS_POST){
     		$_POST['id']=$this->userid;
@@ -35,11 +34,13 @@ class ProfileController extends MemberbaseController {
     	
     }
     
+    // 个人中心修改密码
     public function password() {
 		$this->assign($this->user);
     	$this->display();
     }
     
+    // 个人中心修改密码提交
     public function password_post() {
     	if (IS_POST) {
     	    $old_password=I('post.old_password');
@@ -79,8 +80,8 @@ class ProfileController extends MemberbaseController {
     	 
     }
     
-    
-    function bang(){
+    // 第三方账号绑定
+    public function bang(){
     	$oauth_user_model=M("OauthUser");
     	$uid=sp_get_current_userid();
     	$oauths=$oauth_user_model->where(array("uid"=>$uid))->select();
@@ -92,19 +93,21 @@ class ProfileController extends MemberbaseController {
     	$this->display();
     }
     
-    function avatar(){
+    // 用户头像编辑
+    public function avatar(){
 		$this->assign($this->user);
     	$this->display();
     }
     
-    function avatar_upload(){
+    // 用户头像上传
+    public function avatar_upload(){
     	$config=array(
-    			'rootPath' => './'.C("UPLOADPATH"),
-    			'savePath' => './avatar/',
-    			'maxSize' => 512000,//500K
-    			'saveName'   =>    array('uniqid',''),
-    			'exts'       =>    array('jpg', 'png', 'jpeg'),
-    			'autoSub'    =>    false,
+			'rootPath' => './'.C("UPLOADPATH"),
+			'savePath' => './avatar/',
+			'maxSize' => 512000,//500K
+			'saveName'   =>    array('uniqid',''),
+			'exts'       =>    array('jpg', 'png', 'jpeg'),
+			'autoSub'    =>    false,
     	);
     	$upload = new \Think\Upload($config,'Local');//先在本地裁剪
     	$info=$upload->upload();
@@ -122,7 +125,8 @@ class ProfileController extends MemberbaseController {
     	}
     }
     
-    function avatar_update(){
+    // 用户头像裁剪
+    public function avatar_update(){
         $session_avatar=session('avatar');
     	if(!empty($session_avatar)){
     		$targ_w = I('post.w',0,'intval');
@@ -164,6 +168,8 @@ class ProfileController extends MemberbaseController {
     		
     	}
     }
+    
+    // 保存用户头像
     public function do_avatar() {
 		$imgurl=I('post.imgurl');
 		//去'/'

@@ -10,6 +10,7 @@ class SettingController extends AdminbaseController{
 		$this->options_model = D("Common/Options");
 	}
 	
+	// 网站信息
 	public function site(){
 	    C(S('sp_dynamic_config'));//加载动态配置
 		$option=$this->options_model->where("option_name='site_options'")->find();
@@ -36,6 +37,7 @@ class SettingController extends AdminbaseController{
 		$this->display();
 	}
 	
+	// 网站信息设置提交
 	public function site_post(){
 		if (IS_POST) {
 			if(isset($_POST['option_id'])){
@@ -84,10 +86,12 @@ class SettingController extends AdminbaseController{
 		}
 	}
 	
+	// 密码修改
 	public function password(){
 		$this->display();
 	}
 	
+	// 密码修改提交
 	public function password_post(){
 		if (IS_POST) {
 			if(empty($_POST['old_password'])){
@@ -125,15 +129,14 @@ class SettingController extends AdminbaseController{
 		}
 	}
 	
-	/**
-	 * 上传限制设置界面
-	 */
+	// 上传限制设置界面
 	public function upload(){
 	    $upload_setting=sp_get_upload_setting();
 	    $this->assign($upload_setting);
 	    $this->display();
 	}
 	
+	// 上传限制设置界面提交
 	public function upload_post(){
 	    if(IS_POST){
 	        $result=sp_set_option('upload_setting',I('post.'));
@@ -146,9 +149,7 @@ class SettingController extends AdminbaseController{
 	    
 	}
 	
-	/**
-	 * 清除缓存
-	 */
+	// 清除缓存
 	public function clearcache(){
 		sp_clear_cache();
 		$this->display();

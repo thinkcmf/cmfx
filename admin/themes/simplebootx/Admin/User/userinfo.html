@@ -9,10 +9,10 @@
 		<form class="form-horizontal js-ajax-form" method="post" action="{:U('User/userinfo_post')}">
 			<fieldset>
 				<div class="control-group">
-					<label class="control-label" for="input-user_nicename">{:L('NICENAME')}</label>
+					<label class="control-label" for="input-user_nicename"><span class="form-required">*</span>{:L('NICENAME')}</label>
 					<div class="controls">
 						<input type="hidden" name="id" value="{$id}">
-						<input type="text" id="input-user_nicename" name="user_nicename" value="{$user_nicename}">
+						<input type="text" id="input-user_nicename" name="user_nicename" value="{$user_nicename}" required>
 					</div>
 				</div>
 				<div class="control-group">
@@ -28,9 +28,9 @@
 					</div>
 				</div>
 				<div class="control-group">
-					<label class="control-label" for="input-birthday">{:L('BIRTHDAY')}</label>
+					<label class="control-label" for="input-birthday"><span class="form-required">*</span>{:L('BIRTHDAY')}</label>
 					<div class="controls">
-						<input class="js-date" type="text" id="input-birthday" placeholder="2013-01-04" name="birthday" value="{$birthday}">
+						<input class="js-date" type="text" id="input-birthday" placeholder="2013-01-04" name="birthday" value="{$birthday}" required>
 					</div>
 				</div>
 				<div class="control-group">

@@ -1,14 +1,14 @@
 <?php
-
-/**
- * 会员注册登录
- */
 namespace User\Controller;
+
 use Common\Controller\HomebaseController;
+
 class IndexController extends HomebaseController {
-    //登录
+    
+    // 前台用户首页 (公开)
 	public function index() {
-		$id=I("get.id");
+	    
+		$id=I("get.id",0,'intval');
 		
 		$users_model=M("Users");
 		
@@ -17,11 +17,13 @@ class IndexController extends HomebaseController {
 		if(empty($user)){
 			$this->error("查无此人！");
 		}
+		
 		$this->assign($user);
 		$this->display(":index");
 
     }
     
+    // 前台ajax 判断用户登录状态接口
     function is_login(){
     	if(sp_is_user_login()){
     		$this->ajaxReturn(array("status"=>1,"user"=>sp_get_current_user()));
@@ -40,24 +42,6 @@ class IndexController extends HomebaseController {
     	}
     	session("user",null);//只有前台用户退出
     	redirect(__ROOT__."/");
-    }
-	
-	public function logout2(){
-    	$ucenter_syn=C("UCENTER_ENABLED");
-    	$login_success=false;
-    	if($ucenter_syn){
-    		include UC_CLIENT_ROOT."client.php";
-    		echo uc_user_synlogout();
-    	}
-    	$session_user=session('user');
-		if(!empty($session_user)){
-		$referer=$_SERVER["HTTP_REFERER"];
-			session("user",null);//只有前台用户退出
-			session('login_http_referer',$referer);
-			$this->success("退出成功！",__ROOT__."/");
-		}else{
-			redirect(__ROOT__."/");
-		}
     }
 
 }

@@ -12,16 +12,19 @@ class AdController extends AdminbaseController{
 		$this->ad_model = D("Common/Ad");
 	}
 	
+	// 后台广告列表
 	public function index(){
 		$ads=$this->ad_model->select();
 		$this->assign("ads",$ads);
 		$this->display();
 	}
 	
+	// 广告添加
 	public function add(){
 		$this->display();
 	}
 	
+	// 广告添加提交
 	public function add_post(){
 		if(IS_POST){
 			if ($this->ad_model->create()!==false){
@@ -37,6 +40,7 @@ class AdController extends AdminbaseController{
 		}
 	}
 	
+	// 广告编辑
 	public function edit(){
 		$id=I("get.id",0,'intval');
 		$ad=$this->ad_model->where(array('ad_id'=>$id))->find();
@@ -44,6 +48,7 @@ class AdController extends AdminbaseController{
 		$this->display();
 	}
 	
+	// 广告编辑提交
 	public function edit_post(){
 		if (IS_POST) {
 			if ($this->ad_model->create()!==false) {
@@ -58,9 +63,7 @@ class AdController extends AdminbaseController{
 		}
 	}
 	
-	/**
-	 *  删除
-	 */
+	// 广告删除
 	public function delete(){
 		$id = I("get.id",0,"intval");
 		if ($this->ad_model->delete($id)!==false) {
@@ -70,6 +73,7 @@ class AdController extends AdminbaseController{
 		}
 	}
 	
+	// 广告显示/隐藏
 	public function toggle(){
 		if(!empty($_POST['ids']) && isset($_GET["display"])){
 			$ids = I('post.ids/a');

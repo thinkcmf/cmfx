@@ -12,7 +12,7 @@
 
 <link href="__PUBLIC__/simpleboot/themes/{:C('SP_ADMIN_STYLE')}/theme.min.css" rel="stylesheet">
 <link href="__PUBLIC__/simpleboot/css/simplebootadmin.css" rel="stylesheet">
-<link href="__PUBLIC__/simpleboot/font-awesome/4.4.0/css/font-awesome.min.css"  rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/simpleboot/font-awesome/4.4.0/css/font-awesome.min.css?page=index"  rel="stylesheet" type="text/css">
 <!--[if IE 7]>
 	<link rel="stylesheet" href="__PUBLIC__/simpleboot/font-awesome/4.4.0/css/font-awesome-ie7.min.css">
 <![endif]-->
@@ -45,7 +45,7 @@ var GV = {
     JS_ROOT: "public/js/"
 };
 </script>
-<php>$submenus=$SUBMENU_CONFIG;</php>
+<php>$submenus=$menus;</php>
 
 <php>function getsubmenu($submenus){</php>
 <php>foreach($submenus as $menu){ </php>
@@ -181,7 +181,7 @@ right: initial !important;}
 					</a>
 					</if>
 					
-					<if condition="$Think.APP_DEBUG">
+					<if condition="APP_DEBUG">
 					<a class="btn btn-small" href="javascript:openapp('{:U('admin/menu/index')}','index_menu','{:L('ADMIN_MENU_INDEX')}');" title="{:L('ADMIN_MENU_INDEX')}">
 						<i class="fa fa-list"></i>
 					</a>

@@ -137,21 +137,59 @@
             
             ajaxForm_list.each(function(){
             	$(this).validate({
-                	//是否在获取焦点时验证
-    				onfocusout : false,
+            		//是否在获取焦点时验证
+    				//onfocusout : false,
     				//是否在敲击键盘时验证
-    				onkeyup : false,
-    				//当鼠标掉级时验证
-    				onclick : false,
+    				//onkeyup : false,
+    				//当鼠标点击时验证
+    				//onclick : false,
     				//给未通过验证的元素加效果,闪烁等
-    				highlight : false,
-    				//是否在获取焦点时验证
-    				onfocusout : false,
+                    highlight: function( element, errorClass, validClass ) {
+                        if ( element.type === "radio" ) {
+                            this.findByName( element.name ).addClass( errorClass ).removeClass( validClass );
+                        } else {
+                        	var $element =$( element );
+                        	$element.addClass( errorClass ).removeClass( validClass );
+                        	$element.parent().addClass("has-error");//bootstrap3表单
+                        	$element.parents('.control-group').addClass("error");//bootstrap2表单
+                            
+                        }
+                    },
+                    unhighlight: function( element, errorClass, validClass ) {
+                        if ( element.type === "radio" ) {
+                            this.findByName( element.name ).removeClass( errorClass ).addClass( validClass );
+                        } else {
+                        	var $element =$( element );
+                        	$element.removeClass( errorClass ).addClass( validClass );
+                        	$element.parent().removeClass("has-error");//bootstrap3表单
+                        	$element.parents('.control-group').removeClass("error");//bootstrap2表单
+                        }
+                    },
                 	showErrors:function(errorMap, errorArr){
-                		try {
-    						$(errorArr[0].element).focus();
-    					} catch (err) {
-    					}
+                        var i, elements, error;
+                        for ( i = 0; this.errorList[ i ]; i++ ) {
+                            error = this.errorList[ i ];
+                            if ( this.settings.highlight ) {
+                                this.settings.highlight.call( this, error.element, this.settings.errorClass, this.settings.validClass );
+                            }
+                            //this.showLabel( error.element, error.message );
+                        }
+                        if ( this.errorList.length ) {
+                            //this.toShow = this.toShow.add( this.containers );
+                        }
+                        if ( this.settings.success ) {
+                            for ( i = 0; this.successList[ i ]; i++ ) {
+                                //this.showLabel( this.successList[ i ] );
+                            }
+                        }
+                        if ( this.settings.unhighlight ) {
+                            for ( i = 0, elements = this.validElements(); elements[ i ]; i++ ) {
+                                this.settings.unhighlight.call( this, elements[ i ], this.settings.errorClass, this.settings.validClass );
+                            }
+                        }
+                        this.toHide = this.toHide.not( this.toShow );
+                        this.hideErrors();
+                        this.addWrapper( this.toShow ).show();
                 	},
                 	submitHandler:function(form){
                 		var $form=$(form);
@@ -168,7 +206,7 @@
     	                        var text = $btn.text();
     	                        //按钮文案、状态修改
     	                        $btn.removeClass('disabled').prop('disabled', false).text(text.replace('中...', '')).parent().find('span').remove();
-    	                        if (data.state === 'success') {
+    	                        if (data.status == 1) {
     	                        	if($btn.data('success')){
     		                        	var successCallback=$btn.data('success');
     		                        	window[successCallback](data, statusText, xhr, $form);
@@ -179,7 +217,7 @@
     	                        		layout:'center',
     	                        		modal:true
     	                        	});
-    	                        } else if (data.state === 'fail') {
+    	                        } else if (data.status == 0) {
     	                        	if($btn.data('error')){
     		                        	var errorCallback=$btn.data('error');
     		                        	window[errorCallback](data, statusText, xhr, $form);
@@ -227,7 +265,7 @@
     	                        		}
     	                            }
     	                        } else {
-    	                        	if (data.state === 'success') {
+    	                        	if (data.status == 1) {
     	                        		var wait=$btn.data("wait");
     	                        		if(window.parent.art){
     	                                    if(wait){
@@ -252,13 +290,20 @@
     	                        
     	                    },
     	                    error:function(xhr,e,statusText){
-    	                    	alert(statusText);
-    	                    	if(window.parent.art){
-    	                            reloadPage(window.parent);
-    	                        }else{
-    	                            //刷新当前页
-    	                            reloadPage(window);
-    	                        }
+    	                    	noty({text: statusText,
+	                        		type:'error',
+	                        		layout:'center',
+	                        		callback:{
+                            			onClose:function(){
+                            				if(window.parent.art){
+                	                            reloadPage(window.parent);
+                	                        }else{
+                	                            //刷新当前页
+                	                            reloadPage(window);
+                	                        }
+                            			}
+                            		}
+	                        	});
     	                    },
     	                    complete: function(){
     	                    	$btn.data("loading",false);
@@ -306,13 +351,13 @@
    				   		onClick: function($noty){
    				   			$noty.close();
 	   				   		$.getJSON(href).done(function (data) {
-	                            if (data.state === 'success') {
+	                            if (data.status == 1) {
 	                                if (data.referer) {
 	                                    location.href = data.referer;
 	                                } else {
 	                                    reloadPage(window);
 	                                }
-	                            } else if (data.state === 'fail') {
+	                            } else if (data.status == 0) {
 	                            	noty({text: data.info,
 	                            		type:'error',
 	                            		layout:'center',
@@ -366,13 +411,13 @@
    				   		onClick: function($noty){
    				   			$noty.close();
 	   				   		$.getJSON(href).done(function (data) {
-	                            if (data.state === 'success') {
+	                            if (data.status == 1) {
 	                                if (data.referer) {
 	                                    location.href = data.referer;
 	                                } else {
 	                                    reloadPage(window);
 	                                }
-	                            } else if (data.state === 'fail') {
+	                            } else if (data.status == 0) {
 	                                noty({text: data.info,
 	                            		type:'error',
 	                            		layout:'center',
@@ -417,7 +462,7 @@
                 
                 
                 $.getJSON(href).done(function (data) {
-                    if (data.state === 'success') {
+                    if (data.status == 1) {
                         noty({
                         	text:data.info,
                         	type:'success',
@@ -435,7 +480,7 @@
                         		}
                         	}
                         });
-                    } else if (data.state === 'fail') {
+                    } else if (data.status == 0) {
                         noty({text: data.info,
                     		type:'error',
                     		layout:'center',
@@ -469,13 +514,13 @@
             $.post(this.href, function (data) {
                 refresh_lock = false;
 
-                if (data.state === 'success') {
+                if (data.status == 1) {
                     if (data.referer) {
                         location.href = data.referer;
                     } else {
                         reloadPage(window);
                     }
-                } else if (data.state === 'fail') {
+                } else if (data.status == 0) {
                     Wind.art.dialog.alert(data.info);
                 }
             }, 'json');
@@ -582,7 +627,7 @@
                 
                 $.post(href,{},function(data){
                 	
-                	if (data.state === 'success') {
+                	if (data.status == 1) {
                 		
                 		var $count=$this.find(".count");
                 		var count=parseInt($count.text());
@@ -590,15 +635,29 @@
                 		if(data.info){
                 			noty({text: data.info,
                         		type:'success',
-                        		layout:'center'
+                        		layout:'center',
+                        		callback:{
+                        			onClose:function(){
+                        				if (data.referer) {
+    	                                    location.href = data.referer;
+    	                                }
+                        			}
+                        		}
                         	});
                 		}
                 		
                 		
-                    } else if (data.state === 'fail') {
+                    } else if (data.status == 0) {
                     	noty({text: data.info,
                     		type:'error',
-                    		layout:'center'
+                    		layout:'center',
+                    		callback:{
+                    			onClose:function(){
+                    				if (data.referer) {
+	                                    location.href = data.referer;
+	                                }
+                    			}
+                    		}
                     	});
                     }
                 	
@@ -684,20 +743,34 @@
                 
                 $.post(href,{},function(data){
                 	
-                	if (data.state === 'success') {
+                	if (data.status == '1') {
                 		
                 		if(data.info){
                 			noty({text: data.info,
                         		type:'success',
-                        		layout:'center'
+                        		layout:'center',
+                        		callback:{
+                        			onClose:function(){
+                        				if (data.referer) {
+    	                                    location.href = data.referer;
+    	                                }
+                        			}
+                        		}
                         	});
                 		}
                 		
                 		
-                    } else if (data.state === 'fail') {
+                    } else if (data.status == 0) {
                     	noty({text: data.info,
                     		type:'error',
-                    		layout:'center'
+                    		layout:'center',
+                    		callback:{
+                    			onClose:function(){
+                    				if (data.referer) {
+	                                    location.href = data.referer;
+	                                }
+                    			}
+                    		}
                     	});
                     }
                 },"json");
@@ -722,20 +795,34 @@
                 
                 $.post(href,{url:url,key:key,title:title,description:description},function(data){
                 	
-                	if (data.state === 'success') {
+                	if (data.status == 1) {
                 		
                 		if(data.info){
                 			noty({text: data.info,
                         		type:'success',
-                        		layout:'center'
+                        		layout:'center',
+                        		callback:{
+                        			onClose:function(){
+                        				if (data.referer) {
+    	                                    location.href = data.referer;
+    	                                }
+                        			}
+                        		}
                         	});
                 		}
                 		
                 		
-                    } else if (data.state === 'fail') {
+                    } else if (data.status == 0) {
                     	noty({text: data.info,
                     		type:'error',
-                    		layout:'center'
+                    		layout:'center',
+                    		callback:{
+                    			onClose:function(){
+                    				if (data.referer) {
+	                                    location.href = data.referer;
+	                                }
+                    			}
+                    		}
                     	});
                     }
                 	
@@ -775,15 +862,15 @@
                         //按钮文案、状态修改
                         btn.removeClass('disabled').text(text.replace('中...', '')).parent().find('span').remove();
                         btn.removeProp('disabled').removeClass('disabled');
-                        if (data.state === 'success') {
+                        if (data.status == 1) {
                             $('<span class="tips_success">' + data.info + '</span>').appendTo(btn.parent()).fadeIn('slow').delay(1000).fadeOut(function () {
                             });
-                        } else if (data.state === 'fail') {
+                        } else if (data.status == 0) {
                             $('<span class="tips_error">' + data.info + '</span>').appendTo(btn.parent()).fadeIn('fast');
                             btn.removeProp('disabled').removeClass('disabled');
                         }
                         
-                        if (data.state === 'success') {
+                        if (data.status == 1) {
                     		var $comments=form.siblings(".comments");
                     		var comment_tpl=btn.parents(".comment-area").find(".comment-tpl").html();
                     		var $comment_tpl=$(comment_tpl);

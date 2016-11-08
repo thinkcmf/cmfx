@@ -12,6 +12,7 @@ use Common\Controller\HomebaseController;
 
 class PageController extends HomebaseController{
     
+    // 页面内页
 	public function index() {
 		$id=I('get.id',0,'intval');
 		$content=sp_sql_page($id);
@@ -34,6 +35,7 @@ class PageController extends HomebaseController{
 		$this->display(":$tplname");
 	}
 	
+	// 页面列表接口,返回页面列表,用于后台导航编辑添加
 	public function nav_index(){
 		$navcatname="页面";
 		

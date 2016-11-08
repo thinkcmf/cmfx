@@ -12,6 +12,7 @@
 			<input autocomplete="off" type="text" class="js-datetime" name="end_time" value="{$formget.end_time|default=''}" style="width: 120px;"> {:L('KEYWORD')}
 			<input type="text" name="keyword" style="width: 200px;" value="{$formget.keyword|default=''}" placeholder="{:L('PLEASE_ENTER_KEYWORD')}">
 			<button class="btn btn-primary">{:L('SEARCH')}</button>
+			<a class="btn btn-danger" href="{:U('AdminPage/index')}">清空</a>
 		</form>
 		<form class="js-ajax-form" method="post">
 			<div class="table-actions">
@@ -35,7 +36,7 @@
 					<td><a>{$vo.id}</a></td>
 					<td><a href="{:U('portal/page/index',array('id'=>$vo['id']))}" target="_blank"><span>{$vo.post_title}</span></a></td>
 					<!--  <td>0</td> -->
-					<td>{$users[$vo['post_author']]['user_login']}</td>
+					<td>{$vo.user_nicename|default=$vo.user_login}</td>
 					<td>{$vo.post_date}</td>
 					<td>
 						<a href="{:U('AdminPage/edit',array('id'=>$vo['id']))}">{:L('EDIT')}</a>|

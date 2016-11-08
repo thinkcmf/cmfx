@@ -9,6 +9,10 @@ class NavModel extends CommonModel {
 			
 	);
 	
+	protected $_auto = array (
+	    array ('href', 'htmlspecialchars_decode', self::MODEL_BOTH, 'function'),
+	);
+	
 	protected function _before_write(&$data) {
 		parent::_before_write($data);
 	}

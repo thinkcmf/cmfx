@@ -12,6 +12,7 @@ class GuestbookadminController extends AdminbaseController{
 		$this->guestbook_model=D("Common/Guestbook");
 	}
 	
+	// 后台留言列表
 	public function index(){
 		$count=$this->guestbook_model->where(array("status"=>1))->count();
 		$page = $this->page($count, 20);
@@ -21,6 +22,7 @@ class GuestbookadminController extends AdminbaseController{
 		$this->display();
 	}
 
+	// 删除留言
 	public function delete(){
 		$id=I("get.id",0,'intval');
 		$result=$this->guestbook_model->where(array("id"=>$id))->delete();

@@ -12,6 +12,7 @@ class CommentController extends MemberbaseController{
 		$this->comments_model=D("Common/Comments");
 	}
 	
+	// 个人中心我的评论列表
 	public function index(){
 		$uid=sp_get_current_userid();
 		$where=array("uid"=>$uid);
@@ -30,6 +31,7 @@ class CommentController extends MemberbaseController{
 		$this->display(":index");
 	}
 	
+	// 前台用户提交评论
 	public function post(){
 		if (IS_POST){
 			

@@ -8,12 +8,10 @@
 // +----------------------------------------------------------------------
 namespace Portal\Controller;
 use Common\Controller\HomebaseController;
-/**
- * 文章列表
-*/
+
 class ListController extends HomebaseController {
 
-	//文章内页
+	// 前台文章列表
 	public function index() {
 	    $term_id=I('get.id',0,'intval');
 		$term=sp_get_term($term_id);
@@ -34,6 +32,7 @@ class ListController extends HomebaseController {
     	$this->display(":$tplname");
 	}
 	
+	// 文章分类列表接口,返回文章分类列表,用于后台导航编辑添加
 	public function nav_index(){
 		$navcatname="文章分类";
         $term_obj= M("Terms");

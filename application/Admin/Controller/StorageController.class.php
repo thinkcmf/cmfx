@@ -9,11 +9,13 @@ class StorageController extends AdminbaseController{
 		parent::_initialize();
 	}
 	
+	// 文件存储设置
 	public function index(){
 		$this->assign(sp_get_cmf_settings('storage'));
 		$this->display();
 	}
 	
+	// 文件存储设置提交
 	public function setting_post(){
 		if(IS_POST){
 			

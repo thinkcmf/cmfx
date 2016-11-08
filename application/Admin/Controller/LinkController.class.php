@@ -13,17 +13,20 @@ class LinkController extends AdminbaseController{
 		$this->link_model = D("Common/Links");
 	}
 	
+	// 后台友情链接列表
 	public function index(){
 		$links=$this->link_model->order(array("listorder"=>"ASC"))->select();
 		$this->assign("links",$links);
 		$this->display();
 	}
 	
+	// 友情链接添加
 	public function add(){
 		$this->assign("targets",$this->targets);
 		$this->display();
 	}
 	
+	// 友情链接添加提交
 	public function add_post(){
 		if(IS_POST){
 			if ($this->link_model->create()!==false) {
@@ -39,6 +42,7 @@ class LinkController extends AdminbaseController{
 		}
 	}
 	
+	// 友情链接编辑
 	public function edit(){
 		$id=I("get.id",0,'intval');
 		$link=$this->link_model->where(array('link_id'=>$id))->find();
@@ -47,6 +51,7 @@ class LinkController extends AdminbaseController{
 		$this->display();
 	}
 	
+	// 友情链接编辑
 	public function edit_post(){
 		if (IS_POST) {
 			if ($this->link_model->create()!==false) {
@@ -61,9 +66,7 @@ class LinkController extends AdminbaseController{
 		}
 	}
 	
-	/**
-	 * 排序
-	 */
+	// 友情链接排序
 	public function listorders() {
 		$status = parent::_listorders($this->link_model);
 		if ($status) {
@@ -73,9 +76,7 @@ class LinkController extends AdminbaseController{
 		}
 	}
 	
-	/**
-	 * 删除
-	 */
+	// 友情链接删除
 	public function delete(){
 		if(isset($_POST['ids'])){
 			
@@ -89,10 +90,8 @@ class LinkController extends AdminbaseController{
 		}
 	
 	}
-	
-	/**
-	 * 显示/隐藏
-	 */
+
+	// 友情链接显示/隐藏
 	public function toggle(){
 		if(isset($_POST['ids']) && $_GET["display"]){
 			$ids = I('post.ids/a');
@@ -112,6 +111,5 @@ class LinkController extends AdminbaseController{
 			}
 		}
 	}
-	
 	
 }

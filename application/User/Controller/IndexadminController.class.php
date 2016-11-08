@@ -5,6 +5,7 @@ use Common\Controller\AdminbaseController;
 
 class IndexadminController extends AdminbaseController {
     
+    // 后台本站用户列表
     public function index(){
         $where=array();
         $request=I('request.');
@@ -40,6 +41,7 @@ class IndexadminController extends AdminbaseController {
     	$this->display(":index");
     }
     
+    // 后台本站用户禁用
     public function ban(){
     	$id= I('get.id',0,'intval');
     	if ($id) {
@@ -54,6 +56,7 @@ class IndexadminController extends AdminbaseController {
     	}
     }
     
+    // 后台本站用户启用
     public function cancelban(){
     	$id= I('get.id',0,'intval');
     	if ($id) {

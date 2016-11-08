@@ -23,8 +23,8 @@
 		    		<span>{$post_date} by {$user_nicename|default=$user_login}</span>
 		    		<span>
 		    			<a href="javascript:;"><i class="fa fa-eye"></i><span>{$post_hits}</span></a>
-						<a href="{:U('article/do_like',array('id'=>$object_id))}" class="js-count-btn"><i class="fa fa-thumbs-up"></i><span class="count">{$post_like}</span></a>
-						<a href="{:U('user/favorite/do_favorite',array('id'=>$object_id))}" class="js-favorite-btn" data-title="{$post_title}" data-url="{:leuu('article/index',array('id'=>$object_id,'cid'=>$term_id))}" data-key="{:sp_get_favorite_key('posts',$object_id)}">
+						<a href="{:U('article/do_like',array('id'=>$article_id))}" class="js-count-btn"><i class="fa fa-thumbs-up"></i><span class="count">{$post_like}</span></a>
+						<a href="{:U('user/favorite/do_favorite',array('id'=>$article_id))}" class="js-favorite-btn" data-title="{$post_title}" data-url="{:leuu('article/index',array('id'=>$article_id,'cid'=>$term_id))}" data-key="{:sp_get_favorite_key('posts',$article_id)}">
 							<i class="fa fa-star-o"></i>
 						</a>
 					</span>
@@ -62,7 +62,7 @@
 		    	
 		    	
 		    	{:hook('comment',array(
-		    		'post_id'=>$object_id,
+		    		'post_id'=>$article_id,
 		    		'post_table'=>'posts',
 		    		'post_title'=>$post_title
 		    	))}

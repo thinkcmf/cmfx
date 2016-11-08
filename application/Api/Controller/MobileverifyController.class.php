@@ -1,7 +1,6 @@
 <?php
-
 /**
- * 验证码处理
+ * 手机验证码发送
  */
 namespace Api\Controller;
 
@@ -9,6 +8,7 @@ use Think\Controller;
 
 class MobileverifyController extends Controller{
 
+    // 手机验证码发送
     public function send(){
         if(IS_POST){
             $mobile=I('post.mobile/s');

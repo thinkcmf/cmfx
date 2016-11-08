@@ -12,6 +12,7 @@ class CommentadminController extends AdminbaseController{
 		$this->comments_model=D("Common/Comments");
 	}
 
+	// 后台评论列表
 	public function index($table=""){
 		$where=array();
 		if(!empty($table)){
@@ -34,6 +35,7 @@ class CommentadminController extends AdminbaseController{
 		$this->display(":index");
 	}
 	
+	// 后台评论删除
 	public function delete(){
 		if(isset($_GET['id'])){
 			$id = intval(I("get.id"));
@@ -53,6 +55,7 @@ class CommentadminController extends AdminbaseController{
 		}
 	}
 	
+	// 后台评论审核
 	public function check(){
 		if(isset($_POST['ids']) && $_GET["check"]){
 			$data["status"]=1;

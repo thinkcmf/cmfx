@@ -90,16 +90,30 @@
 						$("#avatar_uploder").hide();
 						var $uploaded_area=$(".uploaded_avatar_area");
 						$uploaded_area.find("img").remove();
-						var $img=$("<img/>").attr("src","__UPLOAD__avatar/"+data.data.file);
+						var src= "__UPLOAD__avatar/"+data.data.file;
+						var $img=$("<img/>").attr("src",src);
 						$img.prependTo($uploaded_area);
 						$(".uploaded_avatar_btns").show();
-						$img.Jcrop({
-					    	aspectRatio:1/1,
-					    	setSelect: [ 0, 0, 100, 100 ],
-					    	onSelect: function(c){
-					    		$img.data("area",c);
-					    	}
-					    });
+						var img = new Image();
+						img.src=src;
+						
+						var callback=function(){
+							console.log(img.width);
+							$img.Jcrop({
+						    	aspectRatio:1,
+						    	trueSize: [img.width,img.height],
+						    	setSelect: [ 0, 0, 100, 100 ],
+						    	onSelect: function(c){
+						    		$img.data("area",c);
+						    	}
+						    });
+						}
+						
+						if(img.complete){
+							callback();
+						}else{
+							img.onload=callback;
+						}
 						
 					}else{
 						noty({text: data.info,

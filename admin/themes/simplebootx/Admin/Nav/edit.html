@@ -2,84 +2,87 @@
 </head>
 <body>
 	<div class="wrap">
-		<div class="common-form">
-			<form method="post" class="form-horizontal js-ajax-form" action="{:U('nav/edit_post')}">
-				<fieldset>
-					<div class="control-group">
-						<label class="control-label">{:L('NAVIGATION_CATEGORY')}</label>
-						<div class="controls">
-							<select name="cid" id="navcid_select">
-								<foreach name="navcats" item="vo">
-								<php>$navcid_selected=$navcid==$vo['navcid']?"selected":"";</php>
-								<option value="{$vo.navcid}" {$navcid_selected}>{$vo.name}</option>
-								</foreach>
-							</select>
-						</div>
+		<ul class="nav nav-tabs">
+			<li><a href="{:U('nav/index')}">{:L('ADMIN_NAV_INDEX')}</a></li>
+			<li><a href="{:U('nav/add')}">{:L('ADMIN_NAV_ADD')}</a></li>
+			<li class="active"><a>编辑菜单</a></li>
+		</ul>
+		<form method="post" class="form-horizontal js-ajax-form" action="{:U('nav/edit_post')}">
+			<fieldset>
+				<div class="control-group">
+					<label class="control-label">{:L('NAVIGATION_CATEGORY')}</label>
+					<div class="controls">
+						<select name="cid" id="navcid_select">
+							<foreach name="navcats" item="vo">
+							<php>$navcid_selected=$navcid==$vo['navcid']?"selected":"";</php>
+							<option value="{$vo.navcid}" {$navcid_selected}>{$vo.name}</option>
+							</foreach>
+						</select>
 					</div>
-					<div class="control-group">
-						<label class="control-label">{:L('PARENT')}</label>
-						<div class="controls">
-							<select name="parentid">
-								<option value="0">/</option>
-								{$nav_trees}
-							</select>
-						</div>
-					</div>
-					<div class="control-group">
-						<label class="control-label">{:L('LABEL')}</label>
-						<div class="controls">
-							<input type="text" name="label" value="{$label}"><span class="form-required">*</span>
-						</div>
-					</div>
-					<div class="control-group">
-						<label class="control-label">{:L('HREF')}</label>
-						<div class="controls">
-							<input type="radio" name="nav" id="outlink_radio">
-							<input type="text" name="href" id="outlink_input" value="http://">
-							<input type="radio" name="nav" id="selecturl_radio">
-							<select name="href" id="selecthref">
-								<option value="{:base64_encode('home')}">{:L('HOME')}</option>
-								<foreach name="navs" item="vo">
-									<optgroup label="{$vo.name}">
-									{$vo.html}
-									</optgroup>
-								</foreach>
-							</select>
-						</div>
-					</div>
-					<div class="control-group">
-						<label class="control-label">{:L('TARGET')}</label>
-						<div class="controls">
-							<select name="target">
-								<option value="">{:L('TARGET_DEFAULT')}</option>
-								<option value="_blank">{:L('TARGET_BLANK')}</option>
-							</select>
-						</div>
-					</div>
-					<div class="control-group">
-						<label class="control-label">{:L('ICON')}</label>
-						<div class="controls">
-							<input type="text" name="icon" value="{$icon}">
-						</div>
-					</div>
-					<div class="control-group">
-						<label class="control-label">{:L('STATUS')}</label>
-						<div class="controls">
-							<select name="status">
-								<option value="1">{:L('DISPLAY')}</option>
-								<php>$status_selected=empty($status)?"selected":"";</php>
-								<option value="0" {$status_selected}>{:L('HIDDEN')}</option>
-							</select>
-						</div>
-					</div>
-				</fieldset>
-				<div class="form-actions">
-					<input type="hidden" name="id" value="{$id}">
-					<button type="submit" class="btn btn-primary js-ajax-submit">{:L('SAVE')}</button>
-					<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
 				</div>
-			</form>
-		</div>
+				<div class="control-group">
+					<label class="control-label">{:L('PARENT')}</label>
+					<div class="controls">
+						<select name="parentid">
+							<option value="0">/</option>
+							{$nav_trees}
+						</select>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">{:L('LABEL')}</label>
+					<div class="controls">
+						<input type="text" name="label" value="{$label}"><span class="form-required">*</span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">{:L('HREF')}</label>
+					<div class="controls">
+						<input type="radio" name="nav" id="outlink_radio">
+						<input type="text" name="href" id="outlink_input" value="http://">
+						<input type="radio" name="nav" id="selecturl_radio">
+						<select name="href" id="selecthref">
+							<option value="{:base64_encode('home')}">{:L('HOME')}</option>
+							<foreach name="navs" item="vo">
+								<optgroup label="{$vo.name}">
+								{$vo.html}
+								</optgroup>
+							</foreach>
+						</select>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">{:L('TARGET')}</label>
+					<div class="controls">
+						<select name="target">
+							<option value="">{:L('TARGET_DEFAULT')}</option>
+							<option value="_blank">{:L('TARGET_BLANK')}</option>
+						</select>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">{:L('ICON')}</label>
+					<div class="controls">
+						<input type="text" name="icon" value="{$icon}">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">{:L('STATUS')}</label>
+					<div class="controls">
+						<select name="status">
+							<option value="1">{:L('DISPLAY')}</option>
+							<php>$status_selected=empty($status)?"selected":"";</php>
+							<option value="0" {$status_selected}>{:L('HIDDEN')}</option>
+						</select>
+					</div>
+				</div>
+			</fieldset>
+			<div class="form-actions">
+				<input type="hidden" name="id" value="{$id}">
+				<button type="submit" class="btn btn-primary js-ajax-submit">{:L('SAVE')}</button>
+				<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+			</div>
+		</form>
 	</div>
 	<script src="__PUBLIC__/js/common.js"></script>
 	<script>

@@ -20,13 +20,11 @@ class IndexController extends AdminbaseController {
     public function index() {
         $this->load_menu_lang();
     	
-        $this->assign("SUBMENU_CONFIG", D("Common/Menu")->menu_json());
+        $this->assign("menus", D("Common/Menu")->menu_json());
        	$this->display();
-        
     }
     
     private function load_menu_lang(){
-        if (!C('LANG_SWITCH_ON',null,false)) return;
         $default_lang=C('DEFAULT_LANG');
         
         $langSet=C('ADMIN_LANG_SWITCH_ON',null,false)?LANG_SET:$default_lang;

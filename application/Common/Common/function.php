@@ -265,6 +265,9 @@ function sp_clear_cache(){
 
 /**
  * 保存数组变量到php文件
+ * @param string $path 保存路径
+ * @param mixed $value 要保存的变量
+ * @return boolean 保存成功返回true,否则false
  */
 function sp_save_var($path,$value){
 	$ret = file_put_contents($path, "<?php\treturn " . var_export($value, true) . ";?>");
@@ -312,7 +315,14 @@ function sp_set_dynamic_config($data){
 
 
 /**
- * 生成参数列表,以数组形式返回
+ * 转化格式化的字符串为数组 
+ * @param string $tag 要转化的字符串,格式如:"id:2;cid:1;order:post_date desc;"
+ * @return array 转化后字符串<pre>
+ * array(
+ *  'id'=>'2',
+ *  'cid'=>'1',
+ *  'order'=>'post_date desc'
+ * )
  */
 function sp_param_lable($tag = ''){
 	$param = array();
@@ -618,14 +628,15 @@ function _sp_get_menu_datas($id){
 	}
 
 	$navs= $nav_obj->where(array('cid'=>$id,'status'=>1))->order(array("listorder" => "ASC"))->select();
+	
+	$default_app=strtolower(C("DEFAULT_MODULE"));
+	$g=C("VAR_MODULE");
 	foreach ($navs as $key=>$nav){
 		$href=htmlspecialchars_decode($nav['href']);
 		$hrefold=$href;
 		if(strpos($hrefold,"{")){//序列 化的数据
 			$href=unserialize(stripslashes($nav['href']));
-			$default_app=strtolower(C("DEFAULT_MODULE"));
             $href=strtolower(leuu($href['action'],$href['param']));
-			$g=C("VAR_MODULE");
 			$href=preg_replace("/\/$default_app\//", "/",$href);
 			$href=preg_replace("/$g=$default_app&/", "",$href);
 		}else{
@@ -656,40 +667,58 @@ function sp_get_menu_tree($id="main"){
 }
 
 /**
- * 获取父ID下的子类
- * @param $tag
- * @param $field
+ * 获取某导航子菜单
+ * @param $parent_id  导航id
+ * @param $field 要获取菜单的字段,如label,href
  * @param $order
- * @param $limit
- * @return mixed
+ * @return array 
  */
-function sp_get_submenu($tag,$field,$order){
-	$Nav= M("Nav");
+function sp_get_submenu($parent_id,$field='',$order=''){
+	$nav_model= M("Nav");
 	$field = !empty($field) ? $field : '*';
 	$order = !empty($order) ? $order : 'id';
 	//根据参数生成查询条件
     $where = array();
-	$reg = $Nav->where(array('parentid'=>$tag))->select();
+	$reg = $nav_model->where(array('parentid'=>$parent_id))->select();
 	if($reg) {
-		$where['parentid'] = $tag;
+		$where['parentid'] = $parent_id;
 	}else{
-		$parentid = $Nav->where($where['id'] = $tag)->getField('parentid');
+		$parentid = $nav_model->where($where['id'] = $parent_id)->getField('parentid');
 
 		if(empty($parentid)){
-			$where['id']= $tag;
+			$where['id']= $parent_id;
 		}else{
 			$where['parentid'] = $parentid;
 		}
 
 	}
-	$terms=$Nav->field($field)->where($where)->order($order)->select();
-	foreach($terms as $key =>$value){
-		$terms[$key]['href'] =  unserialize($value['href']);
+	
+	$navs=$nav_model->field($field)->where($where)->order($order)->select();
+	
+	$default_app=strtolower(C("DEFAULT_MODULE"));
+	$g=C("VAR_MODULE");
+	foreach($navs as $key =>$value){
+	    
+	    $hrefold=$navs[$key]['href'];
+	    if(strpos($hrefold,"{")){//序列 化的数据
+	        $href =  unserialize($value['href']);
+	        $href=strtolower(leuu($href['action'],$href['param']));
+	        $href=preg_replace("/\/$default_app\//", "/",$href);
+	        $href=preg_replace("/$g=$default_app&/", "",$href);
+	        $navs[$key]['href']=$href;
+	    }else{
+	        if($hrefold=="home"){
+	            $navs[$key]['href']=__ROOT__."/";
+	        }else{
+	            $navs[$key]['href']=$hrefold;
+	        }
+	    }
+		
 		if(empty($value['parentid'])){
-			$terms[$key]['parentid'] = $tag;
+			$navs[$key]['parentid'] = $parent_id;
 		}
 	}
-	return $terms;
+	return $navs;
 
 }
 /**
@@ -1055,6 +1084,7 @@ function sp_file_read($file){
 		file_get_contents($file);
 	}
 }
+
 /*修复缩略图使用网络地址时，会出现的错误。5iymt 2015年7月10日*/
 function sp_asset_relative_url($asset_url){
     if(strpos($asset_url,"http")===0){
@@ -1086,7 +1116,6 @@ function sp_content_page($content,$pagetpl='{first}{prev}{liststart}{list}{liste
  * @param string $ad
  * @return 广告内容
  */
-
 function sp_getad($ad){
 	$ad_obj= M("Ad");
 	$ad=$ad_obj->field("ad_content")->where("ad_name='$ad' and status=1")->find();
@@ -1157,6 +1186,7 @@ function sp_check_user_action($object="",$count_limit=1,$ip_limit=false,$expire=
 
 	return true;
 }
+
 /**
  * 用于生成收藏内容用的key
  * @param string $table 收藏内容所在表
@@ -1168,7 +1198,6 @@ function sp_get_favorite_key($table,$object_id){
 
 	return sp_authencode($string);
 }
-
 
 function sp_get_relative_url($url){
 	if(strpos($url,"http")===0){
@@ -1194,7 +1223,6 @@ function sp_get_relative_url($url){
  * @param array $where
  * @return array
  */
-
 function sp_get_users($tag="field:*;limit:0,8;order:create_time desc;",$where=array()){
 	$where=array();
 	$tag=sp_param_lable($tag);
@@ -1435,7 +1463,11 @@ function UU($url='',$vars='',$suffix=true,$domain=false){
 	return leuu($url,$vars,$suffix,$domain);
 }
 
-
+/**
+ * 获取所有url美化规则
+ * @param string $refresh 是否强制刷新
+ * @return mixed|void|boolean|NULL|unknown[]|unknown
+ */
 function sp_get_routes($refresh=false){
 	$routes=F("routes");
 
@@ -1870,9 +1902,7 @@ function sp_get_plugins_return($url, $params = array()){
  * @param string $filename_nosuffix
  */
 function sp_add_template_file_suffix($filename_nosuffix){
-
-
-
+    
     if(file_exists_case($filename_nosuffix.C('TMPL_TEMPLATE_SUFFIX'))){
         $filename_nosuffix = $filename_nosuffix.C('TMPL_TEMPLATE_SUFFIX');
     }else if(file_exists_case($filename_nosuffix.".php")){
@@ -2035,6 +2065,7 @@ function sp_delete_physics_img($imglist){
 
     return $res;
 }
+
 /**
  * 安全删除位于头像文件夹中的头像
  *
@@ -2111,10 +2142,15 @@ function sp_get_mobile_code($mobile,$expire_time){
 function sp_mobile_code_log($mobile,$code,$expire_time){
     
     $mobile_code_log_model=M('MobileCodeLog');
-    $log_count=$mobile_code_log_model->where(array('mobile'=>$mobile))->count();
-    
-    if($log_count>0){
-        $result=$mobile_code_log_model->where(array('mobile'=>$mobile))->save(array('send_time'=>time(),'expire_time'=>$expire_time,'code'=>$code,'count'=>array('exp','count+1')));
+    $find_log = $mobile_code_log_model->where(array('mobile'=>$mobile))->find();
+    if($find_log){
+        $sendtime   = strtotime(date("Y-m-d"));//当天0点
+        if($find_log['send_time']<=$sendtime){
+            $count =1;
+        }else{
+            $count = array('exp','count+1');
+        }
+        $result=$mobile_code_log_model->where(array('mobile'=>$mobile))->save(array('send_time'=>time(),'expire_time'=>$expire_time,'code'=>$code,'count'=>$count));
     }else{
         $result=$mobile_code_log_model->add(array('mobile'=>$mobile,'send_time'=>time(),'code'=>$code,'count'=>1,'expire_time'=>$expire_time));
     }

@@ -72,6 +72,16 @@ class IndexController extends Controller {
             $err++;
         }
         
+        if (extension_loaded('mbstring')) {
+            $data['mbstring'] = '<i class="fa fa-check correct"></i> 已开启';
+        } else {
+            $data['mbstring'] = '<i class="fa fa-remove error"></i> 未开启';
+            if (function_exists('imagettftext')) {
+                $data['mbstring'].='<br><i class="fa fa-remove error"></i> FreeType Support未开启';
+            }
+            $err++;
+        }
+        
         if (ini_get('file_uploads')) {
             $data['upload_size'] = '<i class="fa fa-check correct"></i> ' . ini_get('upload_max_filesize');
         } else {

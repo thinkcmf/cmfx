@@ -52,7 +52,16 @@ class AppframeController extends Controller {
         
     }
     
-    //分页
+    /**
+     * 
+     * @param number $totalSize 总数
+     * @param number $pageSize  总页数
+     * @param number $currentPage 当前页
+     * @param number $listRows 每页显示条数
+     * @param string $pageParam 分页参数
+     * @param string $pageLink 分页链接
+     * @param string $static 是否为静态链接
+     */
     protected function page($totalSize = 1, $pageSize = 0, $currentPage = 1, $listRows = 6, $pageParam = '', $pageLink = '', $static = FALSE) {
     	if ($pageSize == 0) {
     		$pageSize = C("PAGE_LISTROWS");

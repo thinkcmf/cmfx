@@ -23,12 +23,14 @@ class AdminPostController extends AdminbaseController {
 		$this->term_relationships_model = D("Portal/TermRelationships");
 	}
 	
+	// 后台文章管理列表
 	public function index(){
 		$this->_lists(array("post_status"=>array('neq',3)));
 		$this->_getTree();
 		$this->display();
 	}
 	
+	// 文章添加
 	public function add(){
 		$terms = $this->terms_model->order(array("listorder"=>"asc"))->select();
 		$term_id = I("get.term",0,'intval');
@@ -39,6 +41,7 @@ class AdminPostController extends AdminbaseController {
 		$this->display();
 	}
 	
+	// 文章添加提交
 	public function add_post(){
 		if (IS_POST) {
 			if(empty($_POST['term'])){
@@ -71,8 +74,9 @@ class AdminPostController extends AdminbaseController {
 		}
 	}
 	
+	// 文章编辑
 	public function edit(){
-		$id=  intval(I("get.id"));
+		$id=  I("get.id",0,'intval');
 		
 		$term_relationship = M('TermRelationships')->where(array("object_id"=>$id,"status"=>1))->getField("term_id",true);
 		$this->_getTermTree($term_relationship);
@@ -85,6 +89,7 @@ class AdminPostController extends AdminbaseController {
 		$this->display();
 	}
 	
+	// 文章编辑提交
 	public function edit_post(){
 		if (IS_POST) {
 			if(empty($_POST['term'])){
@@ -123,7 +128,7 @@ class AdminPostController extends AdminbaseController {
 		}
 	}
 	
-	//排序
+	// 文章排序
 	public function listorders() {
 		$status = parent::_listorders($this->term_relationships_model);
 		if ($status) {
@@ -133,6 +138,10 @@ class AdminPostController extends AdminbaseController {
 		}
 	}
 	
+	/**
+	 * 文章列表处理方法,根据不同条件显示不同的列表
+	 * @param array $where 查询条件
+	 */
 	private function _lists($where=array()){
 		$term_id=I('request.term',0,'intval');
 		
@@ -195,6 +204,7 @@ class AdminPostController extends AdminbaseController {
 		$this->assign("posts",$posts);
 	}
 	
+	// 获取文章分类树结构 select 形式
 	private function _getTree(){
 		$term_id=empty($_REQUEST['term'])?0:intval($_REQUEST['term']);
 		$result = $this->terms_model->order(array("listorder"=>"asc"))->select();
@@ -218,6 +228,7 @@ class AdminPostController extends AdminbaseController {
 		$this->assign("taxonomys", $taxonomys);
 	}
 	
+	// 获取文章分类树结构 
 	private function _getTermTree($term=array()){
 		$result = $this->terms_model->order(array("listorder"=>"asc"))->select();
 		
@@ -241,6 +252,7 @@ class AdminPostController extends AdminbaseController {
 		$this->assign("taxonomys", $taxonomys);
 	}
 	
+	// 文章删除
 	public function delete(){
 		if(isset($_GET['id'])){
 			$id = I("get.id",0,'intval');
@@ -262,6 +274,7 @@ class AdminPostController extends AdminbaseController {
 		}
 	}
 	
+	// 文章审核
 	public function check(){
 		if(isset($_POST['ids']) && $_GET["check"]){
 		    $ids = I('post.ids/a');
@@ -283,7 +296,8 @@ class AdminPostController extends AdminbaseController {
 		}
 	}
 	
-	function top(){
+	// 文章置顶
+	public function top(){
 		if(isset($_POST['ids']) && $_GET["top"]){
 			$ids = I('post.ids/a');
 			
@@ -304,7 +318,8 @@ class AdminPostController extends AdminbaseController {
 		}
 	}
 	
-	function recommend(){
+	// 文章推荐
+	public function recommend(){
 		if(isset($_POST['ids']) && $_GET["recommend"]){
 			$ids = I('post.ids/a');
 			
@@ -325,6 +340,7 @@ class AdminPostController extends AdminbaseController {
 		}
 	}
 	
+	// 文章批量移动
 	public function move(){
 		if(IS_POST){
 			if(isset($_GET['ids']) && $_GET['old_term_id'] && isset($_POST['term_id'])){
@@ -366,6 +382,7 @@ class AdminPostController extends AdminbaseController {
 		}
 	}
 	
+	// 文章批量复制
 	public function copy(){
 	    if(IS_POST){
 	        if(isset($_GET['ids']) && isset($_POST['term_id'])){
@@ -419,13 +436,15 @@ class AdminPostController extends AdminbaseController {
 	    }
 	}
 	
-	function recyclebin(){
+	// 文章回收站列表
+	public function recyclebin(){
 		$this->_lists(array('post_status'=>array('eq',3)));
 		$this->_getTree();
 		$this->display();
 	}
 	
-	function clean(){
+	// 清除已经删除的文章
+	public function clean(){
 		if(isset($_POST['ids'])){
 			$ids = I('post.ids/a');
 			$ids = array_map('intval', $ids);
@@ -452,7 +471,8 @@ class AdminPostController extends AdminbaseController {
 		}
 	}
 	
-	function restore(){
+	// 文章还原
+	public function restore(){
 		if(isset($_GET['id'])){
 			$id = I("get.id",0,'intval');
 			if ($this->posts_model->where(array("id"=>$id,'post_status'=>3))->save(array("post_status"=>"1"))) {

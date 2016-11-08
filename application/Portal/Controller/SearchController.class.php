@@ -6,17 +6,15 @@
 // +----------------------------------------------------------------------
 // | Author: Dean <zxxjjforever@163.com>
 // +----------------------------------------------------------------------
-/**
- * 搜索结果页面
- */
 namespace Portal\Controller;
 
 use Common\Controller\HomebaseController;
 
 class SearchController extends HomebaseController {
-    //文章内页
+    
+    //搜索结果页面
     public function index() {
-		$keyword = I("request.keyword");
+		$keyword = I('request.keyword/s','');
 		
 		if (empty($keyword)) {
 			$this -> error("关键词不能为空！请重新输入！");
@@ -25,6 +23,5 @@ class SearchController extends HomebaseController {
 		$this -> assign("keyword", $keyword);
 		$this -> display(":search");
     }
-    
     
 }

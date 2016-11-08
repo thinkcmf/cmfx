@@ -9,6 +9,7 @@
 // | Author: Dean <zxxjjforever@163.com>
 // +---------------------------------------------------------------------
 namespace Common\Behavior;
+
 use Think\Behavior;
 use Think\Hook;
 

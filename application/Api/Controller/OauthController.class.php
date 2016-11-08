@@ -19,7 +19,7 @@ class OauthController extends HomebaseController {
 	
 	public function _initialize() {}
 	
-	//登录地址
+	// 第三方登录地址
 	public function login($type = null){
 		empty($type) && $this->error('参数错误');
 		session('login_http_referer',$_SERVER["HTTP_REFERER"]);
@@ -29,7 +29,7 @@ class OauthController extends HomebaseController {
 		redirect($sns->getRequestCodeURL());
 	}
 	
-	//授权回调地址
+	// 第三方登录授权回调地址
 	public function callback($type = null, $code = null){
 
 		(empty($type)) && $this->error('参数错误');
@@ -60,13 +60,12 @@ class OauthController extends HomebaseController {
 				$this->_login_handle($user_info, $type, $token);
 			}
 		}else{
-			
 			$this->success('登录失败！',$this->_get_login_redirect());
 		}
 	}
 	
-	
-	function bang($type=""){
+	// 第三方账号绑定
+	public function bang($type=""){
 		if(sp_is_user_login()){
 			empty($type) && $this->error('参数错误');
 			//加载ThinkOauth类并实例化一个对象
@@ -78,16 +77,19 @@ class OauthController extends HomebaseController {
 		}else{
 			$this->error("您还没有登录！");
 		}
-		
-		
 	}
 	
+	/**
+	 * 获取登录跳转地址
+	 */
 	private function _get_login_redirect(){
 	    $session_login_http_referer=session('login_http_referer');
 		return empty($session_login_http_referer)?__ROOT__."/":$session_login_http_referer;
 	}
 	
-	//绑定第三方账号
+	/**
+	 *  处理绑定第三方账号
+	 */
 	private function _bang_handle($user_info, $type, $token){
 		
 		$current_uid=sp_get_current_userid();
@@ -137,7 +139,9 @@ class OauthController extends HomebaseController {
 		
 	}
 	
-	//登陆
+	/**
+	 *  处理第三方登陆
+	 */
 	private function _login_handle($user_info, $type, $token){
 		$oauth_user_model = M('OauthUser');
 		$type=strtolower($type);

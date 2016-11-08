@@ -6,11 +6,13 @@
  * 修改日期：2013-12-13
  */
 namespace User\Controller;
+
 use Common\Controller\AdminbaseController;
+
 class OauthadminController extends AdminbaseController {
 	
-	//用户列表
-	function index(){
+	// 后台第三方用户列表
+	public function index(){
 		$oauth_user_model=M('OauthUser');
 		$count=$oauth_user_model->where(array("status"=>1))->count();
 		$page = $this->page($count, 20);
@@ -24,14 +26,14 @@ class OauthadminController extends AdminbaseController {
 		$this->display();
 	}
 	
-	//删除用户
-	function delete(){
-		$id=intval($_GET['id']);
+	// 后台删除第三方用户绑定
+	public function delete(){
+		$id = I('get.id',0,'intval');
 		if(empty($id)){
 			$this->error('非法数据！');
 		}
-		$rst = M("OauthUser")->where(array("id"=>$id))->delete();
-		if ($rst!==false) {
+		$result = M("OauthUser")->where(array("id"=>$id))->delete();
+		if ($result!==false) {
 			$this->success("删除成功！", U("oauthadmin/index"));
 		} else {
 			$this->error('删除失败！');

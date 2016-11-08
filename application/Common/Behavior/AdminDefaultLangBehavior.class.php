@@ -19,8 +19,6 @@ class AdminDefaultLangBehavior extends Behavior{
      * @return void
      */
     private function loadLang() {
-        // 不开启语言包功能，仅仅加载框架语言文件直接返回
-        if (!C('LANG_SWITCH_ON',null,false)) return;
         
         $default_lang = C('DEFAULT_LANG');
         $langSet = C('ADMIN_LANG_SWITCH_ON',null,false)?LANG_SET:$default_lang;

@@ -14,6 +14,7 @@ class SlideController extends AdminbaseController{
 		$this->slidecat_model = D("Common/SlideCat");
 	}
 	
+	// 幻灯片列表
 	public function index(){
 		$cates=array(
 			array("cid"=>"0","cat_name"=>"默认分类"),
@@ -36,12 +37,14 @@ class SlideController extends AdminbaseController{
 		$this->display();
 	}
 	
+	// 幻灯片添加
 	public function add(){
 		$categorys=$this->slidecat_model->field("cid,cat_name")->where("cat_status!=0")->select();
 		$this->assign("categorys",$categorys);
 		$this->display();
 	}
 	
+	// 幻灯片添加提交
 	public function add_post(){
 		if(IS_POST){
 			if ($this->slide_model->create()!==false) {
@@ -56,6 +59,7 @@ class SlideController extends AdminbaseController{
 		}
 	}
 	
+	// 幻灯片编辑
 	public function edit(){
 		$categorys=$this->slidecat_model->field("cid,cat_name")->where("cat_status!=0")->select();
 		$id = I("get.id",0,'intval');
@@ -65,6 +69,7 @@ class SlideController extends AdminbaseController{
 		$this->display();
 	}
 	
+	// 幻灯片编辑提交
 	public function edit_post(){
 		if(IS_POST){
 			if ($this->slide_model->create()!==false) {
@@ -80,6 +85,7 @@ class SlideController extends AdminbaseController{
 		}
 	}
 	
+	// 幻灯片删除
 	public function delete(){
 		if(isset($_POST['ids'])){
 			$ids = implode(",", $_POST['ids']);
@@ -100,6 +106,7 @@ class SlideController extends AdminbaseController{
 		
 	}
 	
+	// 幻灯片显示/隐藏
 	public function toggle(){
 		if(isset($_POST['ids']) && $_GET["display"]){
 			$ids = I('post.ids/a');
@@ -119,7 +126,7 @@ class SlideController extends AdminbaseController{
 		}
 	}
 	
-	//隐藏
+	// 幻灯片隐藏
 	public function ban(){
     	$id = I('get.id',0,'intval');
     	if ($id) {
@@ -134,7 +141,7 @@ class SlideController extends AdminbaseController{
     	}
     }
     
-    //显示
+    // 幻灯片启用
     public function cancelban(){
     	$id = I('get.id',0,'intval');
     	if ($id) {
@@ -149,7 +156,7 @@ class SlideController extends AdminbaseController{
     	}
     }
     
-	//排序
+	// 幻灯片排序
 	public function listorders() {
 		$status = parent::_listorders($this->slide_model);
 		if ($status) {

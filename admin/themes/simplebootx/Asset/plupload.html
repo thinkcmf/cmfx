@@ -45,6 +45,9 @@
 	height:100%;
 	line-height: 100px;
 	text-align: center;
+	text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .files-wrapper li .selected-icon-wrapper{
@@ -135,6 +138,10 @@
 	</div>
 	<script>
 		var multi={$multi};
+		var mime_type = {$mime_type};
+		var extensions = mime_type.extensions.split(/,/);
+		var mimeTypeRegExp=new RegExp('\\.(' + extensions.join('|') + ')$', 'i');
+		
 		Wind.use('plupload',function(){
 			var uploader = new plupload.Uploader({
 				runtimes : 'html5,flash,silverlight,html4',
@@ -144,8 +151,8 @@
 				flash_swf_url : '../js/Moxie.swf',
 				silverlight_xap_url : '../js/Moxie.xap',
 				filters : {
-					max_file_size : '{$upload_max_filesize_mb}mb',
-					mime_types: [{$mime_type}]
+					max_file_size : '{$upload_max_filesize_mb}mb'/* ,
+					mime_types: [{$mime_type}] */
 				},
 				multi_selection:{$multi},
 				multipart_params:{
@@ -182,16 +189,22 @@
 							if(!multi) {
 								$('#select-files').css('visibility','hidden');
 							}
-							var $img=$('<img/>');
-							$img.attr('src',data.url);
-							$('#'+file.id).addClass('uploaded')
+							var $file=$('#'+file.id);
+							$file.addClass('uploaded')
 							.data('id',file.id)
 							.data('url',data.url)
 							.data('preview_url',data.preview_url)
 							.data('filepath',data.filepath)
-							.data('name',data.name)
-							.find('.upload-percent')
-							.html($img);
+							.data('name',data.name);
+							
+							if(data.url.match(/\.(jpeg|gif|jpg|png|bmp|pic)$/gi)){
+								var $img=$('<img/>');
+								$img.attr('src',data.url);
+								$file.find('.upload-percent')
+								.html($img);
+							}else{
+								$file.find('.upload-percent').attr('title',data.name).text(data.name);
+							}
 						}else{
 							alert(data.message);
 							$('#'+file.id).remove();
@@ -202,6 +215,21 @@
 					}
 				}
 			});
+			
+			plupload.addFileFilter('mime_types', function(filters, file, cb) {
+				if (!mimeTypeRegExp.test(file.name)) {
+					this.trigger('Error', {
+						code : plupload.FILE_EXTENSION_ERROR,
+						message : plupload.translate('File extension error.'),
+						file : file
+					});
+					alert("此文件类型不能上传!\n"+file.name);
+					cb(false);
+				} else {
+					cb(true);
+				}
+			});
+
 
 			uploader.init();
 			

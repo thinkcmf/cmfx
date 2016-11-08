@@ -19,10 +19,14 @@ class AdminbaseController extends AppframeController {
 	}
 
 	function _initialize(){
-		parent::_initialize();
-       define("TMPL_PATH", C("SP_ADMIN_TMPL_PATH"));
-		$this->load_app_admin_menu_lang();//暂时取消后台多语言
-       $session_admin_id=session('ADMIN_ID');
+	    parent::_initialize();
+	    define("TMPL_PATH", C("SP_ADMIN_TMPL_PATH"));
+	    
+	    //暂时取消后台多语言
+	    $this->load_app_admin_menu_lang();
+	    
+	    $session_admin_id=session('ADMIN_ID');
+	    
     	if(!empty($session_admin_id)){
     		$users_obj= M("Users");
     		$user=$users_obj->where(array('id'=>$session_admin_id))->find();
@@ -31,7 +35,7 @@ class AdminbaseController extends AppframeController {
 			}
 			$this->assign("admin",$user);
 		}else{
-			//$this->error("您还没有登录！",U("admin/public/login"));
+		    
 			if(IS_AJAX){
 				$this->error("您还没有登录！",U("admin/public/login"));
 			}else{
@@ -155,7 +159,9 @@ class AdminbaseController extends AppframeController {
     }
 
     /**
-     *  排序 排序字段为listorders数组 POST 排序字段为：listorder或者自定义字段
+     * 排序 排序字段为listorders数组 POST 排序字段为：listorder或者自定义字段
+     * @param mixed $model 需要排序的模型类
+     * @param string $custom_field 自定义排序字段 默认为listorder,可以改为自己的排序字段
      */
     protected function _listorders($model,$custom_field='') {
         if (!is_object($model)) {
@@ -172,10 +178,11 @@ class AdminbaseController extends AppframeController {
     }
 
 	/**
-	 * 后台分页
-	 *
+	 * 
+	 * {@inheritDoc}
+	 * @see \Common\Controller\AppframeController::page()
 	 */
-	protected function page($total_size = 1, $page_size = 0, $current_page = 1, $listRows = 6, $pageParam = '', $pageLink = '', $static = FALSE) {
+	protected function page($total_size = 1, $page_size = 0, $current_page = 1, $listRows = 6, $pageParam = '', $pageLink = '', $static = false) {
 		if ($page_size == 0) {
 			$page_size = C("PAGE_LISTROWS");
 		}
@@ -185,10 +192,15 @@ class AdminbaseController extends AppframeController {
 		}
 
 		$page = new \Page($total_size, $page_size, $current_page, $listRows, $pageParam, $pageLink, $static);
-        $page->SetPager('Admin', '{first}{prev}&nbsp;{liststart}{list}{listend}&nbsp;{next}{last}<span>共{recordcount}条数据</span>', array("listlong" => "4", "first" => "首页", "last" => "尾页", "prev" => "上一页", "next" => "下一页", "list" => "*", "disabledclass" => ""));
+        $page->SetPager('Admin', '{first}{prev}&nbsp;{liststart}{list}&nbsp;{next}{last}<span>共{recordcount}条数据</span>', array("listlong" => "4", "first" => "首页", "last" => "尾页", "prev" => "上一页", "next" => "下一页", "list" => "*", "disabledclass" => ""));
 		return $page;
 	}
 
+	/**
+	 *  检查后台用户访问权限
+	 * @param int $uid 后台用户id
+	 * @return boolean 检查通过返回true
+	 */
 	private function check_access($uid){
 		//如果用户角色是1，则无需判断
 		if($uid == 1){
@@ -205,22 +217,23 @@ class AdminbaseController extends AppframeController {
 		}
 	}
 
+	/**
+	 * 加载后台用户语言包
+	 */
     private function load_app_admin_menu_lang(){
-    	if (C('LANG_SWITCH_ON',null,false)){
-    	    $default_lang=C('DEFAULT_LANG');
-    	    $langSet=C('ADMIN_LANG_SWITCH_ON',null,false)?LANG_SET:$default_lang;
-    		if($default_lang!=$langSet){
-    		    $admin_menu_lang_file=SPAPP.MODULE_NAME."/Lang/".$langSet."/admin_menu.php";
-    		}else{
-    		    $admin_menu_lang_file=SITE_PATH."data/lang/".MODULE_NAME."/Lang/$langSet/admin_menu.php";
-    		    if(!file_exists_case($admin_menu_lang_file)){
-    		        $admin_menu_lang_file=SPAPP.MODULE_NAME."/Lang/".$langSet."/admin_menu.php";
-    		    }
-    		}
-    		if(is_file($admin_menu_lang_file)){
-    			$lang=include $admin_menu_lang_file;
-    			L($lang);
-    		}
+	    $default_lang=C('DEFAULT_LANG');
+	    $langSet=C('ADMIN_LANG_SWITCH_ON',null,false)?LANG_SET:$default_lang;
+		if($default_lang!=$langSet){
+		    $admin_menu_lang_file=SPAPP.MODULE_NAME."/Lang/".$langSet."/admin_menu.php";
+		}else{
+		    $admin_menu_lang_file=SITE_PATH."data/lang/".MODULE_NAME."/Lang/$langSet/admin_menu.php";
+		    if(!file_exists_case($admin_menu_lang_file)){
+		        $admin_menu_lang_file=SPAPP.MODULE_NAME."/Lang/".$langSet."/admin_menu.php";
+		    }
+		}
+		if(is_file($admin_menu_lang_file)){
+			$lang=include $admin_menu_lang_file;
+			L($lang);
     	}
     }
 }

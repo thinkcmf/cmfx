@@ -33,6 +33,7 @@ class PluginController extends AppframeController{
 	
 	public $controller_name;
 
+	// 插件控制器入口
 	public function execute($_plugin = null, $_controller = null, $_action = null){
 		if(C('URL_CASE_INSENSITIVE')){
 			$_plugin = ucfirst(parse_name($_plugin, 1));
@@ -60,10 +61,20 @@ class PluginController extends AppframeController{
 		}
 	}
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 * @see \Think\Controller::display()
+	 */
 	public function display($templateFile = '', $charset = '', $contentType = '', $content = '', $prefix = '') {
 		parent::display($this->parseTemplate($templateFile), $charset, $contentType);
 	}
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 * @see \Think\Controller::fetch()
+	 */
 	public function fetch($templateFile='',$content='',$prefix=''){
 		return parent::fetch($this->parseTemplate($templateFile),$content,$prefix);
 	}

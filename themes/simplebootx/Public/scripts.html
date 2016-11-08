@@ -6,74 +6,72 @@ var GV = {
     JS_ROOT: "public/js/"
 };
 </script>
-<!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="__PUBLIC__/js/jquery.js"></script>
-    <script src="__PUBLIC__/js/wind.js"></script>
-    <script src="__TMPL__Public/assets/simpleboot/bootstrap/js/bootstrap.min.js"></script>
-    <script src="__PUBLIC__/js/frontend.js"></script>
-	<script>
-	$(function(){
-		$('body').on('touchstart.dropdown', '.dropdown-menu', function (e) { e.stopPropagation(); });
-		
-		$("#main-menu li.dropdown").hover(function(){
-			$(this).addClass("open");
-		},function(){
-			$(this).removeClass("open");
-		});
-		
-		$.post("{:U('user/index/is_login')}",{},function(data){
-			if(data.status==1){
-				if(data.user.avatar){
-					$("#main-menu-user .headicon").attr("src",data.user.avatar.indexOf("http")==0?data.user.avatar:"{:sp_get_image_url('[AVATAR]','!avatar')}".replace('[AVATAR]',data.user.avatar));
-				}
-				
-				$("#main-menu-user .user-nicename").text(data.user.user_nicename!=""?data.user.user_nicename:data.user.user_login);
-				$("#main-menu-user li.login").show();
-				
-			}
-			if(data.status==0){
-				$("#main-menu-user li.offline").show();
+   <!-- Placed at the end of the document so the pages load faster -->
+   <script src="__PUBLIC__/js/jquery.js"></script>
+   <script src="__PUBLIC__/js/wind.js"></script>
+   <script src="__TMPL__Public/assets/simpleboot/bootstrap/js/bootstrap.min.js"></script>
+   <script src="__PUBLIC__/js/frontend.js"></script>
+<script>
+$(function(){
+	$('body').on('touchstart.dropdown', '.dropdown-menu', function (e) { e.stopPropagation(); });
+	
+	$("#main-menu li.dropdown").hover(function(){
+		$(this).addClass("open");
+	},function(){
+		$(this).removeClass("open");
+	});
+	
+	$.post("{:U('user/index/is_login')}",{},function(data){
+		if(data.status==1){
+			if(data.user.avatar){
+				$("#main-menu-user .headicon").attr("src",data.user.avatar.indexOf("http")==0?data.user.avatar:"{:sp_get_image_url('[AVATAR]','!avatar')}".replace('[AVATAR]',data.user.avatar));
 			}
 			
-			/* $.post("{:U('user/notification/getLastNotifications')}",{},function(data){
-				$(".nav .notifactions .count").text(data.list.length);
-			}); */
+			$("#main-menu-user .user-nicename").text(data.user.user_nicename!=""?data.user.user_nicename:data.user.user_login);
+			$("#main-menu-user li.login").show();
 			
-		});	
-		;(function($){
-			$.fn.totop=function(opt){
-				var scrolling=false;
-				return this.each(function(){
-					var $this=$(this);
-					$(window).scroll(function(){
-						if(!scrolling){
-							var sd=$(window).scrollTop();
-							if(sd>100){
-								$this.fadeIn();
-							}else{
-								$this.fadeOut();
-							}
-						}
-					});
-					
-					$this.click(function(){
-						scrolling=true;
-						$('html, body').animate({
-							scrollTop : 0
-						}, 500,function(){
-							scrolling=false;
+		}
+		if(data.status==0){
+			$("#main-menu-user li.offline").show();
+		}
+		
+		/* $.post("{:U('user/notification/getLastNotifications')}",{},function(data){
+			$(".nav .notifactions .count").text(data.list.length);
+		}); */
+		
+	});	
+	;(function($){
+		$.fn.totop=function(opt){
+			var scrolling=false;
+			return this.each(function(){
+				var $this=$(this);
+				$(window).scroll(function(){
+					if(!scrolling){
+						var sd=$(window).scrollTop();
+						if(sd>100){
+							$this.fadeIn();
+						}else{
 							$this.fadeOut();
-						});
+						}
+					}
+				});
+				
+				$this.click(function(){
+					scrolling=true;
+					$('html, body').animate({
+						scrollTop : 0
+					}, 500,function(){
+						scrolling=false;
+						$this.fadeOut();
 					});
 				});
-			};
-		})(jQuery); 
-		
-		$("#backtotop").totop();
-		
-		
-	});
-	</script>
+			});
+		};
+	})(jQuery); 
+	
+	$("#backtotop").totop();
+	
+	
+});
+</script>
 

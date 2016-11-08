@@ -12,16 +12,12 @@ use Common\Controller\AdminbaseController;
 
 class MailerController extends AdminbaseController {
 
-	/**
-	 * SMTP配置
-	 */
+    // SMTP配置
     public function index() {
     	$this->display();
     }
     
-    /**
-     * SMTP配置处理
-     */
+    // SMTP配置处理
     public function index_post() {
     	$post = array_map('trim', I('post.'));
     	
@@ -43,9 +39,7 @@ class MailerController extends AdminbaseController {
     	}
     }
     
-    /**
-     * 会员账号激活
-     */
+    // 会员注册邮件模板
     public function active(){
     	$where = array('option_name'=>'member_email_active');
     	$option = M('Options')->where($where)->find();
@@ -56,6 +50,7 @@ class MailerController extends AdminbaseController {
     	$this->display();
     }
     
+    // 会员注册邮件模板提交
     public function active_post(){
         $configs=array();
     	$configs['SP_MEMBER_EMAIL_ACTIVE'] = I('post.lightup',0,'intval');
@@ -80,6 +75,7 @@ class MailerController extends AdminbaseController {
     	}
     }
     
+    // 邮件发送测试
     public function test(){
         if(IS_POST){
             $rules = array(

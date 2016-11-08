@@ -14,6 +14,7 @@ class AssetController extends AdminbaseController {
     }
     
     
+    // 文件上传
     public function plupload(){
         $upload_setting=sp_get_upload_setting();
         

@@ -53,7 +53,7 @@ class UeditorController extends Controller {
 	// 百度编辑器文件上传
 	public function upload(){
 		error_reporting(E_ERROR);
-		header("Content-Type: text/html; charset=utf-8");
+		header("Content-Type: application/json; charset=utf-8");
 		
 		$action = $_GET['action'];
 		

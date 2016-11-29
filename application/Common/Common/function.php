@@ -599,7 +599,7 @@ hello;
  </ul>
  */
 
-function sp_get_menu($id="main",$effected_id="mainmenu",$filetpl="<span class='file'>\$label</span>",$foldertpl="<span class='folder'>\$label</span>",$ul_class="" ,$li_class="" ,$style="filetree",$showlevel=6,$dropdown='hasChild'){
+function sp_get_menu($id="main",$menu_root_ul_id="mainmenu",$filetpl="<span class='file'>\$label</span>",$foldertpl="<span class='folder'>\$label</span>",$ul_class="" ,$li_class="" ,$menu_root_ul_class="filetree",$showlevel=6,$dropdown='hasChild'){
 	$navs=F("site_nav_".$id);
 	if(empty($navs)){
 		$navs=_sp_get_menu_datas($id);
@@ -608,7 +608,7 @@ function sp_get_menu($id="main",$effected_id="mainmenu",$filetpl="<span class='f
 	import("Tree");
 	$tree = new \Tree();
 	$tree->init($navs);
-	return $tree->get_treeview_menu(0,$effected_id, $filetpl, $foldertpl,  $showlevel,$ul_class,$li_class,  $style,  1, FALSE, $dropdown);
+	return $tree->get_treeview_menu(0,$menu_root_ul_id, $filetpl, $foldertpl,  $showlevel,$ul_class,$li_class,  $menu_root_ul_class,  1, FALSE, $dropdown);
 }
 
 
@@ -1086,6 +1086,11 @@ function sp_file_read($file){
 }
 
 /*修复缩略图使用网络地址时，会出现的错误。5iymt 2015年7月10日*/
+/**
+ * 获取文件相对路径
+ * @param string $asset_url 文件的URL
+ * @return string
+ */
 function sp_asset_relative_url($asset_url){
     if(strpos($asset_url,"http")===0){
     	return $asset_url;
@@ -1113,12 +1118,12 @@ function sp_content_page($content,$pagetpl='{first}{prev}{liststart}{list}{liste
 
 /**
  * 根据广告名称获取广告内容
- * @param string $ad
+ * @param string $ad_name
  * @return 广告内容
  */
-function sp_getad($ad){
+function sp_getad($ad_name){
 	$ad_obj= M("Ad");
-	$ad=$ad_obj->field("ad_content")->where("ad_name='$ad' and status=1")->find();
+	$ad=$ad_obj->field("ad_content")->where(array('ad_name'=>$ad_name,'status'=>1))->find();
 	return htmlspecialchars_decode($ad['ad_content']);
 }
 

@@ -4,6 +4,12 @@ ThinkCMF是一款基于PHP+MYSQL开发的中文内容管理框架。ThinkCMF提�
 文档:http://www.thinkcmf.com/document
 
 ## UPDATE
+### X2.2.2
+* 优化chrome 上传文件时,打开文件选择框慢
+* 修复后台文件添加编辑相册图片移除浏览器不兼容问题
+* 修复文件上传在遨游下不能上传文件问题
+* 修复后台登录错误时提示无样式
+
 ### X2.2.1
 [Core]
 * 优化前后台表单验证

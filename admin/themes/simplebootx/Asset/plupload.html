@@ -114,9 +114,11 @@
 			<div class="tab-pane active" id="upload-file-tab">
 				<div class="file-upload-btn-wrapper">
 					<!--选择按钮-->
+					<div id="container" style="display: inline-block;">
 					<a class="btn btn-primary" id="select-files">
 						选择文件
 					</a>
+					</div>
 					<span class="num">
 						<empty name="multi">
 							最多上传<em>1</em>个附件,
@@ -144,12 +146,12 @@
 		
 		Wind.use('plupload',function(){
 			var uploader = new plupload.Uploader({
-				runtimes : 'html5,flash,silverlight,html4',
+				runtimes : 'flash,html5,silverlight,html4',
 				browse_button : 'select-files', // you can pass an id...
-				container: document.getElementById('files-container'), // ... or DOM Element itself
+				container: document.getElementById('container'), // ... or DOM Element itself
 				url : "{:U('asset/asset/plupload')}",
-				flash_swf_url : '../js/Moxie.swf',
-				silverlight_xap_url : '../js/Moxie.xap',
+				flash_swf_url : '__PUBLIC__/js/plupload/Moxie.swf',
+				silverlight_xap_url : '__PUBLIC__/js/plupload/Moxie.xap',
 				filters : {
 					max_file_size : '{$upload_max_filesize_mb}mb'/* ,
 					mime_types: [{$mime_type}] */
@@ -188,6 +190,7 @@
 						if(data.status==1){
 							if(!multi) {
 								$('#select-files').css('visibility','hidden');
+								$('#container').css('visibility','hidden');
 							}
 							var $file=$('#'+file.id);
 							$file.addClass('uploaded')

@@ -67,40 +67,44 @@ class AdminbaseController extends AppframeController {
 		parent::success($message, $jumpUrl, $ajax);
 	}
 
-	/**
-	 * 模板显示
-	 * @param type $templateFile 指定要调用的模板文件
-	 * @param type $charset 输出编码
-	 * @param type $contentType 输出类型
-	 * @param string $content 输出内容
-	 * 此方法作用在于实现后台模板直接存放在各自项目目录下。例如Admin项目的后台模板，直接存放在Admin/Tpl/目录下
-	 */
-	public function display($templateFile = '', $charset = '', $contentType = '', $content = '', $prefix = '') {
+    /**
+     * 模板显示
+     * @param string $templateFile 指定要调用的模板文件
+     * @param string $charset 输出编码
+     * @param string $contentType 输出类型
+     * @param string $content 输出内容
+     * 此方法作用在于实现后台模板直接存放在各自项目目录下。例如Admin项目的后台模板，直接存放在Admin/Tpl/目录下
+     * @param string $prefix
+     * @throws \Think\Exception
+     */
+    protected function display($templateFile = '', $charset = '', $contentType = '', $content = '', $prefix = '') {
         parent::display($this->parseTemplate($templateFile), $charset, $contentType,$content,$prefix);
 	}
 
-	/**
-	 * 获取输出页面内容
-	 * 调用内置的模板引擎fetch方法，
-	 * @access protected
-	 * @param string $templateFile 指定要调用的模板文件
-	 * 默认为空 由系统自动定位模板文件
-	 * @param string $content 模板输出内容
-	 * @param string $prefix 模板缓存前缀*
-	 * @return string
-	 */
-	public function fetch($templateFile='',$content='',$prefix=''){
+    /**
+     * 获取输出页面内容
+     * 调用内置的模板引擎fetch方法，
+     * @access protected
+     * @param string $templateFile 指定要调用的模板文件
+     * 默认为空 由系统自动定位模板文件
+     * @param string $content 模板输出内容
+     * @param string $prefix 模板缓存前缀*
+     * @return string
+     * @throws \Think\Exception
+     */
+    protected function fetch($templateFile='',$content='',$prefix=''){
 		$templateFile = empty($content)?$this->parseTemplate($templateFile):'';
 		return parent::fetch($templateFile,$content,$prefix);
 	}
 
-	/**
-	 * 自动定位模板文件
-	 * @access protected
-	 * @param string $template 模板文件规则
-	 * @return string
-	 */
-	public function parseTemplate($template='') {
+    /**
+     * 自动定位模板文件
+     * @access protected
+     * @param string $template 模板文件规则
+     * @return string
+     * @throws \Think\Exception
+     */
+    protected function parseTemplate($template='') {
 		$tmpl_path=C("SP_ADMIN_TMPL_PATH");
 		define("SP_TMPL_PATH", $tmpl_path);
     	if($this->theme) { // 指定模板主题
@@ -162,6 +166,7 @@ class AdminbaseController extends AppframeController {
      * 排序 排序字段为listorders数组 POST 排序字段为：listorder或者自定义字段
      * @param mixed $model 需要排序的模型类
      * @param string $custom_field 自定义排序字段 默认为listorder,可以改为自己的排序字段
+     * @return bool
      */
     protected function _listorders($model,$custom_field='') {
         if (!is_object($model)) {

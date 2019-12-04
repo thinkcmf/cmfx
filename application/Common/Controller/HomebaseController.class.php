@@ -109,7 +109,7 @@ class HomebaseController extends AppframeController {
 	 * @param string $content 模板输出内容
 	 * @return mixed
 	 */
-	public function display($templateFile = '', $charset = '', $contentType = '', $content = '', $prefix = '') {
+    protected function display($templateFile = '', $charset = '', $contentType = '', $content = '', $prefix = '') {
 		parent::display($this->parseTemplate($templateFile), $charset, $contentType,$content,$prefix);
 	}
 	
@@ -123,18 +123,19 @@ class HomebaseController extends AppframeController {
 	 * @param string $prefix 模板缓存前缀*
 	 * @return string
 	 */
-	public function fetch($templateFile='',$content='',$prefix=''){
+    protected function fetch($templateFile='',$content='',$prefix=''){
 	    $templateFile = empty($content)?$this->parseTemplate($templateFile):'';
 		return parent::fetch($templateFile,$content,$prefix);
 	}
-	
-	/**
-	 * 自动定位模板文件
-	 * @access protected
-	 * @param string $template 模板文件规则
-	 * @return string
-	 */
-	public function parseTemplate($template='') {
+
+    /**
+     * 自动定位模板文件
+     * @access protected
+     * @param string $template 模板文件规则
+     * @return string
+     * @throws \Think\Exception
+     */
+    protected function parseTemplate($template='') {
 		
 		$tmpl_path=C("SP_TMPL_PATH");
 		define("SP_TMPL_PATH", $tmpl_path);
